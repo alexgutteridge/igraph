@@ -21,20 +21,20 @@ class TestGraph < Test::Unit::TestCase
 
   def test_neighbours
     assert_nothing_raised do
-      IGraph.new(['A','B','C','D'],true).neighbors('A',IGraph::IGRAPH_ALL)
+      IGraph.new(['A','B','C','D'],true).neighbors('A',IGraph::ALL)
     end
     graph = IGraph.new(['A','B','C','D'],true)
-    assert_equal ['B'], graph.neighbors('A',IGraph::IGRAPH_ALL)
-    assert_equal ['D'], graph.neighbors('C',IGraph::IGRAPH_ALL)    
+    assert_equal ['B'], graph.neighbors('A',IGraph::ALL)
+    assert_equal ['D'], graph.neighbors('C',IGraph::ALL)    
   end
 
   def test_adjacent
     assert_nothing_raised do
-      IGraph.new(['A','B','C','D'],true).adjacent('A',IGraph::IGRAPH_ALL)
+      IGraph.new(['A','B','C','D'],true).adjacent('A',IGraph::ALL)
     end
     graph = IGraph.new(['A','B','C','D'],true)
     eid1  = graph.get_eid('A','B')
-    eid2  = graph.adjacent('A',IGraph::IGRAPH_ALL)[0]
+    eid2  = graph.adjacent('A',IGraph::ALL)[0]
     assert_equal eid1, eid2
   end
 
@@ -45,7 +45,10 @@ class TestGraph < Test::Unit::TestCase
 
   def test_degree
     graph = IGraph.new(['A','B','C','D'],true)
-    assert_equal [1],  graph.degree(['A'],    IGraph::IGRAPH_ALL,true)
-    assert_equal [1,1],graph.degree(['A','B'],IGraph::IGRAPH_ALL,true)
+    assert_equal [1],  graph.degree(['A'],    IGraph::ALL,true)
+    assert_equal [1,1],graph.degree(['A','B'],IGraph::ALL,true)
+    assert_raises IGraphError do 
+      graph.degree('A',IGraph::ALL,true)
+    end
   end
 end
