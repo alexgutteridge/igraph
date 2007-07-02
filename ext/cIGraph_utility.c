@@ -31,7 +31,13 @@ VALUE cIGraph_get_vertex_object(VALUE graph, igraph_integer_t n){
 int cIGraph_vertex_arr_to_id_vec(VALUE graph, VALUE va, igraph_vector_t *nv){
 
   VALUE vertex;
+  VALUE tmp;
 
+  tmp = rb_check_array_type(va);
+
+  if(NIL_P(tmp))
+    rb_raise(cIGraphError, "Array expected\n");
+    
   //Initialize edge vector
   igraph_vector_init_int(nv,0);
   vertex = rb_ary_shift(va);

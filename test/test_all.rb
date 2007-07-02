@@ -3,6 +3,7 @@
 require 'test/unit'
 
 require 'tc_create'
+require 'tc_iterators'
 require 'tc_add_delete'
 require 'tc_basic_query'
 require 'tc_basic_properties'

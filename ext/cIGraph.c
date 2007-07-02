@@ -92,6 +92,17 @@ void Init_igraph(){
   rb_define_alloc_func(cIGraph, cIGraph_alloc);
   rb_define_method(cIGraph, "initialize", cIGraph_initialize, 2);
 
+  rb_define_method(cIGraph, "each_vertex",   cIGraph_each_vertex,  0);
+  rb_define_method(cIGraph, "each_edge",     cIGraph_each_edge,    1);
+  rb_define_method(cIGraph, "each_edge_eid", cIGraph_each_edge_eid,1);  
+
+  rb_define_const(cIGraph, "EDGEORDER_ID",   INT2NUM(1));
+  rb_define_const(cIGraph, "EDGEORDER_FROM", INT2NUM(2));
+  rb_define_const(cIGraph, "EDGEORDER_TO",   INT2NUM(3));
+
+  rb_define_method(cIGraph, "each",        cIGraph_each_vertex, 0);
+  rb_include_module(cIGraph, rb_mEnumerable);
+
   rb_define_method(cIGraph, "include?", cIGraph_include, 1);
 
   rb_define_method(cIGraph, "vcount", cIGraph_vcount, 0);
@@ -104,10 +115,10 @@ void Init_igraph(){
   rb_define_method(cIGraph, "neighbours", cIGraph_neighbors,2);
   rb_define_method(cIGraph, "adjacent",   cIGraph_adjacent,2);
 
-  rb_define_const(cIGraph, "IGRAPH_OUT",   INT2NUM(1));
-  rb_define_const(cIGraph, "IGRAPH_IN",    INT2NUM(2));
-  rb_define_const(cIGraph, "IGRAPH_ALL",   INT2NUM(3));
-  rb_define_const(cIGraph, "IGRAPH_TOTAL", INT2NUM(4));
+  rb_define_const(cIGraph, "OUT",   INT2NUM(1));
+  rb_define_const(cIGraph, "IN",    INT2NUM(2));
+  rb_define_const(cIGraph, "ALL",   INT2NUM(3));
+  rb_define_const(cIGraph, "TOTAL", INT2NUM(4));
   
   rb_define_method(cIGraph, "is_directed",  cIGraph_is_directed,0);
   rb_define_method(cIGraph, "is_directed?", cIGraph_is_directed,0);  

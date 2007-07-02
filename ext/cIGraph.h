@@ -20,6 +20,11 @@ void cIGraph_free(void *p);
 VALUE cIGraph_alloc(VALUE klass);
 VALUE cIGraph_initialize(VALUE self, VALUE edges, VALUE directed);
 
+//Iterators
+VALUE cIGraph_each_vertex  (VALUE self);
+VALUE cIGraph_each_edge    (VALUE self, VALUE order);
+VALUE cIGraph_each_edge_eid(VALUE self, VALUE order);
+
 //Basic query operations
 VALUE cIGraph_vcount     (VALUE self);
 VALUE cIGraph_ecount     (VALUE self);

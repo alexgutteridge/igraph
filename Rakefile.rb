@@ -41,12 +41,14 @@ end
   
 hoe.spec.dependencies.delete_if{|dep| dep.name == "hoe"}
 
+IGRAPH = '/usr/local/include/igraph'
+
 desc "Uses extconf.rb and make to build the extension"
 task :build_extension => ['ext/igraph.so']
 SRC = FileList['ext/*.c'] + FileList['ext/*.h']
 file 'ext/igraph.so' => SRC do
   Dir.chdir('ext')
-  system("ruby extconf.rb --with-igraph-dir=$IGRAPH_HOME")
+  system("ruby extconf.rb --with-igraph-include=#{IGRAPH}")
   system("make")
   Dir.chdir('..')
 end
