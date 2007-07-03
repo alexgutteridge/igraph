@@ -105,6 +105,16 @@ void Init_igraph(){
 
   rb_define_method(cIGraph, "include?", cIGraph_include, 1);
 
+  rb_define_method(cIGraph, "all_vertices",         cIGraph_all_v,    0);
+  rb_define_method(cIGraph, "vertices",             cIGraph_all_v,    0);
+  rb_define_method(cIGraph, "adjacent_vertices",    cIGraph_adj_v,    2);
+  rb_define_method(cIGraph, "nonadjacent_vertices", cIGraph_nonadj_v, 2);
+
+  rb_define_method(cIGraph, "all_edges",         cIGraph_all_e,    1);
+  rb_define_method(cIGraph, "edges",             cIGraph_all_e,    1);
+  rb_define_method(cIGraph, "adjacent_edges",    cIGraph_adj_e,    2);
+  rb_define_method(cIGraph, "nonadjacent_edges", cIGraph_nonadj_e, 2);  
+
   rb_define_method(cIGraph, "vcount", cIGraph_vcount, 0);
   rb_define_method(cIGraph, "ecount", cIGraph_ecount, 0);
 
@@ -125,8 +135,11 @@ void Init_igraph(){
 
   rb_define_method(cIGraph, "degree", cIGraph_degree,3);
 
-  rb_define_method(cIGraph, "add_edges",    cIGraph_add_edges,1);
-  rb_define_method(cIGraph, "add_vertices", cIGraph_add_vertices,1);
+  rb_define_method(cIGraph, "add_edges",    cIGraph_add_edges,    1);
+  rb_define_method(cIGraph, "add_vertices", cIGraph_add_vertices, 1);
+
+  rb_define_method(cIGraph, "add_edge",   cIGraph_add_edge,   2);
+  rb_define_method(cIGraph, "add_vertex", cIGraph_add_vertex, 1);
 
   rb_define_method(cIGraph, "are_connected",  cIGraph_are_connected,2);
   rb_define_method(cIGraph, "are_connected?", cIGraph_are_connected,2);  
