@@ -2,6 +2,23 @@
 #include "ruby.h"
 #include "cIGraph.h"
 
+/* call-seq:
+ *   graph.add_edges(edges) -> Fixnum
+ *
+ * Adds the edges in the edges Array to the graph. Edges are specified as an
+ * Array in the same way as with IGraph#new.
+ *
+ * Returns 0 on success.
+ *
+ * Example:
+ *
+ *  g = IGraph.new([1,2,3,4],true)
+ *  g.add_edges([1,4,2,3])
+ *
+ * Adds an extra directed edge to this trivial graph. Note that vertices
+ * must have already been added to the graph before they can be used in
+ * an edge (throws a IGraphError otherwise).
+ */
 VALUE cIGraph_add_edges(VALUE self, VALUE edges){
 
   igraph_t *graph;
@@ -40,6 +57,21 @@ VALUE cIGraph_add_edges(VALUE self, VALUE edges){
 
 }
 
+/* call-seq:
+ *   graph.add_vertices(vs) -> Fixnum
+ *
+ * Adds the vertices in the vs Array to the graph.
+ *
+ * Returns 0 on success.
+ *
+ * Example:
+ *
+ *  g = IGraph.new([1,2,3,4],true)
+ *  g.add_vertices([5,6,7,8])
+ *
+ * Adds 4 extra vertices to this graph. IGraph will silently ignore attempts
+ * to add a vertex twice to the same graph.
+ */
 VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
 
   igraph_t *graph;
@@ -79,6 +111,22 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
 
 }
 
+/* call-seq:
+ *   graph.add_edge(from,to) -> Fixnum
+ *
+ * Adds an edge between the two vertices given. This is just a convinience
+ * method, it is possible to use IGraph#add_edges to add a single edge as well
+ *
+ * Returns 0 on success.
+ *
+ * Example:
+ *
+ *  g = IGraph.new([1,2,3,4],true)
+ *  g.add_edge(1,4)
+ *
+ * Note that vertices must have already been added to the graph before 
+ * they can be used in an edge (throws a IGraphError otherwise).
+ */
 VALUE cIGraph_add_edge(VALUE self, VALUE from, VALUE to){
 
   igraph_t *graph;
@@ -117,6 +165,22 @@ VALUE cIGraph_add_edge(VALUE self, VALUE from, VALUE to){
 
 }
 
+/* call-seq:
+ *   graph.add_vertex(v) -> Fixnum
+ *
+ * Adds the vertex to the graph. This is just a convinience method it is
+ * also possible to use IGraph#add_vertices to add a single vertex.
+ *
+ * Returns 0 on success.
+ *
+ * Example:
+ *
+ *  g = IGraph.new([1,2,3,4],true)
+ *  g.add_vertex(5)
+ *
+ * Adds 1 extra vertex to this graph. IGraph will silently ignore attempts
+ * to add a vertex twice to the same graph.
+ */
 VALUE cIGraph_add_vertex(VALUE self, VALUE v){
 
   igraph_t *graph;

@@ -7,7 +7,7 @@ hoe = Hoe.new("igraph",'0.1') do |p|
   
   p.author = "Alex Gutteridge"
   p.email = "alexg@kuicr.kyoto-u.ac.jp"
-  p.url = "http://web.kuicr.kyoto-u.ac.jp/~alexg/igraph/"
+  p.url = "http://igraph.rubyforge.org/"
   
   p.description = p.paragraphs_of("README.txt",1..3)[0]
   p.summary     = p.paragraphs_of("README.txt",1)[0]
