@@ -19,14 +19,23 @@ VALUE cIGraph_alloc(VALUE klass){
 }
 
 /* call-seq:
- *   IGraph.new(edges,directed) -> graph
+ *   IGraph.new(edges,directed) -> IGraph
  *
- * Creates a new IGraph graph with the edges specified in the edge Array.
+ * Creates a new IGraph graph with the edges specified in the edges Array.
  * The first two elements define the first edge (the order is from,to for 
  * directed graphs). The next two define the second edge and so on. The 
- * Array should contain an even number of elements.
+ * Array should contain an even number of elements. Graph elements can be
+ * any ruby object.
+ *
  * The boolean value directed specifies whether a directed or undirected
  * graph is created.
+ *
+ * Example:
+ *
+ *   IGraph.new([1,2,3,4],true)
+ *
+ * Creates a graph with four vertices. Vertex 1 is connected to vertex 2.
+ * Vertex 3 is connected to vertex 4.
  */
 
 VALUE cIGraph_initialize(VALUE self, VALUE edges, VALUE directed){
@@ -82,7 +91,8 @@ VALUE cIGraph_initialize(VALUE self, VALUE edges, VALUE directed){
 }
 
 /* Interface to the iGraph[http://cneurocvs.rmki.kfki.hu/igraph/] library
- * for graph computation
+ * for graph and network computation. See IGraph#new for how to create a
+ * graph and get started.
  */
 
 void Init_igraph(){
@@ -92,9 +102,9 @@ void Init_igraph(){
   rb_define_alloc_func(cIGraph, cIGraph_alloc);
   rb_define_method(cIGraph, "initialize", cIGraph_initialize, 2);
 
-  rb_define_method(cIGraph, "each_vertex",   cIGraph_each_vertex,  0);
-  rb_define_method(cIGraph, "each_edge",     cIGraph_each_edge,    1);
-  rb_define_method(cIGraph, "each_edge_eid", cIGraph_each_edge_eid,1);  
+  rb_define_method(cIGraph, "each_vertex",   cIGraph_each_vertex,  0); /* in cIGraph_iterators.c */
+  rb_define_method(cIGraph, "each_edge",     cIGraph_each_edge,    1); /* in cIGraph_iterators.c */
+  rb_define_method(cIGraph, "each_edge_eid", cIGraph_each_edge_eid,1); /* in cIGraph_iterators.c */ 
 
   rb_define_const(cIGraph, "EDGEORDER_ID",   INT2NUM(1));
   rb_define_const(cIGraph, "EDGEORDER_FROM", INT2NUM(2));
@@ -106,24 +116,24 @@ void Init_igraph(){
   rb_define_method(cIGraph, "include?", cIGraph_include, 1);
 
   rb_define_method(cIGraph, "all_vertices",         cIGraph_all_v,    0);
-  rb_define_method(cIGraph, "vertices",             cIGraph_all_v,    0);
-  rb_define_method(cIGraph, "adjacent_vertices",    cIGraph_adj_v,    2);
-  rb_define_method(cIGraph, "nonadjacent_vertices", cIGraph_nonadj_v, 2);
+  rb_define_method(cIGraph, "vertices",             cIGraph_all_v,    0); /* in cIGraph_selectors.c */
+  rb_define_method(cIGraph, "adjacent_vertices",    cIGraph_adj_v,    2); /* in cIGraph_selectors.c */
+  rb_define_method(cIGraph, "nonadjacent_vertices", cIGraph_nonadj_v, 2); /* in cIGraph_selectors.c */
 
   rb_define_method(cIGraph, "all_edges",         cIGraph_all_e,    1);
   rb_define_method(cIGraph, "edges",             cIGraph_all_e,    1);
   rb_define_method(cIGraph, "adjacent_edges",    cIGraph_adj_e,    2);
   rb_define_method(cIGraph, "nonadjacent_edges", cIGraph_nonadj_e, 2);  
 
-  rb_define_method(cIGraph, "vcount", cIGraph_vcount, 0);
-  rb_define_method(cIGraph, "ecount", cIGraph_ecount, 0);
+  rb_define_method(cIGraph, "vcount", cIGraph_vcount, 0); /* in cIGraph_basic_query.c */
+  rb_define_method(cIGraph, "ecount", cIGraph_ecount, 0); /* in cIGraph_basic_query.c */
 
-  rb_define_method(cIGraph, "edge",    cIGraph_edge, 1);
-  rb_define_method(cIGraph, "get_eid", cIGraph_get_eid, 2);
+  rb_define_method(cIGraph, "edge",    cIGraph_edge, 1); /* in cIGraph_basic_query.c */
+  rb_define_method(cIGraph, "get_eid", cIGraph_get_eid, 2); /* in cIGraph_basic_query.c */
 
   rb_define_method(cIGraph, "neighbors",  cIGraph_neighbors,2);
-  rb_define_method(cIGraph, "neighbours", cIGraph_neighbors,2);
-  rb_define_method(cIGraph, "adjacent",   cIGraph_adjacent,2);
+  rb_define_method(cIGraph, "neighbours", cIGraph_neighbors,2); /* in cIGraph_basic_query.c */
+  rb_define_method(cIGraph, "adjacent",   cIGraph_adjacent,2); /* in cIGraph_basic_query.c */
 
   rb_define_const(cIGraph, "OUT",   INT2NUM(1));
   rb_define_const(cIGraph, "IN",    INT2NUM(2));
@@ -131,18 +141,18 @@ void Init_igraph(){
   rb_define_const(cIGraph, "TOTAL", INT2NUM(4));
   
   rb_define_method(cIGraph, "is_directed",  cIGraph_is_directed,0);
-  rb_define_method(cIGraph, "is_directed?", cIGraph_is_directed,0);  
+  rb_define_method(cIGraph, "is_directed?", cIGraph_is_directed,0); /* in cIGraph_basic_query.c */ 
 
-  rb_define_method(cIGraph, "degree", cIGraph_degree,3);
+  rb_define_method(cIGraph, "degree", cIGraph_degree,3); /* in cIGraph_basic_query.c */
 
-  rb_define_method(cIGraph, "add_edges",    cIGraph_add_edges,    1);
-  rb_define_method(cIGraph, "add_vertices", cIGraph_add_vertices, 1);
+  rb_define_method(cIGraph, "add_edges",    cIGraph_add_edges,    1); /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "add_vertices", cIGraph_add_vertices, 1); /* in cIGraph_add_delete.c */
 
-  rb_define_method(cIGraph, "add_edge",   cIGraph_add_edge,   2);
-  rb_define_method(cIGraph, "add_vertex", cIGraph_add_vertex, 1);
+  rb_define_method(cIGraph, "add_edge",   cIGraph_add_edge,   2); /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "add_vertex", cIGraph_add_vertex, 1); /* in cIGraph_add_delete.c */
 
   rb_define_method(cIGraph, "are_connected",  cIGraph_are_connected,2);
-  rb_define_method(cIGraph, "are_connected?", cIGraph_are_connected,2);  
+  rb_define_method(cIGraph, "are_connected?", cIGraph_are_connected,2); /* in cIGraph_basic_properties.c */  
 
   rb_define_method(cIGraph, "shortest_paths",     cIGraph_shortest_paths,2);
   rb_define_method(cIGraph, "get_shortest_paths", cIGraph_get_shortest_paths,3);

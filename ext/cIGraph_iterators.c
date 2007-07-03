@@ -2,6 +2,22 @@
 #include "ruby.h"
 #include "cIGraph.h"
 
+/* call-seq:
+ *   graph.each_vertex{|v| } -> nil
+ *
+ * Iterates through all the vertices in the graph. Also accessible via 
+ * IGraph#each which is used by Enumerable to provide other methods.
+ *
+ * Example:
+ *
+ *  g = IGraph.new([1,2,3,4],true)
+ *  g.each do |v|
+ *    puts v
+ *  end
+ *  g.find_all{|v| v > 2} #returns [3,4]
+ *
+ */
+
 VALUE cIGraph_each_vertex(VALUE self){
 
   igraph_t *graph;
@@ -24,7 +40,26 @@ VALUE cIGraph_each_vertex(VALUE self){
   return Qnil;
 
 }
-
+/* call-seq:
+ *   graph.each_edge(mode){|v,w| } -> nil
+ *
+ * Iterates through all the edges in the graph. mode specifies the order the
+ * edges are returned: IGRAPH_EDGEORDER_ID, edge id order. 
+ * IGRAPH_EDGEORDER_FROM, vertex id order, the id of the source vertex 
+ * counts for directed graphs. The order of the adjacent edges of a given 
+ * vertex is arbitrary. IGRAPH_EDGEORDER_TO, vertex id order, the id of the 
+ * target vertex counts for directed graphs. The order of the adjacent edges 
+ * of a given vertex is arbitrary. For undirected graph the latter two are 
+ * the same.
+ *
+ * Example:
+ *
+ *  g = IGraph.new([1,2,3,4],true)
+ *  g.each_edge(IGraph::EDGORDER_ID) do |v,w|
+ *    puts "#{v} -> #{w}"
+ *  end
+ *
+ */
 VALUE cIGraph_each_edge(VALUE self, VALUE order){
 
   igraph_t *graph;
@@ -55,6 +90,26 @@ VALUE cIGraph_each_edge(VALUE self, VALUE order){
 
 }
 
+/* call-seq:
+ *   graph.each_edge_eid(mode){|id| } -> nil
+ *
+ * Iterates through all the edges in the graph. mode specifies the order the
+ * edges are returned: IGRAPH_EDGEORDER_ID, edge id order. 
+ * IGRAPH_EDGEORDER_FROM, vertex id order, the id of the source vertex 
+ * counts for directed graphs. The order of the adjacent edges of a given 
+ * vertex is arbitrary. IGRAPH_EDGEORDER_TO, vertex id order, the id of the 
+ * target vertex counts for directed graphs. The order of the adjacent edges 
+ * of a given vertex is arbitrary. For undirected graph the latter two are 
+ * the same.
+ *
+ * Example:
+ *
+ *  g = IGraph.new([1,2,3,4],true)
+ *  g.each_edge(IGraph::EDGORDER_ID) do |id|
+ *    puts id
+ *  end
+ *
+ */
 VALUE cIGraph_each_edge_eid(VALUE self, VALUE order){
 
   igraph_t *graph;
