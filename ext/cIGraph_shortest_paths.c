@@ -12,6 +12,7 @@ VALUE cIGraph_shortest_paths(VALUE self, VALUE from, VALUE mode){
   int i;
   int j;
   VALUE row;
+  VALUE path_length;
   VALUE matrix = rb_ary_new();
   int n_row;
   int n_col;
@@ -35,7 +36,8 @@ VALUE cIGraph_shortest_paths(VALUE self, VALUE from, VALUE mode){
     row = rb_ary_new();
     rb_ary_push(matrix,row);
     for(j=0; j<igraph_matrix_ncol(&res); j++){
-      rb_ary_push(row,INT2NUM(MATRIX(res,i,j)));
+      path_length = MATRIX(res,i,j) == n_col ? Qnil : INT2NUM(MATRIX(res,i,j));
+      rb_ary_push(row,path_length);
     }
   }
 

@@ -25,6 +25,15 @@ VALUE cIGraph_each_vertex  (VALUE self);
 VALUE cIGraph_each_edge    (VALUE self, VALUE order);
 VALUE cIGraph_each_edge_eid(VALUE self, VALUE order);
 
+//Selectors
+VALUE cIGraph_all_v   (VALUE self);
+VALUE cIGraph_adj_v   (VALUE self, VALUE v, VALUE mode);
+VALUE cIGraph_nonadj_v(VALUE self, VALUE v, VALUE mode);
+
+VALUE cIGraph_all_e   (VALUE self,          VALUE mode);
+VALUE cIGraph_adj_e   (VALUE self, VALUE v, VALUE mode);
+VALUE cIGraph_nonadj_e(VALUE self, VALUE v, VALUE mode);
+
 //Basic query operations
 VALUE cIGraph_vcount     (VALUE self);
 VALUE cIGraph_ecount     (VALUE self);
@@ -40,6 +49,8 @@ VALUE cIGraph_add_edges      (VALUE self, VALUE edges);
 VALUE cIGraph_add_vertices   (VALUE self, VALUE vs);
 VALUE cIGraph_delete_edges   (VALUE self, VALUE edges);
 VALUE cIGraph_delete_vertices(VALUE self, VALUE vs);
+VALUE cIGraph_add_edge       (VALUE self, VALUE from, VALUE to);
+VALUE cIGraph_add_vertex     (VALUE self, VALUE v);
 
 //Basic properties
 VALUE cIGraph_are_connected(VALUE self, VALUE from, VALUE to);
