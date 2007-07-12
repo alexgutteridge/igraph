@@ -1,24 +1,18 @@
 == Introduction
 
-IGraph
+IGraph is a Ruby extension for using the igraph library ([http://cneurocvs.rmki.kfki.hu/igraph/]). igraph is a library for creating and manipulating graphs with a particular emphasis on network analysis functions.
 
-IGraph
+IGraph is currently pre-alpha status and should be considered unstable. There are functions for building and querying simple graphs as well as shortest path calculations.
 
-IGraph
+All bug reports, feature request and patches are welcome.
 
 == Installation
 
 A working igraph library installation is required.
 
-An IGraph gem is available as well as a package using setup.rb. In each case the installation requires the location of your igraph library to compile the extension. If you download the setup.rb package use these incantations:
+An IGraph gem is available. The installation requires the location of your igraph headers and library to compile the extension. E.g. under Ubuntu linux:
 
-  ruby setup.rb config -- --with-igraph-dir=$R_HOME
-  ruby setup.rb setup
-  ruby setup.rb install
-
-Using gems it is almost the same:
-
-  gem install igraph -- --with-igraph-dir=$R_HOME
+  gem install igraph -- --with-igraph-include=/usr/local/include/igraph
 
 == Documentation
 
@@ -27,6 +21,8 @@ Here is a very quick and simple example:
  require 'igraph'
 
  graph = IGraph.new([],true)
+ graph.add_edges([1,2,3,4])
+ graph.vcount # returns 4
 
 == License
 

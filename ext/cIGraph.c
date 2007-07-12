@@ -38,22 +38,31 @@ VALUE cIGraph_alloc(VALUE klass){
  * Vertex 3 is connected to vertex 4.
  */
 
-VALUE cIGraph_initialize(VALUE self, VALUE edges, VALUE directed){
+VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
 
   igraph_t *graph;
   igraph_vector_t edge_v;
   VALUE vertex;
   VALUE object_h;
   VALUE id_h;
+  VALUE directed;
+  VALUE edges;
+  VALUE attrs;
   int vertex_n = 0;
   int current_vertex_id;
+  int i;
+
+  rb_scan_args(argc,argv,"12", &edges, &directed, &attrs);
 
   igraph_set_error_handler(cIGraph_error_handler);
   igraph_set_warning_handler(cIGraph_warning_handler);  
+  //igraph_i_set_attribute_table(&cIGraph_attribute_table);
 
   //New hash for mapping vertex objects to floats used by iGraph
   object_h = rb_iv_set(self,"@object_ids",rb_hash_new());
   id_h     = rb_iv_set(self,"@id_objects",rb_hash_new());
+
+  rb_iv_set(self,"@edge_attrs",rb_hash_new());
 
   //Initialize edge vector
   igraph_vector_init_int(&edge_v,0);
@@ -63,8 +72,8 @@ VALUE cIGraph_initialize(VALUE self, VALUE edges, VALUE directed){
     igraph_to_undirected(graph,IGRAPH_TO_UNDIRECTED_COLLAPSE);
 
   //Loop through objects in edge Array
-  vertex = rb_ary_shift(edges);
-  while(vertex != Qnil){
+  for (i=0; i<RARRAY(edges)->len; i++) {
+    vertex = RARRAY(edges)->ptr[i];
     if(rb_funcall(object_h,rb_intern("has_key?"),1,vertex)){
       //If @vertices includes this vertex then look up the vertex number
       current_vertex_id = NUM2INT(rb_hash_aref(object_h,vertex));
@@ -76,12 +85,20 @@ VALUE cIGraph_initialize(VALUE self, VALUE edges, VALUE directed){
       vertex_n++;
     }
     igraph_vector_push_back(&edge_v,current_vertex_id);
-    vertex = rb_ary_shift(edges);
   }
 
   if(igraph_vector_size(&edge_v) > 0){
     igraph_add_vertices(graph,vertex_n,0);
     igraph_add_edges(graph,&edge_v,0);
+  }
+
+  if(attrs != Qnil){
+    for (i=0; i<RARRAY(attrs)->len; i++) {
+      cIGraph_set_edge_attr(self,
+			    RARRAY(edges)->ptr[i*2],
+			    RARRAY(edges)->ptr[(i*2)+1],
+			    RARRAY(attrs)->ptr[i]);
+    }
   }
 
   igraph_vector_destroy(&edge_v);
@@ -100,7 +117,12 @@ void Init_igraph(){
   cIGraphError = rb_define_class("IGraphError", rb_eRuntimeError);
 
   rb_define_alloc_func(cIGraph, cIGraph_alloc);
-  rb_define_method(cIGraph, "initialize", cIGraph_initialize, 2);
+  rb_define_method(cIGraph, "initialize", cIGraph_initialize, -1);
+
+  rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2);
+  rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3);
+  rb_define_method(cIGraph, "get_edge_attr", cIGraph_get_edge_attr, 2);
+  rb_define_method(cIGraph, "set_edge_attr", cIGraph_set_edge_attr, 3);
 
   rb_define_method(cIGraph, "each_vertex",   cIGraph_each_vertex,  0); /* in cIGraph_iterators.c */
   rb_define_method(cIGraph, "each_edge",     cIGraph_each_edge,    1); /* in cIGraph_iterators.c */
@@ -145,16 +167,26 @@ void Init_igraph(){
 
   rb_define_method(cIGraph, "degree", cIGraph_degree,3); /* in cIGraph_basic_query.c */
 
-  rb_define_method(cIGraph, "add_edges",    cIGraph_add_edges,    1); /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "add_edges",    cIGraph_add_edges,    -1); /* in cIGraph_add_delete.c */
   rb_define_method(cIGraph, "add_vertices", cIGraph_add_vertices, 1); /* in cIGraph_add_delete.c */
 
-  rb_define_method(cIGraph, "add_edge",   cIGraph_add_edge,   2); /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "add_edge",   cIGraph_add_edge,   -1); /* in cIGraph_add_delete.c */
   rb_define_method(cIGraph, "add_vertex", cIGraph_add_vertex, 1); /* in cIGraph_add_delete.c */
 
   rb_define_method(cIGraph, "are_connected",  cIGraph_are_connected,2);
   rb_define_method(cIGraph, "are_connected?", cIGraph_are_connected,2); /* in cIGraph_basic_properties.c */  
 
-  rb_define_method(cIGraph, "shortest_paths",     cIGraph_shortest_paths,2);
-  rb_define_method(cIGraph, "get_shortest_paths", cIGraph_get_shortest_paths,3);
+  rb_define_method(cIGraph, "shortest_paths",         cIGraph_shortest_paths,2); /* in cIGraph_shortest_paths.c */
+  rb_define_method(cIGraph, "get_shortest_paths",     cIGraph_get_shortest_paths,3); /* in cIGraph_shortest_paths.c */
+  rb_define_method(cIGraph, "get_all_shortest_paths", cIGraph_get_all_shortest_paths,3); /* in cIGraph_shortest_paths.c */  
+  rb_define_method(cIGraph, "average_path_length",    cIGraph_average_path_length,2); /* in cIGraph_shortest_paths.c */  
+  rb_define_method(cIGraph, "diameter",               cIGraph_diameter,2); /* in cIGraph_shortest_paths.c */
+  rb_define_method(cIGraph, "girth",                  cIGraph_girth,0); /* in cIGraph_shortest_paths.c */
 
-}
+
+  rb_define_method(cIGraph, "neighbourhood_size",   cIGraph_neighborhood_size, 3);  /* in cIGraph_vertex_neighbourhood.c */
+  rb_define_method(cIGraph, "neighborhood_size",    cIGraph_neighborhood_size, 3);  
+  rb_define_method(cIGraph, "neighbourhood",        cIGraph_neighborhood, 3); /* in cIGraph_vertex_neighbourhood.c */
+  rb_define_method(cIGraph, "neighborhood",         cIGraph_neighborhood, 3);
+  rb_define_method(cIGraph, "neighbourhood_graphs", cIGraph_neighborhood_graphs, 3);  /* in cIGraph_vertex_neighbourhood.c */
+  rb_define_method(cIGraph, "neighborhood_graphs",  cIGraph_neighborhood_graphs, 3);}

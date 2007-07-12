@@ -18,7 +18,11 @@ VALUE cIGraph_include(VALUE self, VALUE v);
 void Init_igraph(void);
 void cIGraph_free(void *p);
 VALUE cIGraph_alloc(VALUE klass);
-VALUE cIGraph_initialize(VALUE self, VALUE edges, VALUE directed);
+VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self);
+
+//Attribute accessors
+VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to);
+VALUE cIGraph_set_edge_attr(VALUE self, VALUE from, VALUE to, VALUE attr);
 
 //Iterators
 VALUE cIGraph_each_vertex  (VALUE self);
@@ -45,16 +49,26 @@ VALUE cIGraph_is_directed(VALUE self);
 VALUE cIGraph_degree     (VALUE self, VALUE v, VALUE mode, VALUE loops);
 
 //Adding and eleting vertices and edges
-VALUE cIGraph_add_edges      (VALUE self, VALUE edges);
+VALUE cIGraph_add_edges      (int argc, VALUE *argv, VALUE self);
+VALUE cIGraph_add_edge       (int argc, VALUE *argv, VALUE self);
 VALUE cIGraph_add_vertices   (VALUE self, VALUE vs);
 VALUE cIGraph_delete_edges   (VALUE self, VALUE edges);
 VALUE cIGraph_delete_vertices(VALUE self, VALUE vs);
-VALUE cIGraph_add_edge       (VALUE self, VALUE from, VALUE to);
 VALUE cIGraph_add_vertex     (VALUE self, VALUE v);
 
 //Basic properties
 VALUE cIGraph_are_connected(VALUE self, VALUE from, VALUE to);
 
 //Shortest Path Related Functions
-VALUE cIGraph_shortest_paths    (VALUE self, VALUE from, VALUE mode);
-VALUE cIGraph_get_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mode);
+VALUE cIGraph_shortest_paths        (VALUE self, VALUE from, VALUE mode);
+VALUE cIGraph_get_shortest_paths    (VALUE self, VALUE from, VALUE to, VALUE mode);
+VALUE cIGraph_get_all_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mode); 
+VALUE cIGraph_average_path_length   (VALUE self, VALUE directed, VALUE unconn);
+VALUE cIGraph_diameter              (VALUE self, VALUE directed, VALUE unconn);
+VALUE cIGraph_girth                 (VALUE self);
+
+
+//Vertex neighbourhood functions
+VALUE cIGraph_neighborhood_size  (VALUE self, VALUE from, VALUE order, VALUE mode);
+VALUE cIGraph_neighborhood       (VALUE self, VALUE from, VALUE order, VALUE mode);
+VALUE cIGraph_neighborhood_graphs(VALUE self, VALUE from, VALUE order, VALUE mode);
