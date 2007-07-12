@@ -19,14 +19,19 @@
  * must have already been added to the graph before they can be used in
  * an edge (throws a IGraphError otherwise).
  */
-VALUE cIGraph_add_edges(VALUE self, VALUE edges){
+VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
 
   igraph_t *graph;
   igraph_vector_t edge_v;
   VALUE vertex;
   VALUE object_h;
+  VALUE edges;
+  VALUE attrs;
   int vid;
   int code = 0;
+  int i;
+
+  rb_scan_args(argc, argv, "11", &edges, &attrs);
 
   //Initialize edge vector
   igraph_vector_init_int(&edge_v,0);
@@ -35,8 +40,8 @@ VALUE cIGraph_add_edges(VALUE self, VALUE edges){
   Data_Get_Struct(self, igraph_t, graph);
 
   //Loop through objects in edge Array
-  vertex = rb_ary_shift(edges);
-  while(vertex != Qnil){
+  for (i=0; i<RARRAY(edges)->len; i++) {
+    vertex = RARRAY(edges)->ptr[i];
     if(rb_funcall(object_h,rb_intern("has_key?"),1,vertex)){
       //If @vertices includes this vertex then look up the vertex number
       vid = NUM2INT(rb_hash_aref(object_h,vertex));
@@ -44,11 +49,19 @@ VALUE cIGraph_add_edges(VALUE self, VALUE edges){
       rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices first");
     }
     igraph_vector_push_back(&edge_v,vid);
-    vertex = rb_ary_shift(edges);
   }
 
   if(igraph_vector_size(&edge_v) > 0){
     code = igraph_add_edges(graph,&edge_v,0);
+  }
+
+  if(attrs != Qnil){
+    for (i=0; i<RARRAY(attrs)->len; i++) {
+      cIGraph_set_edge_attr(self,
+			    RARRAY(edges)->ptr[i*2],
+			    RARRAY(edges)->ptr[(i*2)+1],
+			    RARRAY(attrs)->ptr[i]);
+    }
   }
 
   igraph_vector_destroy(&edge_v);
@@ -81,6 +94,7 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
   int vertex_n;
   int code = 0;
   int length;
+  int i;
 
   object_h = rb_iv_get(self,"@object_ids");
   id_h     = rb_iv_get(self,"@id_objects");
@@ -90,8 +104,8 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
   Data_Get_Struct(self, igraph_t, graph);
 
   //Loop through objects in vertex array
-  vertex = rb_ary_shift(vs);
-  while(vertex != Qnil){
+  for (i=0; i<RARRAY(vs)->len; i++) {
+    vertex = RARRAY(vs)->ptr[i];
     if(rb_funcall(object_h,rb_intern("has_key?"),1,vertex)){
       //If @vertices includes this vertex then raise an error
       //Silently ignore
@@ -103,7 +117,6 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
       rb_hash_aset(id_h,    INT2NUM(vertex_n),vertex);
       vertex_n++;
     }
-    vertex = rb_ary_shift(vs);
   }
   code = igraph_add_vertices(graph,length,0);
 
@@ -127,13 +140,18 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
  * Note that vertices must have already been added to the graph before 
  * they can be used in an edge (throws a IGraphError otherwise).
  */
-VALUE cIGraph_add_edge(VALUE self, VALUE from, VALUE to){
+VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
 
   igraph_t *graph;
   igraph_vector_t edge_v;
   VALUE object_h;
   int vid;
   int code = 0;
+  VALUE from;
+  VALUE to;
+  VALUE attr;
+
+  rb_scan_args(argc, argv, "21", &from, &to, &attr);
 
   //Initialize edge vector
   igraph_vector_init_int(&edge_v,0);
@@ -158,6 +176,10 @@ VALUE cIGraph_add_edge(VALUE self, VALUE from, VALUE to){
   igraph_vector_push_back(&edge_v,vid);
 
   code = igraph_add_edges(graph,&edge_v,0);
+
+  if(attr != Qnil){
+    cIGraph_set_edge_attr(self, from, to, attr);
+  }
 
   igraph_vector_destroy(&edge_v);
 
@@ -184,7 +206,6 @@ VALUE cIGraph_add_edge(VALUE self, VALUE from, VALUE to){
 VALUE cIGraph_add_vertex(VALUE self, VALUE v){
 
   igraph_t *graph;
-  VALUE vertex;
   VALUE object_h;
   VALUE id_h;
   int vertex_n;

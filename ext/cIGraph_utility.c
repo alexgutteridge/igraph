@@ -32,6 +32,7 @@ int cIGraph_vertex_arr_to_id_vec(VALUE graph, VALUE va, igraph_vector_t *nv){
 
   VALUE vertex;
   VALUE tmp;
+  VALUE i;
 
   tmp = rb_check_array_type(va);
 
@@ -40,10 +41,9 @@ int cIGraph_vertex_arr_to_id_vec(VALUE graph, VALUE va, igraph_vector_t *nv){
     
   //Initialize edge vector
   igraph_vector_init_int(nv,0);
-  vertex = rb_ary_shift(va);
-  while(vertex != Qnil){
+  for (i=0; i<RARRAY(va)->len; i++) {
+    vertex = RARRAY(va)->ptr[i];
     igraph_vector_push_back(nv,cIGraph_get_vertex_id(graph, vertex));
-    vertex = rb_ary_shift(va);
   }
 
   return 0;
