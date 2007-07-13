@@ -1,6 +1,6 @@
 //Classes
-VALUE cIGraph;
-VALUE cIGraphError;
+extern VALUE cIGraph;
+extern VALUE cIGraphError;
 
 //Error and warning handling functions
 void cIGraph_error_handler(const char *reason, const char *file,

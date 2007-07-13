@@ -2,6 +2,10 @@
 #include "ruby.h"
 #include "cIGraph.h"
 
+//Classes
+VALUE cIGraph;
+VALUE cIGraphError;
+
 void cIGraph_free(void *p){
   igraph_destroy(p);
 }
