@@ -5,6 +5,7 @@ README.txt
 ext/cIGraph.c
 ext/cIGraph.h
 ext/cIGraph_add_delete.c
+ext/cIGraph_attribute_handler.c
 ext/cIGraph_basic_properties.c
 ext/cIGraph_basic_query.c
 ext/cIGraph_error_handlers.c
@@ -13,7 +14,9 @@ ext/cIGraph_operators.c
 ext/cIGraph_selectors.c
 ext/cIGraph_shortest_paths.c
 ext/cIGraph_utility.c
+ext/cIGraph_vertex_neighbourhood.c
 test/tc_add_delete.rb
+test/tc_attributes.rb
 test/tc_basic_properties.rb
 test/tc_basic_query.rb
 test/tc_create.rb
@@ -21,4 +24,5 @@ test/tc_error_handling.rb
 test/tc_iterators.rb
 test/tc_selectors.rb
 test/tc_shortest_paths.rb
+test/tc_vertex_neighbourhood.rb
 test/test_all.rb

@@ -122,7 +122,6 @@ VALUE cIGraph_neighborhood_graphs(VALUE self, VALUE from, VALUE order, VALUE mod
   igraph_vector_t vidv;
   igraph_neimode_t pmode = NUM2INT(mode);
   igraph_vector_ptr_t res;
-  igraph_vector_t *path_v;
   int i;
 
   VALUE result = rb_ary_new();
@@ -139,7 +138,7 @@ VALUE cIGraph_neighborhood_graphs(VALUE self, VALUE from, VALUE order, VALUE mod
   igraph_neighborhood_graphs(graph,&res,vids,NUM2INT(order),pmode);
 
   for(i=0; i<igraph_vector_ptr_size(&res); i++){
-    rb_ary_push(result,cIGraph_create_derived_graph(self,VECTOR(res)[i]);
+    rb_ary_push(result,cIGraph_create_derived_graph(self,VECTOR(res)[i]));
   }
 
   igraph_vector_destroy(&vidv);
