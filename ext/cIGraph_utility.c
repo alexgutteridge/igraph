@@ -54,3 +54,19 @@ VALUE cIGraph_include(VALUE self, VALUE v){
   VALUE vertex_h = rb_iv_get(self,"@object_ids");
   return rb_funcall(vertex_h,rb_intern("has_key?"),1,v);
 }
+
+VALUE cIGraph_create_derived_graph(VALUE old_graph, igraph_t *new_graph){
+
+  VALUE new_graph_obj;
+
+  //Wrap new graph object
+  new_graph_obj = Data_Wrap_Struct(cIGraph, 0, cIGraph_free, new_graph);
+
+  //Go through hashes of old graph and copy across
+  //are vertex ids the same? If not we're bolloxed
+  rb_iv_set(new_graph_obj,"@object_ids",rb_iv_get(old_graph,"@object_ids"));
+  rb_iv_set(new_graph_obj,"@id_objects",rb_iv_get(old_graph,"@id_objects"));
+
+  return new_graph_obj;
+
+}
