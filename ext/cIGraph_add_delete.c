@@ -55,14 +55,14 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
     code = igraph_add_edges(graph,&edge_v,0);
   }
 
-  if(attrs != Qnil){
-    for (i=0; i<RARRAY(attrs)->len; i++) {
-      cIGraph_set_edge_attr(self,
-			    RARRAY(edges)->ptr[i*2],
-			    RARRAY(edges)->ptr[(i*2)+1],
-			    RARRAY(attrs)->ptr[i]);
-    }
-  }
+  //if(attrs != Qnil){
+  //  for (i=0; i<RARRAY(attrs)->len; i++) {
+  //   cIGraph_set_edge_attr(self,
+  //			    RARRAY(edges)->ptr[i*2],
+  //		    RARRAY(edges)->ptr[(i*2)+1],
+  //		    RARRAY(attrs)->ptr[i]);
+//}
+  //}
 
   igraph_vector_destroy(&edge_v);
 
@@ -178,7 +178,7 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
   code = igraph_add_edges(graph,&edge_v,0);
 
   if(attr != Qnil){
-    cIGraph_set_edge_attr(self, from, to, attr);
+    //cIGraph_set_edge_attr(self, from, to, attr);
   }
 
   igraph_vector_destroy(&edge_v);
@@ -236,5 +236,30 @@ VALUE cIGraph_add_vertex(VALUE self, VALUE v){
     code = igraph_add_vertices(graph,length,0);
 
   return INT2NUM(code);
+
+}
+
+/* call-seq:
+ *   graph.delete_edge(from,to)
+ *
+ * Deletes the edge connecting the two vertices given.
+ */
+VALUE cIGraph_delete_edge(VALUE self, VALUE from, VALUE to){
+
+  igraph_t *graph;
+  igraph_integer_t eid = 0;
+  int from_i;
+  int to_i;
+
+  Data_Get_Struct(self, igraph_t, graph);
+
+  from_i = cIGraph_get_vertex_id(self,from);
+  to_i   = cIGraph_get_vertex_id(self,to);
+
+  igraph_get_eid(graph,&eid,from_i,to_i,1);
+
+  igraph_delete_edges(graph,igraph_ess_1(eid));
+
+  return Qnil;
 
 }

@@ -4,9 +4,11 @@
 
 igraph_integer_t cIGraph_get_vertex_id(VALUE graph, VALUE v){
 
-  VALUE vertex_h;
+  //VALUE vertex_h;
 
-  vertex_h = rb_iv_get(graph,"@object_ids");
+  //vertex_h = rb_iv_get(graph,"@object_ids");
+
+  VALUE vertex_array = ((VALUE*)graph->attr)[0];
 
   if(rb_funcall(vertex_h,rb_intern("has_key?"),1,v))
     return NUM2INT(rb_hash_aref(vertex_h,v));
