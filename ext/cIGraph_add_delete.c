@@ -51,8 +51,12 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
       rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices first");
     }
     igraph_vector_push_back(&edge_v,vid);
-    if (attrs != Qnil && i % 2){
-      igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+    if (i % 2){
+      if (attrs != Qnil){
+	igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+      } else {
+	igraph_vector_ptr_push_back(&edge_attr,(void*)Qnil);
+      }
     }
   }
 
@@ -160,15 +164,10 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
     //If graph includes this vertex then look up the vertex number
     igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, from));
     igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, to));
-    if (attr != Qnil){
-      igraph_vector_ptr_push_back(&edge_attr,(void*)attr);
-    }
+    igraph_vector_ptr_push_back(&edge_attr,(void*)attr);
   } else {
-    rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices first");
+    rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices");
   }
-
-  igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, from));
-  igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, to));
 
   code = igraph_add_edges(graph,&edge_v,&edge_attr);
 

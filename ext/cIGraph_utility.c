@@ -29,7 +29,7 @@ VALUE cIGraph_get_vertex_object(VALUE graph, igraph_integer_t n){
   Data_Get_Struct(graph, igraph_t, igraph);
   v_ary = ((VALUE*)igraph->attr)[0];
 
-  obj = rb_ary_entry(graph,n);
+  obj = rb_ary_entry(v_ary,n);
 
   return obj;
 

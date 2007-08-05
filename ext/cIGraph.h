@@ -23,8 +23,8 @@ VALUE cIGraph_alloc(VALUE klass);
 VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self);
 
 //Attribute accessors
-//VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to);
-//VALUE cIGraph_set_edge_attr(VALUE self, VALUE from, VALUE to, VALUE attr);
+VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to);
+VALUE cIGraph_set_edge_attr(VALUE self, VALUE from, VALUE to, VALUE attr);
 
 //Iterators
 VALUE cIGraph_each_vertex  (VALUE self);

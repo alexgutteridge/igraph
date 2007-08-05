@@ -2,6 +2,36 @@
 #include "ruby.h"
 #include "cIGraph.h"
 
+VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to){
+
+  int idx;
+  igraph_t *graph;
+  VALUE e_ary;
+
+  Data_Get_Struct(self, igraph_t, graph);
+  e_ary = ((VALUE*)graph->attr)[1];
+
+  idx = NUM2INT(cIGraph_get_eid(self, from, to, 1));
+  return rb_ary_entry(e_ary,idx);
+
+}
+
+VALUE cIGraph_set_edge_attr(VALUE self, VALUE from, VALUE to, VALUE attr){
+
+  int idx;
+  igraph_t *graph;
+  VALUE e_ary;
+
+  Data_Get_Struct(self, igraph_t, graph);
+  e_ary = ((VALUE*)graph->attr)[1];
+
+  idx = NUM2INT(cIGraph_get_eid(self, from, to, 1));
+  rb_ary_store(e_ary,idx,attr);
+
+  return Qtrue;
+
+}
+
 igraph_attribute_table_t cIGraph_attribute_table = {
   cIGraph_attribute_init,
   cIGraph_attribute_destroy,
@@ -136,38 +166,38 @@ int cIGraph_get_numeric_graph_attr(const igraph_t *graph,
 
 /* Getting string graph attributes */
 int cIGraph_get_string_graph_attr(const igraph_t *graph,
-					 const char *name, igraph_strvector_t *value) {
+				  const char *name, igraph_strvector_t *value) {
   return 0;
 }
 
 /* Getting numeric vertex attributes */
 int cIGraph_get_numeric_vertex_attr(const igraph_t *graph,
-					   const char *name,
-					   igraph_vs_t vs,
-					   igraph_vector_t *value) {
+				    const char *name,
+				    igraph_vs_t vs,
+				    igraph_vector_t *value) {
   return 0;
 }
 
 /* Getting string vertex attributes */
 int cIGraph_get_string_vertex_attr(const igraph_t *graph,
-					  const char *name,
-					  igraph_vs_t vs,
-					  igraph_strvector_t *value) {
+				   const char *name,
+				   igraph_vs_t vs,
+				   igraph_strvector_t *value) {
   return 0;
 }
 
 /* Getting numeric edge attributes */
 int cIGraph_get_numeric_edge_attr(const igraph_t *graph,
-					 const char *name,
-					 igraph_es_t es,
-					 igraph_vector_t *value) {
+				  const char *name,
+				  igraph_es_t es,
+				  igraph_vector_t *value) {
   return 0;
 }
 
 /* Getting string edge attributes */
 int cIGraph_get_string_edge_attr(const igraph_t *graph,
-					const char *name,
-					igraph_es_t es,
-					igraph_strvector_t *value) {
+				 const char *name,
+				 igraph_es_t es,
+				 igraph_strvector_t *value) {
   return 0;
 }
