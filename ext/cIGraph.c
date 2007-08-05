@@ -48,11 +48,10 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
   igraph_t *graph;
   igraph_vector_t edge_v;
   VALUE vertex;
-  VALUE object_h;
-  VALUE id_h;
   VALUE directed;
   VALUE edges;
   VALUE attrs;
+  VALUE v_ary;
   int vertex_n = 0;
   int current_vertex_id;
   int i;
@@ -62,15 +61,6 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
 
   rb_scan_args(argc,argv,"12", &edges, &directed, &attrs);
 
-  igraph_set_error_handler(cIGraph_error_handler);
-  igraph_set_warning_handler(cIGraph_warning_handler);  
-
-  //New hash for mapping vertex objects to floats used by iGraph
-  object_h = rb_iv_set(self,"@object_ids",rb_hash_new());
-  id_h     = rb_iv_set(self,"@id_objects",rb_hash_new());
-
-  rb_iv_set(self,"@edge_attrs",rb_hash_new());
-
   //Initialize edge vector
   igraph_vector_init_int(&edge_v,0);
 
@@ -79,29 +69,34 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
 
   Data_Get_Struct(self, igraph_t, graph);
 
+  v_ary = rb_ary_new();
+
   if(!directed)
     igraph_to_undirected(graph,IGRAPH_TO_UNDIRECTED_COLLAPSE);
 
   //Loop through objects in edge Array
   for (i=0; i<RARRAY(edges)->len; i++) {
     vertex = RARRAY(edges)->ptr[i];
-    if(rb_funcall(object_h,rb_intern("has_key?"),1,vertex)){
+    if(rb_ary_includes(v_ary,vertex)){
       //If @vertices includes this vertex then look up the vertex number
-      current_vertex_id = NUM2INT(rb_hash_aref(object_h,vertex));
+      current_vertex_id = NUM2INT(rb_funcall(v_ary,rb_intern("index"),1,vertex));
     } else {
-      //otherwise add a new entadd_vertry to Hash
-      rb_hash_aset(object_h,vertex,INT2NUM(vertex_n));
-      rb_hash_aset(id_h,    INT2NUM(vertex_n),vertex);
+      //Otherwise add to the list of vertices
+      rb_ary_push(v_ary,vertex);
       current_vertex_id = vertex_n;
-      
-      igraph_vector_ptr_push_back(&vertex_attr,(void*)RARRAY(edges)->ptr[i]);
-
       vertex_n++;
+      
+      //Add object to list of vertex attributes
+      igraph_vector_ptr_push_back(&vertex_attr,(void*)vertex);
       
     }
     igraph_vector_push_back(&edge_v,current_vertex_id);
-    if (attrs != Qnil && i % 2){
-      igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+    if (i % 2){
+      if (attrs != Qnil){
+	igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+      } else {
+	igraph_vector_ptr_push_back(&edge_attr,(void*)Qnil);
+      }
     }
   }
 
@@ -131,10 +126,10 @@ void Init_igraph(){
   rb_define_alloc_func(cIGraph, cIGraph_alloc);
   rb_define_method(cIGraph, "initialize", cIGraph_initialize, -1);
 
-  //rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2);
-  //rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3);
-  //rb_define_method(cIGraph, "get_edge_attr", cIGraph_get_edge_attr, 2);
-  //rb_define_method(cIGraph, "set_edge_attr", cIGraph_set_edge_attr, 3);
+  rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2);
+  rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3);
+  rb_define_method(cIGraph, "get_edge_attr", cIGraph_get_edge_attr, 2);
+  rb_define_method(cIGraph, "set_edge_attr", cIGraph_set_edge_attr, 3);
 
   rb_define_method(cIGraph, "each_vertex",   cIGraph_each_vertex,  0); /* in cIGraph_iterators.c */
   rb_define_method(cIGraph, "each_edge",     cIGraph_each_edge,    1); /* in cIGraph_iterators.c */
@@ -211,5 +206,7 @@ void Init_igraph(){
   rb_define_method(cIGraph, "write_graph_edgelist", cIGraph_write_graph_edgelist, 1); /* in cIGraph_file.c */
 
   igraph_i_set_attribute_table(&cIGraph_attribute_table);
+  igraph_set_error_handler(cIGraph_error_handler);
+  igraph_set_warning_handler(cIGraph_warning_handler);  
 
 }
