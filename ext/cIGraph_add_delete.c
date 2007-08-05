@@ -24,47 +24,44 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
   igraph_t *graph;
   igraph_vector_t edge_v;
   VALUE vertex;
-  VALUE object_h;
   VALUE edges;
   VALUE attrs;
+  VALUE v_ary;
   int vid;
   int code = 0;
   int i;
+  igraph_vector_ptr_t edge_attr;
 
   rb_scan_args(argc, argv, "11", &edges, &attrs);
 
   //Initialize edge vector
   igraph_vector_init_int(&edge_v,0);
-  object_h = rb_iv_get(self,"@object_ids");
+  igraph_vector_ptr_init(&edge_attr,0);
 
   Data_Get_Struct(self, igraph_t, graph);
+
+  v_ary = ((VALUE*)graph->attr)[0];
 
   //Loop through objects in edge Array
   for (i=0; i<RARRAY(edges)->len; i++) {
     vertex = RARRAY(edges)->ptr[i];
-    if(rb_funcall(object_h,rb_intern("has_key?"),1,vertex)){
-      //If @vertices includes this vertex then look up the vertex number
-      vid = NUM2INT(rb_hash_aref(object_h,vertex));
+    if(rb_ary_includes(v_ary,vertex)){
+      vid = cIGraph_get_vertex_id(self, vertex);
     } else {
       rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices first");
     }
     igraph_vector_push_back(&edge_v,vid);
+    if (attrs != Qnil && i % 2){
+      igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+    }
   }
 
   if(igraph_vector_size(&edge_v) > 0){
-    code = igraph_add_edges(graph,&edge_v,0);
+    code = igraph_add_edges(graph,&edge_v,&edge_attr);
   }
 
-  //if(attrs != Qnil){
-  //  for (i=0; i<RARRAY(attrs)->len; i++) {
-  //   cIGraph_set_edge_attr(self,
-  //			    RARRAY(edges)->ptr[i*2],
-  //		    RARRAY(edges)->ptr[(i*2)+1],
-  //		    RARRAY(attrs)->ptr[i]);
-//}
-  //}
-
   igraph_vector_destroy(&edge_v);
+  igraph_vector_ptr_destroy(&edge_attr);
 
   return INT2NUM(code);
 
@@ -89,36 +86,32 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
 
   igraph_t *graph;
   VALUE vertex;
-  VALUE object_h;
-  VALUE id_h;
-  int vertex_n;
+  VALUE v_ary;
   int code = 0;
-  int length;
+  int to_add;
   int i;
+  igraph_vector_ptr_t vertex_attr;
 
-  object_h = rb_iv_get(self,"@object_ids");
-  id_h     = rb_iv_get(self,"@id_objects");
-  length   = NUM2INT(rb_funcall(vs,      rb_intern("length"),0));
-  vertex_n = NUM2INT(rb_funcall(object_h,rb_intern("length"),0));
+  igraph_vector_ptr_init(&vertex_attr,0);
 
   Data_Get_Struct(self, igraph_t, graph);
+  v_ary = ((VALUE*)graph->attr)[0];
+
+  to_add = RARRAY(vs)->len;
 
   //Loop through objects in vertex array
   for (i=0; i<RARRAY(vs)->len; i++) {
     vertex = RARRAY(vs)->ptr[i];
-    if(rb_funcall(object_h,rb_intern("has_key?"),1,vertex)){
-      //If @vertices includes this vertex then raise an error
-      //Silently ignore
+    if(rb_ary_includes(v_ary,vertex)){
+      //Silently ignore duplicated additions
       //rb_raise(cIGraphError, "Vertex already added to graph");
-      length--;
+      to_add--;
     } else {
-      //otherwise add a new entry to Hash
-      rb_hash_aset(object_h,vertex,INT2NUM(vertex_n));
-      rb_hash_aset(id_h,    INT2NUM(vertex_n),vertex);
-      vertex_n++;
+      igraph_vector_ptr_push_back(&vertex_attr,(void*)RARRAY(vs)->ptr[i]);
     }
   }
-  code = igraph_add_vertices(graph,length,0);
+
+  code = igraph_add_vertices(graph,to_add,&vertex_attr);
 
   return INT2NUM(code);
 
@@ -144,9 +137,11 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
 
   igraph_t *graph;
   igraph_vector_t edge_v;
-  VALUE object_h;
-  int vid;
+  igraph_vector_ptr_t edge_attr;
+
   int code = 0;
+
+  VALUE v_ary;
   VALUE from;
   VALUE to;
   VALUE attr;
@@ -155,32 +150,29 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
 
   //Initialize edge vector
   igraph_vector_init_int(&edge_v,0);
-  object_h = rb_iv_get(self,"@object_ids");
+  igraph_vector_ptr_init(&edge_attr,0);
 
   Data_Get_Struct(self, igraph_t, graph);
 
-  if(rb_funcall(object_h,rb_intern("has_key?"),1,from)){
-    //If @vertices includes this vertex then look up the vertex number
-    vid = NUM2INT(rb_hash_aref(object_h,from));
+  v_ary = ((VALUE*)graph->attr)[0];
+
+  if(rb_ary_includes(v_ary,from) && rb_ary_includes(v_ary,to)){
+    //If graph includes this vertex then look up the vertex number
+    igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, from));
+    igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, to));
+    if (attr != Qnil){
+      igraph_vector_ptr_push_back(&edge_attr,(void*)attr);
+    }
   } else {
     rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices first");
   }
-  igraph_vector_push_back(&edge_v,vid);
 
-  if(rb_funcall(object_h,rb_intern("has_key?"),1,to)){
-    //If @vertices includes this vertex then look up the vertex number
-    vid = NUM2INT(rb_hash_aref(object_h,to));
-  } else {
-    rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices first");
-  }
-  igraph_vector_push_back(&edge_v,vid);
+  igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, from));
+  igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, to));
 
-  code = igraph_add_edges(graph,&edge_v,0);
+  code = igraph_add_edges(graph,&edge_v,&edge_attr);
 
-  if(attr != Qnil){
-    //cIGraph_set_edge_attr(self, from, to, attr);
-  }
-
+  igraph_vector_ptr_destroy(&edge_attr);
   igraph_vector_destroy(&edge_v);
 
   return INT2NUM(code);
@@ -206,34 +198,27 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
 VALUE cIGraph_add_vertex(VALUE self, VALUE v){
 
   igraph_t *graph;
-  VALUE object_h;
-  VALUE id_h;
-  int vertex_n;
-  int code = 0;
-  int length;
+  igraph_vector_ptr_t vertex_attr;
 
-  object_h = rb_iv_get(self,"@object_ids");
-  id_h     = rb_iv_get(self,"@id_objects");
-  length   = 1;
-  vertex_n = NUM2INT(rb_funcall(object_h,rb_intern("length"),0));
+  int code = 0;
+
+  VALUE v_ary;
+
+  igraph_vector_ptr_init(&vertex_attr,0);
 
   Data_Get_Struct(self, igraph_t, graph);
 
+  v_ary = ((VALUE*)graph->attr)[0];
+  
   //Loop through objects in vertex array
-  if(rb_funcall(object_h,rb_intern("has_key?"),1,v)){
-    //If @vertices includes this vertex then raise an error
-    //Silently ignore
+  if(rb_ary_includes(v_ary,v)){
     //rb_raise(cIGraphError, "Vertex already added to graph");
-    length--;
+    return code;
   } else {
-    //otherwise add a new entry to Hash
-    rb_hash_aset(object_h,v,INT2NUM(vertex_n));
-    rb_hash_aset(id_h,    INT2NUM(vertex_n),v);
-    vertex_n++;
+    igraph_vector_ptr_push_back(&vertex_attr,(void*)v);
   }
 
-  if(length != 0)
-    code = igraph_add_vertices(graph,length,0);
+  code = igraph_add_vertices(graph,1,&vertex_attr);
 
   return INT2NUM(code);
 

@@ -58,10 +58,11 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
   int i;
 
   igraph_vector_ptr_t vertex_attr;
+  igraph_vector_ptr_t edge_attr;
 
   rb_scan_args(argc,argv,"12", &edges, &directed, &attrs);
 
-    igraph_set_error_handler(cIGraph_error_handler);
+  igraph_set_error_handler(cIGraph_error_handler);
   igraph_set_warning_handler(cIGraph_warning_handler);  
 
   //New hash for mapping vertex objects to floats used by iGraph
@@ -72,7 +73,9 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
 
   //Initialize edge vector
   igraph_vector_init_int(&edge_v,0);
+
   igraph_vector_ptr_init(&vertex_attr,0);
+  igraph_vector_ptr_init(&edge_attr,0);
 
   Data_Get_Struct(self, igraph_t, graph);
 
@@ -97,24 +100,19 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
       
     }
     igraph_vector_push_back(&edge_v,current_vertex_id);
+    if (attrs != Qnil && i % 2){
+      igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+    }
   }
 
   if(igraph_vector_size(&edge_v) > 0){
     igraph_add_vertices(graph,vertex_n,&vertex_attr);
-    igraph_add_edges(graph,&edge_v,0);
+    igraph_add_edges(graph,&edge_v,&edge_attr);
   }
-
-  //if(attrs != Qnil){
-  //for (i=0; i<RARRAY(attrs)->len; i++) {
-  //  cIGraph_set_edge_attr(self,
-  //		    RARRAY(edges)->ptr[i*2],
-  //		    RARRAY(edges)->ptr[(i*2)+1],
-  //		    RARRAY(attrs)->ptr[i]);
-  //}
-  //}
 
   igraph_vector_destroy(&edge_v);
   igraph_vector_ptr_destroy(&vertex_attr);
+  igraph_vector_ptr_destroy(&edge_attr);
 
   return self;
 
