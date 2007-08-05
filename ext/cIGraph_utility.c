@@ -4,14 +4,17 @@
 
 igraph_integer_t cIGraph_get_vertex_id(VALUE graph, VALUE v){
 
-  //VALUE vertex_h;
+  VALUE v_ary;
+  VALUE idx;
+  igraph_t *igraph;
 
-  //vertex_h = rb_iv_get(graph,"@object_ids");
+  Data_Get_Struct(graph, igraph_t, igraph);
+  v_ary = ((VALUE*)igraph->attr)[0];
 
-  VALUE vertex_array = ((VALUE*)graph->attr)[0];
+  idx   = rb_funcall(v_ary,rb_intern("index"),1,v);
 
-  if(rb_funcall(vertex_h,rb_intern("has_key?"),1,v))
-    return NUM2INT(rb_hash_aref(vertex_h,v));
+  if(idx)
+    return NUM2INT(idx);
 
   return -1;
 
@@ -19,14 +22,16 @@ igraph_integer_t cIGraph_get_vertex_id(VALUE graph, VALUE v){
 
 VALUE cIGraph_get_vertex_object(VALUE graph, igraph_integer_t n){
 
-  VALUE vertex_h;
+  VALUE v_ary;
+  VALUE obj;
+  igraph_t *igraph;
 
-  vertex_h = rb_iv_get(graph,"@id_objects");
+  Data_Get_Struct(graph, igraph_t, igraph);
+  v_ary = ((VALUE*)igraph->attr)[0];
 
-  if(rb_funcall(vertex_h,rb_intern("has_key?"),1,INT2NUM(n)))
-    return rb_hash_aref(vertex_h,INT2NUM(n));
+  obj = rb_ary_entry(graph,n);
 
-  return Qnil;
+  return obj;
 
 }
 
@@ -53,22 +58,12 @@ int cIGraph_vertex_arr_to_id_vec(VALUE graph, VALUE va, igraph_vector_t *nv){
 }
 
 VALUE cIGraph_include(VALUE self, VALUE v){
-  VALUE vertex_h = rb_iv_get(self,"@object_ids");
-  return rb_funcall(vertex_h,rb_intern("has_key?"),1,v);
-}
 
-VALUE cIGraph_create_derived_graph(VALUE old_graph, igraph_t *new_graph){
+  VALUE v_ary;
+  igraph_t *igraph;
 
-  VALUE new_graph_obj;
+  Data_Get_Struct(self, igraph_t, igraph);
+  v_ary = ((VALUE*)igraph->attr)[0];
 
-  //Wrap new graph object
-  new_graph_obj = Data_Wrap_Struct(cIGraph, 0, cIGraph_free, new_graph);
-
-  //Go through hashes of old graph and copy across
-  //are vertex ids the same? If not we're bolloxed
-  rb_iv_set(new_graph_obj,"@object_ids",rb_iv_get(old_graph,"@object_ids"));
-  rb_iv_set(new_graph_obj,"@id_objects",rb_iv_get(old_graph,"@id_objects"));
-
-  return new_graph_obj;
-
+  return rb_ary_includes(v_ary,v);
 }

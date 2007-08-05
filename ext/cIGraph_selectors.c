@@ -18,7 +18,7 @@ VALUE cIGraph_all_v(VALUE self){
   igraph_t *graph;  
 
   Data_Get_Struct(self, igraph_t, graph);
-  return rb_funcall(rb_iv_get(self,"@object_ids"),rb_intern("keys"),0);
+  return ((VALUE*)graph->attr)[0];
 
 }
 
