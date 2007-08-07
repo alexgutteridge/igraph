@@ -113,6 +113,27 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
 
 }
 
+VALUE cIGraph_init_copy(VALUE copy, VALUE orig){
+
+  igraph_t *orig_graph;
+  igraph_t *copy_graph;
+
+  if (copy == orig)
+    return copy;
+
+  if(TYPE(orig) != T_DATA || RDATA(orig)->dfree != (RUBY_DATA_FUNC)cIGraph_free){
+    rb_raise(rb_eTypeError, "Wrong argument type.");
+  }
+  
+  Data_Get_Struct(copy, igraph_t, copy_graph); 
+  Data_Get_Struct(orig, igraph_t, orig_graph);
+
+  igraph_copy(copy_graph,orig_graph);
+
+  return copy;
+
+}
+
 /* Interface to the iGraph[http://cneurocvs.rmki.kfki.hu/igraph/] library
  * for graph and network computation. See IGraph#new for how to create a
  * graph and get started.
@@ -125,10 +146,12 @@ void Init_igraph(){
 
   rb_define_alloc_func(cIGraph, cIGraph_alloc);
   rb_define_method(cIGraph, "initialize", cIGraph_initialize, -1);
+  rb_define_method(cIGraph, "initialize_copy", cIGraph_init_copy, 1);
 
-  rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2);
-  rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3);
-  rb_define_method(cIGraph, "get_edge_attr", cIGraph_get_edge_attr, 2);
+  rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2); /* in cIGraph_attribute_handler.c */
+  rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3); /* in cIGraph_attribute_handler.c */
+  rb_define_alias(cIGraph, "get_edge_attr", "[]");
+  //rb_define_method(cIGraph, "get_edge_attr", cIGraph_get_edge_attr, 2);
   rb_define_method(cIGraph, "set_edge_attr", cIGraph_set_edge_attr, 3);
 
   rb_define_method(cIGraph, "each_vertex",   cIGraph_each_vertex,  0); /* in cIGraph_iterators.c */
@@ -175,12 +198,13 @@ void Init_igraph(){
   rb_define_method(cIGraph, "degree", cIGraph_degree,3); /* in cIGraph_basic_query.c */
 
   rb_define_method(cIGraph, "add_edges",    cIGraph_add_edges,    -1); /* in cIGraph_add_delete.c */
-  rb_define_method(cIGraph, "add_vertices", cIGraph_add_vertices, 1); /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "add_vertices", cIGraph_add_vertices, 1);  /* in cIGraph_add_delete.c */
 
   rb_define_method(cIGraph, "add_edge",   cIGraph_add_edge,   -1); /* in cIGraph_add_delete.c */
-  rb_define_method(cIGraph, "add_vertex", cIGraph_add_vertex, 1); /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "add_vertex", cIGraph_add_vertex, 1);  /* in cIGraph_add_delete.c */
 
-  rb_define_method(cIGraph, "delete_edge", cIGraph_delete_edge, 2); /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "delete_edge",   cIGraph_delete_edge, 2);   /* in cIGraph_add_delete.c */
+  rb_define_method(cIGraph, "delete_vertex", cIGraph_delete_vertex, 1); /* in cIGraph_add_delete.c */
 
   rb_define_method(cIGraph, "are_connected",  cIGraph_are_connected,2);
   rb_define_method(cIGraph, "are_connected?", cIGraph_are_connected,2); /* in cIGraph_basic_properties.c */  

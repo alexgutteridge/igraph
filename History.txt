@@ -1,3 +1,10 @@
-= 0.1 2007-06-29
+= 0.2 2007-07-31
 
-* First version
+* First public (announced) release
+* Updated functions and documentation
+
+= 0.1 2007-07-16
+
+* First private release
+* Graph generation and manipulation functions implemented
+* Selection of basic querying functions implemented

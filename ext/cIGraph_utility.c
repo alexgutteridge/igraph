@@ -13,8 +13,10 @@ igraph_integer_t cIGraph_get_vertex_id(VALUE graph, VALUE v){
 
   idx   = rb_funcall(v_ary,rb_intern("index"),1,v);
 
-  if(idx)
+  if(idx != Qnil)
     return NUM2INT(idx);
+
+  rb_raise(cIGraphError, "Unable to find vertex\n");
 
   return -1;
 

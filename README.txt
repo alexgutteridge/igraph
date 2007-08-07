@@ -1,27 +1,36 @@
 == Introduction
 
-IGraph is a Ruby extension for using the igraph library ([http://cneurocvs.rmki.kfki.hu/igraph/]). igraph is a library for creating and manipulating graphs with a particular emphasis on network analysis functions.
+IGraph is a Ruby extension for interfacing with the C igraph library (http://cneurocvs.rmki.kfki.hu/igraph/). igraph is a library for creating and manipulating graphs with a particular emphasis on network analysis functions.
 
-IGraph is currently pre-alpha status and should be considered unstable. There are functions for building and querying simple graphs as well as shortest path calculations.
+IGraph is currently pre-alpha status and although the basic graph creation and manipulation functions are implemented the API should be considered subject to change. Basic query functions and a few others such as shortest path and sorting functions are also implemented.
 
-All bug reports, feature request and patches are welcome.
+All bug reports, feature requests and patches are welcome. Please email alexg (at) kuicr.kyoto-u.ac.jp or use the rubyforge forums: http://rubyforge.org/forum/?group_id=3943
 
 == Installation
 
-A working igraph library installation is required.
+A working igraph library installation is required. Please see the igraph homepage (http://cneurocvs.rmki.kfki.hu/igraph/) for details on installing igraph.
 
-An IGraph gem is available. The installation requires the location of your igraph headers and library to compile the extension. E.g. under Ubuntu linux:
+IGraph is available as a gem. The installation requires the location of your igraph headers and library to compile the extension. For example, under Ubuntu linux the following command succesfully compiles and installs (you may need to be root):
 
   gem install igraph -- --with-igraph-include=/usr/local/include/igraph
 
 == Documentation
 
+Graph objects are represented in the IGraph class. See the IGraph class documentation for a list of available methods available to build and query graph objects. Any object can be used as a vertex and any edge can be annotated with any kind of object.
+
+Note that many functions require 'mode' constants to tell igraph how you want certain calculations to be made. The constants are listed under the IGraph documentation and should also be made explicit in each methods documentation.
+
 Here is a very quick and simple example:
 
  require 'igraph'
 
+ #Create an empty directed graph
  graph = IGraph.new([],true)
+
+ #Add two edges (unannotated)
  graph.add_edges([1,2,3,4])
+
+ #Count the number of vertices
  graph.vcount # returns 4
 
 == License
