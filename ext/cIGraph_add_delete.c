@@ -247,3 +247,25 @@ VALUE cIGraph_delete_edge(VALUE self, VALUE from, VALUE to){
   return Qnil;
 
 }
+
+/* call-seq:
+ *   graph.delete_vertex(v)
+ *
+ * Delete the vertex specified.
+ */
+VALUE cIGraph_delete_vertex(VALUE self, VALUE v){
+
+  igraph_t *graph;
+  igraph_vs_t vs;
+
+  Data_Get_Struct(self, igraph_t, graph);
+
+  igraph_vs_1(&vs, cIGraph_get_vertex_id(self,v));
+
+  igraph_delete_vertices(graph,vs);
+
+  igraph_vs_destroy(&vs);
+
+  return Qnil; 
+
+}

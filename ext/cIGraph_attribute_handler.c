@@ -78,6 +78,17 @@ void cIGraph_attribute_destroy(igraph_t *graph) {
 
 /* Copying */
 int cIGraph_attribute_copy(igraph_t *to, const igraph_t *from) {
+
+  VALUE vertex_array = ((VALUE*)from->attr)[0];
+  VALUE edge_array   = ((VALUE*)from->attr)[1];
+
+  VALUE* attrs = (VALUE*)calloc(2, sizeof(VALUE));
+
+  attrs[0] = rb_ary_dup(vertex_array);
+  attrs[1] = rb_ary_dup(edge_array);
+
+  to->attr = attrs;  
+
   return IGRAPH_SUCCESS;
 }
 
@@ -100,7 +111,25 @@ int cIGraph_attribute_add_vertices(igraph_t *graph, long int nv, igraph_vector_p
 void cIGraph_attribute_delete_vertices(igraph_t *graph,
 				       const igraph_vector_t *eidx,
 				       const igraph_vector_t *vidx) {
+ 
+ int i;
+ VALUE vertex_array = ((VALUE*)graph->attr)[0];
+ VALUE edge_array   = ((VALUE*)graph->attr)[1];
+
+ VALUE n_v_ary = rb_ary_new();
+ VALUE n_e_ary = rb_ary_new();
+
+ for(i=0;i<igraph_vector_size(vidx);i++){
+   if(VECTOR(*vidx)[i] != 0)
+     rb_ary_store(n_v_ary,VECTOR(*vidx)[i]-1,rb_ary_entry(vertex_array,i));
+ }
+ for(i=0;i<igraph_vector_size(eidx);i++){
+   if(VECTOR(*eidx)[i] != 0)
+     rb_ary_store(n_e_ary,VECTOR(*eidx)[i]-1,rb_ary_entry(edge_array,i));
+ }
   
+ ((VALUE*)graph->attr)[0] = n_v_ary;
+ ((VALUE*)graph->attr)[1] = n_e_ary;
 
   return;
 }
@@ -124,7 +153,19 @@ int cIGraph_attribute_add_edges(igraph_t *graph,
 
 /* Deleting edges */
 void cIGraph_attribute_delete_edges(igraph_t *graph, const igraph_vector_t *idx) {
-  return;
+
+  int i;
+  VALUE edge_array = ((VALUE*)graph->attr)[1];
+  VALUE n_e_ary = rb_ary_new();
+
+  for(i=0;i<igraph_vector_size(idx);i++){
+   if(VECTOR(*idx)[i] != 0)
+     rb_ary_store(n_e_ary,VECTOR(*idx)[i]-1,rb_ary_entry(edge_array,i));
+  }
+
+  ((VALUE*)graph->attr)[1] = n_e_ary;
+  
+  return;  
 }
 
 /* Permuting edges */

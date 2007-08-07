@@ -14,7 +14,6 @@ igraph_integer_t cIGraph_get_vertex_id(VALUE graph, VALUE v);
 VALUE cIGraph_get_vertex_object(VALUE graph, igraph_integer_t n);
 int cIGraph_vertex_arr_to_id_vec(VALUE graph, VALUE va, igraph_vector_t *nv);
 VALUE cIGraph_include(VALUE self, VALUE v);
-VALUE cIGraph_create_derived_graph(VALUE old_graph, igraph_t *new_graph);
 
 //IGraph allocation, destruction and intialization
 void Init_igraph(void);
@@ -57,6 +56,7 @@ VALUE cIGraph_add_vertices   (VALUE self, VALUE vs);
 VALUE cIGraph_delete_edge    (VALUE self, VALUE from, VALUE to);
 VALUE cIGraph_delete_edges   (VALUE self, VALUE edges);
 VALUE cIGraph_delete_vertices(VALUE self, VALUE vs);
+VALUE cIGraph_delete_vertex  (VALUE self, VALUE v);
 VALUE cIGraph_add_vertex     (VALUE self, VALUE v);
 
 //Basic properties
