@@ -1,9 +1,10 @@
 require 'hoe'
 
-$LOAD_PATH.unshift("./lib")
 $LOAD_PATH.unshift("./ext")
 
-hoe = Hoe.new("igraph",'0.1.1') do |p|
+require 'igraph'
+
+hoe = Hoe.new("igraph",IGraph::VERSION) do |p|
   
   p.author = "Alex Gutteridge"
   p.email = "alexg@kuicr.kyoto-u.ac.jp"
