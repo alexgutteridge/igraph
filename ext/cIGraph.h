@@ -20,6 +20,7 @@ void Init_igraph(void);
 void cIGraph_free(void *p);
 VALUE cIGraph_alloc(VALUE klass);
 VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self);
+VALUE cIGraph_init_copy(VALUE copy, VALUE orig);
 
 //Attribute accessors
 VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to);
@@ -37,7 +38,6 @@ VALUE cIGraph_nonadj_v(VALUE self, VALUE v, VALUE mode);
 
 VALUE cIGraph_all_e   (VALUE self,          VALUE mode);
 VALUE cIGraph_adj_e   (VALUE self, VALUE v, VALUE mode);
-VALUE cIGraph_nonadj_e(VALUE self, VALUE v, VALUE mode);
 
 //Basic query operations
 VALUE cIGraph_vcount     (VALUE self);
@@ -70,12 +70,10 @@ VALUE cIGraph_average_path_length   (VALUE self, VALUE directed, VALUE unconn);
 VALUE cIGraph_diameter              (VALUE self, VALUE directed, VALUE unconn);
 VALUE cIGraph_girth                 (VALUE self);
 
-
 //Vertex neighbourhood functions
 VALUE cIGraph_neighborhood_size  (VALUE self, VALUE from, VALUE order, VALUE mode);
 VALUE cIGraph_neighborhood       (VALUE self, VALUE from, VALUE order, VALUE mode);
 VALUE cIGraph_neighborhood_graphs(VALUE self, VALUE from, VALUE order, VALUE mode);
-
 
 //Topological sorting
 VALUE cIGraph_topological_sorting(VALUE self, VALUE mode);
@@ -85,25 +83,33 @@ VALUE cIGraph_read_graph_edgelist (VALUE self, VALUE file, VALUE mode);
 VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file);
 
 //Attributes
-int cIGraph_attribute_init(igraph_t *graph, igraph_vector_ptr_t *attr);
+int cIGraph_attribute_init(igraph_t *graph, 
+			   igraph_vector_ptr_t *attr);
 void cIGraph_attribute_destroy(igraph_t *graph);
-int cIGraph_attribute_copy(igraph_t *to, const igraph_t *from);
-int cIGraph_attribute_add_vertices(igraph_t *graph, long int nv, igraph_vector_ptr_t *attr);
-void cIGraph_attribute_delete_edges(igraph_t *graph, const igraph_vector_t *idx);
+int cIGraph_attribute_copy(igraph_t *to, 
+			   const igraph_t *from);
+int cIGraph_attribute_add_vertices(igraph_t *graph, 
+				   long int nv, 
+				   igraph_vector_ptr_t *attr);
+void cIGraph_attribute_delete_edges(igraph_t *graph, 
+				    const igraph_vector_t *idx);
 void cIGraph_attribute_delete_vertices(igraph_t *graph,
-						const igraph_vector_t *eidx,
-						const igraph_vector_t *vidx);
-int cIGraph_attribute_add_edges(igraph_t *graph, const igraph_vector_t *edges, igraph_vector_ptr_t *attr);
-void cIGraph_attribute_delete_edges(igraph_t *graph, const igraph_vector_t *idx);
+				       const igraph_vector_t *eidx,
+				       const igraph_vector_t *vidx);
+int cIGraph_attribute_add_edges(igraph_t *graph, 
+				const igraph_vector_t *edges, 
+				igraph_vector_ptr_t *attr);
+void cIGraph_attribute_delete_edges(igraph_t *graph, 
+				    const igraph_vector_t *idx);
 int cIGraph_attribute_permute_edges(igraph_t *graph,
-					     const igraph_vector_t *idx);
+				    const igraph_vector_t *idx);
 int cIGraph_attribute_get_info(const igraph_t *graph,
-					igraph_strvector_t *gnames,
-					igraph_vector_t *gtypes,
-					igraph_strvector_t *vnames,
-					igraph_vector_t *vtypes,
-					igraph_strvector_t *enames,
-					igraph_vector_t *etypes);
+			       igraph_strvector_t *gnames,
+			       igraph_vector_t *gtypes,
+			       igraph_strvector_t *vnames,
+			       igraph_vector_t *vtypes,
+			       igraph_strvector_t *enames,
+			       igraph_vector_t *etypes);
 igraph_bool_t cIGraph_attribute_has_attr(const igraph_t *graph,
 					 igraph_attribute_elemtype_t type,
 					 const char* name);
@@ -112,9 +118,11 @@ int cIGraph_attribute_get_type(const igraph_t *graph,
 			       igraph_attribute_elemtype_t elemtype,
 			       const char *name);
 int cIGraph_get_numeric_graph_attr(const igraph_t *graph,
-				   const char *name, igraph_vector_t *value);
+				   const char *name, 
+				   igraph_vector_t *value);
 int cIGraph_get_string_graph_attr(const igraph_t *graph,
-				  const char *name, igraph_strvector_t *value);
+				  const char *name, 
+				  igraph_strvector_t *value);
 int cIGraph_get_numeric_vertex_attr(const igraph_t *graph,
 				    const char *name,
 				    igraph_vs_t vs,

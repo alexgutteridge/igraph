@@ -2,6 +2,12 @@
 #include "ruby.h"
 #include "cIGraph.h"
 
+/* call-seq:
+ *   graph[u,v] -> Object
+ * 
+ * Returns the object associated with the edge connecting vertices u and v.
+ * Aliased to graph.get_edge_attr(u,v)
+ */
 VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to){
 
   int idx;
@@ -16,6 +22,12 @@ VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to){
 
 }
 
+/* call-seq:
+ *   graph[u,v] = w
+ * 
+ * Sets the object associated with the edge connecting vertices u and v.
+ * Aliased to graph.set_edge_attr(u,v)
+ */
 VALUE cIGraph_set_edge_attr(VALUE self, VALUE from, VALUE to, VALUE attr){
 
   int idx;
