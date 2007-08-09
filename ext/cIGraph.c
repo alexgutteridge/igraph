@@ -10,6 +10,11 @@ void cIGraph_free(void *p){
   igraph_destroy(p);
 }
 
+void cIGraph_mark(void *p){
+  rb_gc_mark(((VALUE*)((igraph_t*)p)->attr)[0]);
+  rb_gc_mark(((VALUE*)((igraph_t*)p)->attr)[1]);
+}
+
 VALUE cIGraph_alloc(VALUE klass){
 
   igraph_t *graph = malloc(sizeof(igraph_t));
@@ -17,7 +22,7 @@ VALUE cIGraph_alloc(VALUE klass){
 
   igraph_empty(graph, 0, 1);
 
-  obj = Data_Wrap_Struct(klass, 0, cIGraph_free, graph);
+  obj = Data_Wrap_Struct(klass, cIGraph_mark, cIGraph_free, graph);
 
   return obj;
   
@@ -227,5 +232,30 @@ void Init_igraph(){
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */
   rb_define_method(cIGraph, "write_graph_edgelist", cIGraph_write_graph_edgelist, 1);         /* in cIGraph_file.c */
+
+  rb_define_method(cIGraph, "layout_random", cIGraph_layout_random, 0);
+  rb_define_method(cIGraph, "layout_circle", cIGraph_layout_circle, 0);
+  rb_define_method(cIGraph, "layout_fruchterman_reingold", cIGraph_layout_fruchterman_reingold, 6);
+
+  //Matrix class
+  cIGraphMatrix = rb_define_class("IGraphMatrix", rb_cObject);
+
+  rb_define_alloc_func(cIGraphMatrix, cIGraph_matrix_alloc);
+  rb_define_method(cIGraphMatrix, "initialize",      cIGraph_matrix_initialize, -1);
+  rb_define_method(cIGraphMatrix, "initialize_copy", cIGraph_matrix_init_copy,   1);
+  //rb_define_singleton_method(cIGraphMatrix, "[]",    cIGraph_matrix_initialize, -1);
+  rb_include_module(cIGraphMatrix, rb_mEnumerable);
+  rb_define_method (cIGraphMatrix, "each", cIGraph_matrix_each,0);
+ 
+  rb_define_method(cIGraphMatrix, "[]",   cIGraph_matrix_get,  2);
+  rb_define_method(cIGraphMatrix, "[]=",  cIGraph_matrix_set,  3);
+  rb_define_method(cIGraphMatrix, "size", cIGraph_matrix_size, 0);
+  rb_define_method(cIGraphMatrix, "nrow", cIGraph_matrix_nrow, 0);
+  rb_define_method(cIGraphMatrix, "ncol", cIGraph_matrix_ncol, 0);
+  rb_define_method(cIGraphMatrix, "max",  cIGraph_matrix_max,  0);
+
+  rb_define_method(cIGraphMatrix, "*", cIGraph_matrix_multiply, 1);
+
+  rb_define_method(cIGraphMatrix, "to_a", cIGraph_matrix_toa, 0);
 
 }

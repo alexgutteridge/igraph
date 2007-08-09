@@ -1,6 +1,7 @@
 //Classes
 extern VALUE cIGraph;
 extern VALUE cIGraphError;
+extern VALUE cIGraphMatrix;
 extern igraph_attribute_table_t cIGraph_attribute_table;
 
 //Error and warning handling functions
@@ -18,6 +19,7 @@ VALUE cIGraph_include(VALUE self, VALUE v);
 //IGraph allocation, destruction and intialization
 void Init_igraph(void);
 void cIGraph_free(void *p);
+void cIGraph_mark(void *p);
 VALUE cIGraph_alloc(VALUE klass);
 VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self);
 VALUE cIGraph_init_copy(VALUE copy, VALUE orig);
@@ -82,6 +84,18 @@ VALUE cIGraph_topological_sorting(VALUE self, VALUE mode);
 VALUE cIGraph_read_graph_edgelist (VALUE self, VALUE file, VALUE mode);
 VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file);
 
+
+//Layouts
+VALUE cIGraph_layout_random(VALUE self);
+VALUE cIGraph_layout_circle(VALUE self);
+VALUE cIGraph_layout_fruchterman_reingold(VALUE self,
+					  VALUE niter,
+					  VALUE maxdelta,
+					  VALUE area,
+					  VALUE coolexp,
+					  VALUE repulserad,
+					  VALUE use_seed);
+
 //Attributes
 int cIGraph_attribute_init(igraph_t *graph, 
 			   igraph_vector_ptr_t *attr);
@@ -139,3 +153,29 @@ int cIGraph_get_string_edge_attr(const igraph_t *graph,
 				 const char *name,
 				 igraph_es_t es,
 				 igraph_strvector_t *value);
+
+
+//Matrix functions
+void cIGraph_matrix_free(void *p);
+VALUE cIGraph_matrix_alloc(VALUE klass);
+VALUE cIGraph_matrix_init_copy(VALUE copy, VALUE orig);
+VALUE cIGraph_matrix_initialize(int argc, VALUE *argv, VALUE self);
+void Init_igraphmatrix();
+
+VALUE cIGraph_matrix_each(VALUE self);
+
+VALUE cIGraph_matrix_get (VALUE self, VALUE i, VALUE j);
+VALUE cIGraph_matrix_set (VALUE self, VALUE i, VALUE j, VALUE x);
+VALUE cIGraph_matrix_size(VALUE self);
+VALUE cIGraph_matrix_nrow(VALUE self);
+VALUE cIGraph_matrix_ncol(VALUE self);
+VALUE cIGraph_matrix_max (VALUE self);
+
+VALUE cIGraph_matrix_multiply(VALUE self, VALUE x);
+
+VALUE cIGraph_matrix_toa(VALUE self);
+
+//Not implemented yet
+//VALUE cIGraph_add_rows(VALUE self, VALUE n);
+//VALUE cIGraph_add_cols(VALUE self, VALUE n);
+//VALUE cIGraph_matrix_resize(VALUE self, VALUE nrow, VALUE ncol);
