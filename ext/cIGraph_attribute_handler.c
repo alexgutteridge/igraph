@@ -68,7 +68,8 @@ int cIGraph_attribute_init(igraph_t *graph, igraph_vector_ptr_t *attr) {
 
   VALUE* attrs;
 
-  attrs = (VALUE*)calloc(2, sizeof(VALUE));
+  //attrs = (VALUE*)calloc(2, sizeof(VALUE));
+  attrs = ALLOC_N(VALUE, 2);
 
   if(!attrs)
     IGRAPH_ERROR("Error allocating Arrays\n", IGRAPH_ENOMEM);
@@ -76,7 +77,7 @@ int cIGraph_attribute_init(igraph_t *graph, igraph_vector_ptr_t *attr) {
   //[0] is vertex array, [1] is edge array
   attrs[0] = rb_ary_new();
   attrs[1] = rb_ary_new();
-
+ 
   graph->attr = attrs;
 
   return IGRAPH_SUCCESS;
@@ -91,10 +92,12 @@ void cIGraph_attribute_destroy(igraph_t *graph) {
 /* Copying */
 int cIGraph_attribute_copy(igraph_t *to, const igraph_t *from) {
 
+  VALUE* attrs;
   VALUE vertex_array = ((VALUE*)from->attr)[0];
   VALUE edge_array   = ((VALUE*)from->attr)[1];
 
-  VALUE* attrs = (VALUE*)calloc(2, sizeof(VALUE));
+  //VALUE* attrs = (VALUE*)calloc(2, sizeof(VALUE));
+  attrs = ALLOC_N(VALUE, 2);
 
   attrs[0] = rb_ary_dup(vertex_array);
   attrs[1] = rb_ary_dup(edge_array);
@@ -182,7 +185,19 @@ void cIGraph_attribute_delete_edges(igraph_t *graph, const igraph_vector_t *idx)
 
 /* Permuting edges */
 int cIGraph_attribute_permute_edges(igraph_t *graph,
-						  const igraph_vector_t *idx) {   return 0;
+				    const igraph_vector_t *idx) {
+
+  int i;
+  VALUE edge_array = ((VALUE*)graph->attr)[1];
+  VALUE n_e_ary = rb_ary_new();
+
+  for(i=0;i<igraph_vector_size(idx);i++){
+    rb_ary_push(n_e_ary,rb_ary_entry(edge_array,VECTOR(*idx)[i]));
+  }
+
+  ((VALUE*)graph->attr)[1] = n_e_ary;
+  
+  return 0;
 }
 
 /* Getting attribute names and types */
