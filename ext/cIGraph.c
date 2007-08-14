@@ -13,6 +13,7 @@ void cIGraph_free(void *p){
 void cIGraph_mark(void *p){
   rb_gc_mark(((VALUE*)((igraph_t*)p)->attr)[0]);
   rb_gc_mark(((VALUE*)((igraph_t*)p)->attr)[1]);
+  rb_gc_mark(((VALUE*)((igraph_t*)p)->attr)[2]);
 }
 
 VALUE cIGraph_alloc(VALUE klass){
@@ -89,6 +90,16 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
   igraph_vector_ptr_t vertex_attr;
   igraph_vector_ptr_t edge_attr;
 
+  igraph_i_attribute_record_t v_attr_rec;
+  v_attr_rec.name  = "__RUBY__";
+  v_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
+  v_attr_rec.value = (void*)rb_ary_new();
+
+  igraph_i_attribute_record_t e_attr_rec;
+  e_attr_rec.name  = "__RUBY__";
+  e_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
+  e_attr_rec.value = (void*)rb_ary_new();
+
   rb_scan_args(argc,argv,"12", &edges, &directed, &attrs);
 
   //Initialize edge vector
@@ -117,18 +128,21 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
       vertex_n++;
       
       //Add object to list of vertex attributes
-      igraph_vector_ptr_push_back(&vertex_attr,(void*)vertex);
+      rb_ary_push((VALUE)v_attr_rec.value,vertex);
       
     }
     igraph_vector_push_back(&edge_v,current_vertex_id);
     if (i % 2){
       if (attrs != Qnil){
-	igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+	rb_ary_push((VALUE)e_attr_rec.value,RARRAY(attrs)->ptr[i/2]);
       } else {
-	igraph_vector_ptr_push_back(&edge_attr,(void*)Qnil);
+	rb_ary_push((VALUE)e_attr_rec.value,Qnil);
       }
     }
   }
+
+  igraph_vector_ptr_push_back(&vertex_attr, &v_attr_rec);
+  igraph_vector_ptr_push_back(&edge_attr,   &e_attr_rec);
 
   if(igraph_vector_size(&edge_v) > 0){
     igraph_add_vertices(graph,vertex_n,&vertex_attr);
@@ -178,6 +192,8 @@ void Init_igraph(){
   rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3); /* in cIGraph_attribute_handler.c */
   rb_define_alias (cIGraph, "get_edge_attr", "[]");
   rb_define_alias (cIGraph, "set_edge_attr", "[]=");
+
+  rb_define_method(cIGraph, "attributes", cIGraph_graph_attributes, 0); /* in cIGraph_attribute_handler.c */
 
   rb_define_method(cIGraph, "each_vertex",   cIGraph_each_vertex,  0); /* in cIGraph_iterators.c */
   rb_define_method(cIGraph, "each_edge",     cIGraph_each_edge,    1); /* in cIGraph_iterators.c */
@@ -231,7 +247,11 @@ void Init_igraph(){
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */
+  rb_define_singleton_method(cIGraph, "read_graph_graphml", cIGraph_read_graph_graphml, 2);   /* in cIGraph_file.c */  
+  rb_define_singleton_method(cIGraph, "read_graph_pajek", cIGraph_read_graph_pajek, 2);   /* in cIGraph_file.c */  
   rb_define_method(cIGraph, "write_graph_edgelist", cIGraph_write_graph_edgelist, 1);         /* in cIGraph_file.c */
+  rb_define_method(cIGraph, "write_graph_graphml", cIGraph_write_graph_graphml,   1);         /* in cIGraph_file.c */  
+  rb_define_method(cIGraph, "write_graph_pajek", cIGraph_write_graph_pajek, 1);         /* in cIGraph_file.c */
 
   rb_define_method(cIGraph, "layout_random", cIGraph_layout_random, 0);
   rb_define_method(cIGraph, "layout_circle", cIGraph_layout_circle, 0);

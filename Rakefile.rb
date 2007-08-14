@@ -2,7 +2,14 @@ require 'hoe'
 
 $LOAD_PATH.unshift("./ext")
 
-require 'igraph'
+class IGraph
+  VERSION = "0.0"
+end
+
+begin 
+  require 'igraph'
+rescue RuntimeError
+end
 
 hoe = Hoe.new("igraph",IGraph::VERSION) do |p|
   

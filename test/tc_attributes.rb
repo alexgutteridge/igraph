@@ -21,4 +21,9 @@ class TestGraph < Test::Unit::TestCase
     graph.add_edge('A','D',4)
     assert_equal 4, graph['A','D']
   end
+  def test_graph_attr
+    graph = IGraph.new(['A','B','C','D'],true,[1,2])
+    graph.attributes['test'] = 1
+    assert_equal 1, graph.attributes['test']
+  end
 end
