@@ -32,6 +32,11 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
   int i;
   igraph_vector_ptr_t edge_attr;
 
+  igraph_i_attribute_record_t e_attr_rec;
+  e_attr_rec.name  = "__RUBY__";
+  e_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
+  e_attr_rec.value = (void*)rb_ary_new();
+
   rb_scan_args(argc, argv, "11", &edges, &attrs);
 
   //Initialize edge vector
@@ -53,12 +58,14 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
     igraph_vector_push_back(&edge_v,vid);
     if (i % 2){
       if (attrs != Qnil){
-	igraph_vector_ptr_push_back(&edge_attr,(void*)RARRAY(attrs)->ptr[i/2]);
+	rb_ary_push((VALUE)e_attr_rec.value,RARRAY(attrs)->ptr[i/2]);
       } else {
-	igraph_vector_ptr_push_back(&edge_attr,(void*)Qnil);
+	rb_ary_push((VALUE)e_attr_rec.value,Qnil);
       }
     }
   }
+
+  igraph_vector_ptr_push_back(&edge_attr, &e_attr_rec);
 
   if(igraph_vector_size(&edge_v) > 0){
     code = igraph_add_edges(graph,&edge_v,&edge_attr);
@@ -96,6 +103,11 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
   int i;
   igraph_vector_ptr_t vertex_attr;
 
+  igraph_i_attribute_record_t v_attr_rec;
+  v_attr_rec.name  = "__RUBY__";
+  v_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
+  v_attr_rec.value = (void*)rb_ary_new();
+
   igraph_vector_ptr_init(&vertex_attr,0);
 
   Data_Get_Struct(self, igraph_t, graph);
@@ -111,9 +123,11 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
       //rb_raise(cIGraphError, "Vertex already added to graph");
       to_add--;
     } else {
-      igraph_vector_ptr_push_back(&vertex_attr,(void*)RARRAY(vs)->ptr[i]);
+      rb_ary_push((VALUE)v_attr_rec.value,RARRAY(vs)->ptr[i]);
     }
   }
+
+  igraph_vector_ptr_push_back(&vertex_attr,&v_attr_rec);
 
   code = igraph_add_vertices(graph,to_add,&vertex_attr);
 
@@ -150,6 +164,11 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
   VALUE to;
   VALUE attr;
 
+  igraph_i_attribute_record_t e_attr_rec;
+  e_attr_rec.name  = "__RUBY__";
+  e_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
+  e_attr_rec.value = (void*)rb_ary_new();
+
   rb_scan_args(argc, argv, "21", &from, &to, &attr);
 
   //Initialize edge vector
@@ -164,10 +183,12 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
     //If graph includes this vertex then look up the vertex number
     igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, from));
     igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, to));
-    igraph_vector_ptr_push_back(&edge_attr,(void*)attr);
+    rb_ary_push((VALUE)e_attr_rec.value,attr);
   } else {
     rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices");
   }
+
+  igraph_vector_ptr_push_back(&edge_attr,&e_attr_rec);
 
   code = igraph_add_edges(graph,&edge_v,&edge_attr);
 
@@ -203,6 +224,11 @@ VALUE cIGraph_add_vertex(VALUE self, VALUE v){
 
   VALUE v_ary;
 
+  igraph_i_attribute_record_t v_attr_rec;
+  v_attr_rec.name  = "__RUBY__";
+  v_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
+  v_attr_rec.value = (void*)rb_ary_new();
+
   igraph_vector_ptr_init(&vertex_attr,0);
 
   Data_Get_Struct(self, igraph_t, graph);
@@ -214,8 +240,10 @@ VALUE cIGraph_add_vertex(VALUE self, VALUE v){
     //rb_raise(cIGraphError, "Vertex already added to graph");
     return code;
   } else {
-    igraph_vector_ptr_push_back(&vertex_attr,(void*)v);
+    rb_ary_push((VALUE)v_attr_rec.value,v);
   }
+
+  igraph_vector_ptr_push_back(&vertex_attr,&v_attr_rec);
 
   code = igraph_add_vertices(graph,1,&vertex_attr);
 

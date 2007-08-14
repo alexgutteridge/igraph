@@ -1,3 +1,9 @@
+#include "math.h"
+#include "ruby.h"
+#include "igraph.h"
+
+//#define DEBUG
+
 //Classes
 extern VALUE cIGraph;
 extern VALUE cIGraphError;
@@ -25,8 +31,11 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self);
 VALUE cIGraph_init_copy(VALUE copy, VALUE orig);
 
 //Attribute accessors
+int replace_i(VALUE key, VALUE val, VALUE hash);
 VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to);
 VALUE cIGraph_set_edge_attr(VALUE self, VALUE from, VALUE to, VALUE attr);
+VALUE cIGraph_graph_attributes(VALUE self);
+igraph_i_attribute_record_t cIGraph_create_record(VALUE v);
 
 //Iterators
 VALUE cIGraph_each_vertex  (VALUE self);
@@ -83,7 +92,10 @@ VALUE cIGraph_topological_sorting(VALUE self, VALUE mode);
 //File handling
 VALUE cIGraph_read_graph_edgelist (VALUE self, VALUE file, VALUE mode);
 VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file);
-
+VALUE cIGraph_read_graph_graphml  (VALUE self, VALUE file, VALUE index);
+VALUE cIGraph_write_graph_graphml (VALUE self, VALUE file);
+VALUE cIGraph_read_graph_pajek    (VALUE self, VALUE file);
+VALUE cIGraph_write_graph_pajek   (VALUE self, VALUE file);
 
 //Layouts
 VALUE cIGraph_layout_random(VALUE self);
