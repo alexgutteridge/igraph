@@ -181,12 +181,12 @@ int cIGraph_attribute_add_vertices(igraph_t *graph, long int nv, igraph_vector_p
   VALUE values;
 
   if(attr){
-    if(((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->type == IGRAPH_ATTRIBUTE_PY_OBJECT){
+    if(igraph_vector_ptr_size(attr) > 0 && ((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->type == IGRAPH_ATTRIBUTE_PY_OBJECT){
 
       values = (VALUE)((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->value;
       Check_Type(values, T_ARRAY);
       for(i=0;i<RARRAY(values)->len;i++){
-	rb_ary_push(vertex_array, RARRAY(values)->ptr[i]);
+      rb_ary_push(vertex_array, RARRAY(values)->ptr[i]);
       }
       //Otherwise read each attriute into hashes and use those
     } else {
@@ -196,6 +196,12 @@ int cIGraph_attribute_add_vertices(igraph_t *graph, long int nv, igraph_vector_p
 	igraph_i_attribute_record_t *attr_rec;
 	char *s;
 	record = rb_hash_new();
+
+	//For when no attributes are given
+	if(igraph_vector_ptr_size(attr) == 0){
+	  record = INT2NUM(i+1);
+	}
+	
 	for (j=0; j<igraph_vector_ptr_size(attr); j++) {
 	  VALUE key;
 	  VALUE value;
