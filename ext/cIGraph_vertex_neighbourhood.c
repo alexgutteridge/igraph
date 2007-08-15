@@ -141,7 +141,7 @@ VALUE cIGraph_neighborhood_graphs(VALUE self, VALUE from, VALUE order, VALUE mod
 
   for(i=0; i<igraph_vector_ptr_size(&res); i++){
     n_graph = VECTOR(res)[i];
-    n_graph_obj = Data_Wrap_Struct(cIGraph, 0, cIGraph_free, n_graph);
+    n_graph_obj = Data_Wrap_Struct(cIGraph, cIGraph_mark, cIGraph_free, n_graph);
     rb_ary_push(result,n_graph_obj);
   }
 
