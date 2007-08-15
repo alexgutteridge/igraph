@@ -244,6 +244,8 @@ void Init_igraph(){
   rb_define_alias (cIGraph, "neighborhood", "neighbourhood");
   rb_define_alias (cIGraph, "neighborhood_graphs", "neighbourhood_graphs");
 
+  rb_define_method(cIGraph, "subcomponent", cIGraph_subcomponent, 2); /* in cIGraph_components.c */
+
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */
