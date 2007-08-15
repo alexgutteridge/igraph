@@ -188,6 +188,9 @@ void Init_igraph(){
   rb_define_const(cIGraph, "ALL",   INT2NUM(3));
   rb_define_const(cIGraph, "TOTAL", INT2NUM(4));
 
+  rb_define_const(cIGraph, "WEAK",   INT2NUM(1));
+  rb_define_const(cIGraph, "STRONG", INT2NUM(2));  
+
   rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2); /* in cIGraph_attribute_handler.c */
   rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3); /* in cIGraph_attribute_handler.c */
   rb_define_alias (cIGraph, "get_edge_attr", "[]");
@@ -245,6 +248,9 @@ void Init_igraph(){
   rb_define_alias (cIGraph, "neighborhood_graphs", "neighbourhood_graphs");
 
   rb_define_method(cIGraph, "subcomponent", cIGraph_subcomponent, 2); /* in cIGraph_components.c */
+  rb_define_method(cIGraph, "subgraph",     cIGraph_subgraph,     1); /* in cIGraph_components.c */
+  rb_define_method(cIGraph, "clusters",     cIGraph_clusters,     1); /* in cIGraph_components.c */
+  rb_define_method(cIGraph, "decompose",    cIGraph_decompose,   -1); /* in cIGraph_decompose.c */
 
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
