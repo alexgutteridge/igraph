@@ -90,7 +90,15 @@ VALUE cIGraph_neighborhood_graphs(VALUE self, VALUE from, VALUE order, VALUE mod
 VALUE cIGraph_subcomponent(VALUE self, VALUE v, VALUE mode);
 VALUE cIGraph_subgraph    (VALUE self, VALUE vs);
 VALUE cIGraph_clusters    (VALUE self, VALUE mode);
-VALUE cIGraph_decompose(int argc, VALUE *argv, VALUE self);
+VALUE cIGraph_decompose   (int argc, VALUE *argv, VALUE self);
+
+//Centrality measures
+VALUE cIGraph_closeness       (VALUE self, VALUE vs, VALUE mode);
+VALUE cIGraph_betweenness     (VALUE self, VALUE vs, VALUE directed);
+VALUE cIGraph_edge_betweenness(VALUE self, VALUE directed);
+VALUE cIGraph_pagerank        (VALUE self, VALUE vs, VALUE directed, VALUE niter, VALUE eps, VALUE damping);
+VALUE cIGraph_constraint      (int argc, VALUE *argv, VALUE self);
+VALUE cIGraph_maxdegree       (VALUE self, VALUE vs, VALUE mode, VALUE loops);
 
 //Topological sorting
 VALUE cIGraph_topological_sorting(VALUE self, VALUE mode);

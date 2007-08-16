@@ -252,6 +252,13 @@ void Init_igraph(){
   rb_define_method(cIGraph, "clusters",     cIGraph_clusters,     1); /* in cIGraph_components.c */
   rb_define_method(cIGraph, "decompose",    cIGraph_decompose,   -1); /* in cIGraph_decompose.c */
 
+  rb_define_method(cIGraph, "closeness",        cIGraph_closeness,        2); /* in cIGraph_centrality.c */
+  rb_define_method(cIGraph, "betweenness",      cIGraph_betweenness,      2); /* in cIGraph_centrality.c */
+  rb_define_method(cIGraph, "edge_betweenness", cIGraph_edge_betweenness, 1); /* in cIGraph_centrality.c */
+  rb_define_method(cIGraph, "pagerank",         cIGraph_pagerank,         5); /* in cIGraph_centrality.c */  
+  rb_define_method(cIGraph, "constraint",       cIGraph_constraint,      -1); /* in cIGraph_centrality.c */  
+  rb_define_method(cIGraph, "maxdegree",        cIGraph_maxdegree,        3); /* in cIGraph_centrality.c */    
+
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */
