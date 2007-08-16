@@ -44,6 +44,13 @@ VALUE cIGraph_set_edge_attr(VALUE self, VALUE from, VALUE to, VALUE attr){
 
 }
 
+/* call-seq:
+ *   graph.attributes -> Hash
+ * 
+ * Returns the graph attributes. This is usually only used when reading in
+ * graphs from GraphML format. Feel free to use instance variables on the
+ * graph object if you like (they won't get copied though!).
+ */
 VALUE cIGraph_graph_attributes(VALUE self){
 
   igraph_t *graph;

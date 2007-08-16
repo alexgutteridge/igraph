@@ -48,14 +48,11 @@ VALUE cIGraph_matrix_init_copy(VALUE copy, VALUE orig){
 }
 
 /* call-seq:
- *   IGraphMatrix[[x,y,...],...] -> IGraphMatrix
+ *   IGraphMatrix.new([[x,y,...],...]) -> IGraphMatrix
  *
- *   IGraphMatrix[[1,2],[3,4]]
- *
- * Creates a graph with four vertices. Vertex 1 is connected to vertex 2.
- * Vertex 3 is connected to vertex 4.
+ * Creates a new IGraphMatrix object. The argument should be an Array of
+ * Arrays which each contain the data for a row of the matrix. 
  */
-
 VALUE cIGraph_matrix_initialize(int argc, VALUE *argv, VALUE self){
 
   igraph_matrix_t *m;
@@ -85,6 +82,11 @@ VALUE cIGraph_matrix_initialize(int argc, VALUE *argv, VALUE self){
 
 }
 
+/* call-seq:
+ *   matrix[i,j] -> Float
+ *
+ * Returns the value stored at row i and column j.
+ */
 VALUE cIGraph_matrix_get(VALUE self, VALUE i, VALUE j){
 
   igraph_matrix_t *m;
@@ -94,6 +96,11 @@ VALUE cIGraph_matrix_get(VALUE self, VALUE i, VALUE j){
 
 }
 
+/* call-seq:
+ *   matrix[i,j]= -> Float
+ *
+ * Sets the value stored at row i and column j.
+ */
 VALUE cIGraph_matrix_set(VALUE self, VALUE i, VALUE j, VALUE x){
 
   igraph_matrix_t *m;
@@ -104,6 +111,11 @@ VALUE cIGraph_matrix_set(VALUE self, VALUE i, VALUE j, VALUE x){
 
 }
 
+/* call-seq:
+ *   matrix.each{|v| } -> nil
+ *
+ * Iterates through each value in the matrix.
+ */
 VALUE cIGraph_matrix_each(VALUE self){
 
   igraph_matrix_t *m;
@@ -122,6 +134,11 @@ VALUE cIGraph_matrix_each(VALUE self){
 
 }
 
+/* call-seq:
+ *   matrix.size -> Integer
+ *
+ * Returns the number of elements in the matrix.
+ */
 VALUE cIGraph_matrix_size(VALUE self){
 
   igraph_matrix_t *m;
@@ -131,6 +148,11 @@ VALUE cIGraph_matrix_size(VALUE self){
 
 }
 
+/* call-seq:
+ *   matrix.nrow -> Integer
+ *
+ * Returns the number of rows in the matrix.
+ */
 VALUE cIGraph_matrix_nrow(VALUE self){
 
   igraph_matrix_t *m;
@@ -140,6 +162,11 @@ VALUE cIGraph_matrix_nrow(VALUE self){
 
 }
 
+/* call-seq:
+ *   matrix.ncol -> Integer
+ *
+ * Returns the number of columns in the matrix.
+ */
 VALUE cIGraph_matrix_ncol(VALUE self){
 
   igraph_matrix_t *m;
@@ -149,6 +176,11 @@ VALUE cIGraph_matrix_ncol(VALUE self){
 
 }
 
+/* call-seq:
+ *   matrix.max -> Float
+ *
+ * Returns the value of the maximum element in the matrix.
+ */
 VALUE cIGraph_matrix_max(VALUE self){
 
   igraph_matrix_t *m;
@@ -158,6 +190,11 @@ VALUE cIGraph_matrix_max(VALUE self){
 
 }
 
+/* call-seq:
+ *   matrix * matrix -> IGraphMatrix
+ *
+ * Multiples two IGraphMatrix objects together
+ */
 VALUE cIGraph_matrix_multiply(VALUE self, VALUE x){
 
   igraph_matrix_t *m;
@@ -175,6 +212,11 @@ VALUE cIGraph_matrix_multiply(VALUE self, VALUE x){
 
 }
 
+/* call-seq:
+ *   matrix.to_a -> Array
+ *
+ * Returns the matrix represented as an Array of Arrays.
+ */
 VALUE cIGraph_matrix_toa(VALUE self){
 
   igraph_matrix_t *m;
