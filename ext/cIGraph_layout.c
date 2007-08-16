@@ -21,6 +21,11 @@ VALUE cIGraph_layout_random(VALUE self){
 
 }
 
+/* call-seq:
+ *   graph.layout_random -> IGraphMatrix
+ * 
+ * Returns a layout with nodes laid out around a circle.
+ */
 VALUE cIGraph_layout_circle(VALUE self){
 
   igraph_t *graph;
@@ -35,6 +40,16 @@ VALUE cIGraph_layout_circle(VALUE self){
 
 }
 
+/* call-seq:
+ *   graph.layout_random -> IGraphMatrix
+ * 
+ * Places the vertices on a plane according to the Fruchterman-Reingold 
+ * algorithm.
+ *
+ * This is a force-directed layout, see Fruchterman, T.M.J. and Reingold, 
+ * E.M.: Graph Drawing by Force-directed Placement. Software -- Practice and 
+ * Experience, 21/11, 1129--1164, 1991.
+ */
 VALUE cIGraph_layout_fruchterman_reingold(VALUE self,
 					  VALUE niter,
 					  VALUE maxdelta,

@@ -2,7 +2,7 @@
 
 IGraph is a Ruby extension for interfacing with the C igraph library (http://cneurocvs.rmki.kfki.hu/igraph/). igraph is a library for creating and manipulating graphs with a particular emphasis on network analysis functions.
 
-IGraph is currently in alpha status and although the basic graph creation and manipulation functions are implemented the API should be considered subject to change.
+IGraph is currently in alpha status and although the basic graph creation and manipulation functions are implemented the API should be considered subject to change. The main documentation can be found at http://igraph.rubyforge.org/igraph/.
 
 All bug reports, feature requests and patches are welcome. Please email alexg (at) kuicr.kyoto-u.ac.jp or use the rubyforge forums: http://rubyforge.org/forum/?group_id=3943
 

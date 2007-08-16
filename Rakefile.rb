@@ -33,18 +33,6 @@ hoe = Hoe.new("igraph",IGraph::VERSION) do |p|
     :rdoc_options  => ["--exclude", "test/*", "--main", "README.txt", "--inline-source"]
   }
 
-  task :setup_rb_package => [:clean, :package, :build_manual] do
-    
-    package_dir = "#{p.name}-#{p.version}"
-    cp("setup.rb","pkg/#{package_dir}")
-    cp("manual.pdf","pkg/#{package_dir}")
-    
-    Dir.chdir("pkg")
-    system("tar -czf #{p.name}-#{p.version}.tgz #{package_dir}")
-    Dir.chdir("..")
-
-  end
-
 end
   
 hoe.spec.dependencies.delete_if{|dep| dep.name == "hoe"}
@@ -62,16 +50,3 @@ file 'ext/igraph.so' => SRC do
 end
 
 task :test => [:build_extension]
-
-desc "Build PDF manual"
-task :build_manual => ["manual.pdf"]
-file "manual.pdf" => ["manual.tex"] do
-  out = 'Rerun'
-  while out.match(/Rerun/)
-    out = `pdflatex manual.tex`
-  end  
-end
-
-task :build_manual_clean => [:build_manual] do
-  system("rm manual.{aux,log,out,toc}")
-end

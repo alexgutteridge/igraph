@@ -89,6 +89,19 @@ VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file){
 
 }
 
+/* call-seq:
+ *   IGraph.read_graph_graphml(file,index) -> IGraph
+ *
+ * Reads a graph from a GraphML file specified as the File object file.
+ *
+ * GraphML is an XML-based file format for representing various types of 
+ * graphs. Currently only the most basic import functionality is implemented 
+ * in igraph: it can read GraphML files without nested graphs and hyperedges. 
+ *
+ * If the GraphML file contains more than one graph, the one specified by 
+ * this index will be loaded. Indices start from zero, so supply zero here 
+ * if your GraphML file contains only a single graph.
+ */
 VALUE cIGraph_read_graph_graphml(VALUE self, VALUE file, VALUE index){
 
   VALUE string;
@@ -110,6 +123,16 @@ VALUE cIGraph_read_graph_graphml(VALUE self, VALUE file, VALUE index){
 
 }
 
+/* call-seq:
+ *   graph.write_graph_graphml(file) -> Integer
+ *
+ * Writes the graph to a File in GraphML format
+ *
+ * GraphML is an XML-based file format for representing various types of 
+ * graphs. See the GraphML Primer 
+ * (http://graphml.graphdrawing.org/primer/graphml-primer.html) for detailed 
+ * format description. 
+ */
 VALUE cIGraph_write_graph_graphml(VALUE self, VALUE file){
 
   char *buf;
@@ -132,6 +155,15 @@ VALUE cIGraph_write_graph_graphml(VALUE self, VALUE file){
 
 }
 
+/* call-seq:
+ *   IGraph.read_graph_pajek(file) -> IGraph
+ *
+ * Reads a file in Pajek format
+ *
+ * Only a subset of the Pajek format is implemented. This is partially 
+ * because this format is not very well documented, but also because 
+ * igraph does not support some Pajek features, like multigraphs.
+ */
 VALUE cIGraph_read_graph_pajek(VALUE self, VALUE file){
 
   VALUE string;
@@ -153,6 +185,11 @@ VALUE cIGraph_read_graph_pajek(VALUE self, VALUE file){
 
 }
 
+/* call-seq:
+ *   graph.write_graph_pajek(file) -> Integer
+ *
+ * Writes a graph to a file in Pajek format.
+ */
 VALUE cIGraph_write_graph_pajek(VALUE self, VALUE file){
 
   char *buf;
