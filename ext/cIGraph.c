@@ -250,7 +250,7 @@ void Init_igraph(){
   rb_define_method(cIGraph, "subcomponent", cIGraph_subcomponent, 2); /* in cIGraph_components.c */
   rb_define_method(cIGraph, "subgraph",     cIGraph_subgraph,     1); /* in cIGraph_components.c */
   rb_define_method(cIGraph, "clusters",     cIGraph_clusters,     1); /* in cIGraph_components.c */
-  rb_define_method(cIGraph, "decompose",    cIGraph_decompose,   -1); /* in cIGraph_decompose.c */
+  rb_define_method(cIGraph, "decompose",    cIGraph_decompose,   -1); /* in cIGraph_components.c */
 
   rb_define_method(cIGraph, "closeness",        cIGraph_closeness,        2); /* in cIGraph_centrality.c */
   rb_define_method(cIGraph, "betweenness",      cIGraph_betweenness,      2); /* in cIGraph_centrality.c */
