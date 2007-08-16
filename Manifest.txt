@@ -8,6 +8,8 @@ ext/cIGraph_add_delete.c
 ext/cIGraph_attribute_handler.c
 ext/cIGraph_basic_properties.c
 ext/cIGraph_basic_query.c
+ext/cIGraph_centrality.c
+ext/cIGraph_components.c
 ext/cIGraph_error_handlers.c
 ext/cIGraph_file.c
 ext/cIGraph_iterators.c
@@ -23,6 +25,8 @@ test/tc_add_delete.rb
 test/tc_attributes.rb
 test/tc_basic_properties.rb
 test/tc_basic_query.rb
+test/tc_centrality.rb
+test/tc_components.rb
 test/tc_copy.rb
 test/tc_create.rb
 test/tc_error_handling.rb
