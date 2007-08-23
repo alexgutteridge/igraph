@@ -259,6 +259,13 @@ void Init_igraph(){
   rb_define_method(cIGraph, "constraint",       cIGraph_constraint,      -1); /* in cIGraph_centrality.c */  
   rb_define_method(cIGraph, "maxdegree",        cIGraph_maxdegree,        3); /* in cIGraph_centrality.c */    
 
+  rb_define_method(cIGraph, "minimum_spanning_tree_unweighted", cIGraph_minimum_spanning_tree_unweighted, 0); /* in cIGraph_spanning.c */
+  rb_define_method(cIGraph, "minimum_spanning_tree_prim",       cIGraph_minimum_spanning_tree_prim,       1); /* in cIGraph_spanning.c */
+
+  rb_define_method(cIGraph, "transitivity",          cIGraph_transitivity,          0);
+  rb_define_method(cIGraph, "transitivity_local",    cIGraph_transitivity_local,    1);
+  rb_define_method(cIGraph, "transitivity_avglocal", cIGraph_transitivity_avglocal, 0);
+
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */

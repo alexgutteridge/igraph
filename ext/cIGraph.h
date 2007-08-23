@@ -100,6 +100,15 @@ VALUE cIGraph_pagerank        (VALUE self, VALUE vs, VALUE directed, VALUE niter
 VALUE cIGraph_constraint      (int argc, VALUE *argv, VALUE self);
 VALUE cIGraph_maxdegree       (VALUE self, VALUE vs, VALUE mode, VALUE loops);
 
+//Spanning trees
+VALUE cIGraph_minimum_spanning_tree_prim      (VALUE self, VALUE weights);
+VALUE cIGraph_minimum_spanning_tree_unweighted(VALUE self);
+
+//Transitivity
+VALUE cIGraph_transitivity         (VALUE self);
+VALUE cIGraph_transitivity_local   (VALUE self, VALUE vs);
+VALUE cIGraph_transitivity_avglocal(VALUE self);
+
 //Topological sorting
 VALUE cIGraph_topological_sorting(VALUE self, VALUE mode);
 
