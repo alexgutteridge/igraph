@@ -37,6 +37,7 @@ VALUE cIGraph_shortest_paths(VALUE self, VALUE from, VALUE mode){
   igraph_matrix_init(&res,n_row,n_col);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,from,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);
@@ -103,6 +104,7 @@ VALUE cIGraph_get_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mode){
   }
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&to_vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,to,&to_vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&to_vids,&to_vidv);
@@ -123,6 +125,7 @@ VALUE cIGraph_get_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mode){
 
   for(i=0;i<n_paths;i++){
     igraph_vector_destroy(VECTOR(res)[i]);
+    free(VECTOR(res)[i]);
   }
 
   igraph_vector_destroy(&to_vidv);
@@ -166,17 +169,19 @@ VALUE cIGraph_get_all_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mod
   Data_Get_Struct(self, igraph_t, graph);
 
   //vector to hold the results of the calculations
-  igraph_vector_ptr_init(&res,0);
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&res);
+  IGRAPH_CHECK(igraph_vector_ptr_init(&res,0));
 
   //The id of the vertex from where we are counting
   from_vid = cIGraph_get_vertex_id(self, from);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&to_vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,to,&to_vidv);
   //create vertex selector from the vecotr of ids
-  igraph_vs_vector(&to_vids,&to_vidv);
+  IGRAPH_CHECK(igraph_vs_vector(&to_vids,&to_vidv));
 
-  igraph_get_all_shortest_paths(graph,&res,NULL,from_vid,to_vids,pmode);
+  IGRAPH_CHECK(igraph_get_all_shortest_paths(graph,&res,NULL,from_vid,to_vids,pmode));
 
   for(i=0; i< igraph_vector_ptr_size(&res); i++){
     path = rb_ary_new();
@@ -189,9 +194,13 @@ VALUE cIGraph_get_all_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mod
 
   for(i=0;i<igraph_vector_ptr_size(&res);i++){
     igraph_vector_destroy(VECTOR(res)[i]);
+    free(VECTOR(res)[i]);
   }
 
   igraph_vector_ptr_destroy(&res);
+  igraph_vector_destroy(&to_vidv);
+
+  IGRAPH_FINALLY_CLEAN(1);
 
   return matrix;
 
@@ -285,21 +294,25 @@ VALUE cIGraph_girth(VALUE self){
 
   igraph_t *graph;
   igraph_vector_t res;
+  igraph_integer_t girth = 0;
   int i;
   VALUE path = rb_ary_new();
 
   Data_Get_Struct(self, igraph_t, graph);
 
   //vector to hold the results of the calculations
-  igraph_vector_init(&res,0);
+  IGRAPH_FINALLY(igraph_vector_destroy,&res);
+  IGRAPH_CHECK(igraph_vector_init(&res,0));
 
-  igraph_girth(graph,NULL,&res);
+  IGRAPH_CHECK(igraph_girth(graph,&girth,&res));
 
   for(i=0; i<igraph_vector_size(&res); i++){
     rb_ary_push(path,cIGraph_get_vertex_object(self,VECTOR(res)[i]));
   }
 
   igraph_vector_destroy(&res);
+
+  IGRAPH_FINALLY_CLEAN(1);
 
   return path;
 

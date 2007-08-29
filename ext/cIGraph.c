@@ -8,6 +8,7 @@ VALUE cIGraphError;
 
 void cIGraph_free(void *p){
   igraph_destroy(p);
+  free(p);
 }
 
 void cIGraph_mark(void *p){
@@ -48,7 +49,7 @@ VALUE cIGraph_init_copy(VALUE copy, VALUE orig){
   Data_Get_Struct(copy, igraph_t, copy_graph); 
   Data_Get_Struct(orig, igraph_t, orig_graph);
 
-  igraph_copy(copy_graph,orig_graph);
+  IGRAPH_CHECK(igraph_copy(copy_graph,orig_graph));
 
   return copy;
 
@@ -103,17 +104,21 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
   rb_scan_args(argc,argv,"12", &edges, &directed, &attrs);
 
   //Initialize edge vector
-  igraph_vector_init_int(&edge_v,0);
+  IGRAPH_FINALLY(igraph_vector_destroy,&edge_v);
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&vertex_attr);
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&edge_attr);
 
-  igraph_vector_ptr_init(&vertex_attr,0);
-  igraph_vector_ptr_init(&edge_attr,0);
+  IGRAPH_CHECK(igraph_vector_init_int(&edge_v,0));
+
+  IGRAPH_CHECK(igraph_vector_ptr_init(&vertex_attr,0));
+  IGRAPH_CHECK(igraph_vector_ptr_init(&edge_attr,0));
 
   Data_Get_Struct(self, igraph_t, graph);
 
   v_ary = rb_ary_new();
 
   if(!directed)
-    igraph_to_undirected(graph,IGRAPH_TO_UNDIRECTED_COLLAPSE);
+    IGRAPH_CHECK(igraph_to_undirected(graph,IGRAPH_TO_UNDIRECTED_COLLAPSE));
 
   //Loop through objects in edge Array
   for (i=0; i<RARRAY(edges)->len; i++) {
@@ -131,7 +136,7 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
       rb_ary_push((VALUE)v_attr_rec.value,vertex);
       
     }
-    igraph_vector_push_back(&edge_v,current_vertex_id);
+    IGRAPH_CHECK(igraph_vector_push_back(&edge_v,current_vertex_id));
     if (i % 2){
       if (attrs != Qnil){
 	rb_ary_push((VALUE)e_attr_rec.value,RARRAY(attrs)->ptr[i/2]);
@@ -141,17 +146,19 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
     }
   }
 
-  igraph_vector_ptr_push_back(&vertex_attr, &v_attr_rec);
-  igraph_vector_ptr_push_back(&edge_attr,   &e_attr_rec);
+  IGRAPH_CHECK(igraph_vector_ptr_push_back(&vertex_attr, &v_attr_rec));
+  IGRAPH_CHECK(igraph_vector_ptr_push_back(&edge_attr,   &e_attr_rec));
 
   if(igraph_vector_size(&edge_v) > 0){
-    igraph_add_vertices(graph,vertex_n,&vertex_attr);
-    igraph_add_edges(graph,&edge_v,&edge_attr);
+    IGRAPH_CHECK(igraph_add_vertices(graph,vertex_n,&vertex_attr));
+    IGRAPH_CHECK(igraph_add_edges(graph,&edge_v,&edge_attr));
   }
 
   igraph_vector_destroy(&edge_v);
   igraph_vector_ptr_destroy(&vertex_attr);
   igraph_vector_ptr_destroy(&edge_attr);
+
+  IGRAPH_FINALLY_CLEAN(3);
 
   return self;
 

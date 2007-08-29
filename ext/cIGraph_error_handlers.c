@@ -4,6 +4,7 @@
 
 void cIGraph_error_handler(const char *reason, const char *file,
                              int line, int igraph_errno) {
+  IGRAPH_FINALLY_FREE();
   rb_raise(cIGraphError, reason);
 }
 
