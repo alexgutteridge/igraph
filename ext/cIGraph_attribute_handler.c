@@ -90,7 +90,7 @@ int cIGraph_attribute_init(igraph_t *graph, igraph_vector_ptr_t *attr) {
   VALUE key;
   VALUE value;
 
-  attrs = ALLOC_N(VALUE, 3);
+  attrs = (VALUE*)calloc(3, sizeof(VALUE));
 
   if(!attrs)
     IGRAPH_ERROR("Error allocating Arrays\n", IGRAPH_ENOMEM);
@@ -132,7 +132,8 @@ int cIGraph_attribute_init(igraph_t *graph, igraph_vector_ptr_t *attr) {
 
 /* Destruction */
 void cIGraph_attribute_destroy(igraph_t *graph) {
-  free(graph->attr);
+  VALUE *attrs = (VALUE*)graph->attr;
+  free(attrs);
   return;
 }
 

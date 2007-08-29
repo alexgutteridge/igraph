@@ -177,7 +177,7 @@ VALUE cIGraph_read_graph_pajek(VALUE self, VALUE file){
   string = rb_funcall(file, rb_intern("read"), 0);
   stream = fmemopen(RSTRING(string)->ptr,RSTRING(string)->len, "r");
 
-  igraph_read_graph_pajek(graph, stream);
+  IGRAPH_CHECK(igraph_read_graph_pajek(graph, stream));
 
   fclose(stream);
 

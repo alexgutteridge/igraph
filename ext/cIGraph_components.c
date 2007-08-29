@@ -53,6 +53,7 @@ VALUE cIGraph_subgraph(VALUE self, VALUE vs){
   Data_Get_Struct(self, igraph_t, graph);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,vs,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);

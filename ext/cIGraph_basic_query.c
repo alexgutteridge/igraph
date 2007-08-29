@@ -85,10 +85,11 @@ VALUE cIGraph_edge(VALUE self, VALUE eid){
  *
  */
 VALUE cIGraph_get_eid(VALUE self, VALUE from, VALUE to, VALUE directed){
+
     igraph_t *graph;
     igraph_integer_t eid = 0;
-    int from_i;
-    int to_i;
+    int from_i = 0;
+    int to_i = 0;
     igraph_bool_t directed_b = 0;
 
     Data_Get_Struct(self, igraph_t, graph);
@@ -241,6 +242,7 @@ VALUE cIGraph_degree(VALUE self, VALUE v, VALUE mode, VALUE loops){
   Data_Get_Struct(self, igraph_t, graph);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,v,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);

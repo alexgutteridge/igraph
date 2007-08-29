@@ -50,6 +50,7 @@ VALUE cIGraph_transitivity_local(VALUE self, VALUE vs){
   igraph_vector_init_int(&res,0);
  
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,vs,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);

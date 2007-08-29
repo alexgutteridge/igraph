@@ -40,8 +40,10 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
   rb_scan_args(argc, argv, "11", &edges, &attrs);
 
   //Initialize edge vector
-  igraph_vector_init_int(&edge_v,0);
-  igraph_vector_ptr_init(&edge_attr,0);
+  IGRAPH_FINALLY(igraph_vector_destroy,&edge_v);
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&edge_attr);
+  IGRAPH_CHECK(igraph_vector_init_int(&edge_v,0));
+  IGRAPH_CHECK(igraph_vector_ptr_init(&edge_attr,0));
 
   Data_Get_Struct(self, igraph_t, graph);
 
@@ -55,7 +57,7 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
     } else {
       rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices first");
     }
-    igraph_vector_push_back(&edge_v,vid);
+    IGRAPH_CHECK(igraph_vector_push_back(&edge_v,vid));
     if (i % 2){
       if (attrs != Qnil){
 	rb_ary_push((VALUE)e_attr_rec.value,RARRAY(attrs)->ptr[i/2]);
@@ -65,14 +67,16 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
     }
   }
 
-  igraph_vector_ptr_push_back(&edge_attr, &e_attr_rec);
+  IGRAPH_CHECK(igraph_vector_ptr_push_back(&edge_attr, &e_attr_rec));
 
   if(igraph_vector_size(&edge_v) > 0){
-    code = igraph_add_edges(graph,&edge_v,&edge_attr);
+    IGRAPH_CHECK(code = igraph_add_edges(graph,&edge_v,&edge_attr));
   }
 
   igraph_vector_destroy(&edge_v);
   igraph_vector_ptr_destroy(&edge_attr);
+
+  IGRAPH_FINALLY_CLEAN(2);
 
   return INT2NUM(code);
 
@@ -108,7 +112,8 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
   v_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
   v_attr_rec.value = (void*)rb_ary_new();
 
-  igraph_vector_ptr_init(&vertex_attr,0);
+  IGRAPH_CHECK(igraph_vector_ptr_init(&vertex_attr,0));
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&vertex_attr);
 
   Data_Get_Struct(self, igraph_t, graph);
   v_ary = ((VALUE*)graph->attr)[0];
@@ -127,9 +132,12 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
     }
   }
 
-  igraph_vector_ptr_push_back(&vertex_attr,&v_attr_rec);
+  IGRAPH_CHECK(igraph_vector_ptr_push_back(&vertex_attr,&v_attr_rec));
 
-  code = igraph_add_vertices(graph,to_add,&vertex_attr);
+  IGRAPH_CHECK(code = igraph_add_vertices(graph,to_add,&vertex_attr));
+
+  igraph_vector_ptr_destroy(&vertex_attr);
+  IGRAPH_FINALLY_CLEAN(1);
 
   return INT2NUM(code);
 
@@ -172,8 +180,10 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
   rb_scan_args(argc, argv, "21", &from, &to, &attr);
 
   //Initialize edge vector
-  igraph_vector_init_int(&edge_v,0);
-  igraph_vector_ptr_init(&edge_attr,0);
+  IGRAPH_FINALLY(igraph_vector_destroy,&edge_v);
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&edge_attr);
+  IGRAPH_CHECK(igraph_vector_init_int(&edge_v,0));
+  IGRAPH_CHECK(igraph_vector_ptr_init(&edge_attr,0));
 
   Data_Get_Struct(self, igraph_t, graph);
 
@@ -181,19 +191,20 @@ VALUE cIGraph_add_edge(int argc, VALUE *argv, VALUE self){
 
   if(rb_ary_includes(v_ary,from) && rb_ary_includes(v_ary,to)){
     //If graph includes this vertex then look up the vertex number
-    igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, from));
-    igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, to));
+    IGRAPH_CHECK(igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, from)));
+    IGRAPH_CHECK(igraph_vector_push_back(&edge_v,cIGraph_get_vertex_id(self, to)));
     rb_ary_push((VALUE)e_attr_rec.value,attr);
   } else {
     rb_raise(cIGraphError, "Unknown vertex in edge array. Use add_vertices");
   }
 
-  igraph_vector_ptr_push_back(&edge_attr,&e_attr_rec);
-
-  code = igraph_add_edges(graph,&edge_v,&edge_attr);
+  IGRAPH_CHECK(igraph_vector_ptr_push_back(&edge_attr,&e_attr_rec));
+  IGRAPH_CHECK(code = igraph_add_edges(graph,&edge_v,&edge_attr));
 
   igraph_vector_ptr_destroy(&edge_attr);
   igraph_vector_destroy(&edge_v);
+
+  IGRAPH_FINALLY_CLEAN(2);
 
   return INT2NUM(code);
 
@@ -229,23 +240,28 @@ VALUE cIGraph_add_vertex(VALUE self, VALUE v){
   v_attr_rec.type  = IGRAPH_ATTRIBUTE_PY_OBJECT;
   v_attr_rec.value = (void*)rb_ary_new();
 
-  igraph_vector_ptr_init(&vertex_attr,0);
+  IGRAPH_CHECK(igraph_vector_ptr_init(&vertex_attr,0));
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&vertex_attr);
 
   Data_Get_Struct(self, igraph_t, graph);
 
   v_ary = ((VALUE*)graph->attr)[0];
-  
+
   //Loop through objects in vertex array
   if(rb_ary_includes(v_ary,v)){
     //rb_raise(cIGraphError, "Vertex already added to graph");
+    igraph_vector_ptr_destroy(&vertex_attr);
+    IGRAPH_FINALLY_CLEAN(1);     
     return code;
   } else {
     rb_ary_push((VALUE)v_attr_rec.value,v);
   }
 
-  igraph_vector_ptr_push_back(&vertex_attr,&v_attr_rec);
+  IGRAPH_CHECK(igraph_vector_ptr_push_back(&vertex_attr,&v_attr_rec));
+  IGRAPH_CHECK(code = igraph_add_vertices(graph,1,&vertex_attr));
 
-  code = igraph_add_vertices(graph,1,&vertex_attr);
+  igraph_vector_ptr_destroy(&vertex_attr);
+  IGRAPH_FINALLY_CLEAN(1); 
 
   return INT2NUM(code);
 

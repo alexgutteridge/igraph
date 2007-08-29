@@ -25,6 +25,7 @@ VALUE cIGraph_closeness(VALUE self, VALUE vs, VALUE mode){
   Data_Get_Struct(self, igraph_t, graph);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,vs,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);
@@ -64,24 +65,31 @@ VALUE cIGraph_betweenness(VALUE self, VALUE vs, VALUE directed){
     dir = 1;
 
   //vector to hold the results of the degree calculations
-  igraph_vector_init_int(&res,0);
+  IGRAPH_FINALLY(igraph_vector_destroy, &res);
+  IGRAPH_FINALLY(igraph_vector_destroy, &vidv);
+  IGRAPH_FINALLY(igraph_vs_destroy,&vids);
+   
+  IGRAPH_CHECK(igraph_vector_init(&res,0));
 
   Data_Get_Struct(self, igraph_t, graph);
 
   //Convert an array of vertices to a vector of vertex ids
+  IGRAPH_CHECK(igraph_vector_init_int(&vidv,0));
   cIGraph_vertex_arr_to_id_vec(self,vs,&vidv);
   //create vertex selector from the vecotr of ids
-  igraph_vs_vector(&vids,&vidv);
+  IGRAPH_CHECK(igraph_vs_vector(&vids,&vidv));
 
-  igraph_betweenness(graph,&res,vids,dir);
+  IGRAPH_CHECK(igraph_betweenness(graph,&res,vids,dir));
 
   for(i=0;i<igraph_vector_size(&res);i++){
-    rb_ary_push(betweenness,INT2NUM((int)VECTOR(res)[i]));
+    rb_ary_push(betweenness,rb_float_new((float)VECTOR(res)[i]));
   }
 
   igraph_vector_destroy(&vidv);
   igraph_vector_destroy(&res);
   igraph_vs_destroy(&vids);
+
+  IGRAPH_FINALLY_CLEAN(3);
 
   return betweenness;
 
@@ -148,6 +156,7 @@ VALUE cIGraph_pagerank(VALUE self, VALUE vs, VALUE directed, VALUE niter, VALUE 
   Data_Get_Struct(self, igraph_t, graph);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,vs,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);
@@ -179,7 +188,7 @@ VALUE cIGraph_constraint(int argc, VALUE *argv, VALUE self){
   igraph_vs_t vids;
   igraph_vector_t vidv;
   igraph_vector_t res;
-  igraph_vector_t *wght =  malloc(sizeof(igraph_vector_t));
+  igraph_vector_t wght;
   int i;
   VALUE constraints = rb_ary_new();
   VALUE vs, weights;
@@ -187,26 +196,28 @@ VALUE cIGraph_constraint(int argc, VALUE *argv, VALUE self){
   rb_scan_args(argc,argv,"11",&vs, &weights);
 
   //vector to hold the results of the degree calculations
-  igraph_vector_init(&res,0);
-  igraph_vector_init(wght,0);
+  IGRAPH_FINALLY(igraph_vector_destroy, &res);
+  IGRAPH_FINALLY(igraph_vector_destroy, &wght);
+  IGRAPH_FINALLY(igraph_vector_destroy, &vidv);
+  IGRAPH_CHECK(igraph_vector_init(&res,0));
+  IGRAPH_CHECK(igraph_vector_init(&wght,0));
 
   Data_Get_Struct(self, igraph_t, graph);
 
   //Convert an array of vertices to a vector of vertex ids
+  IGRAPH_CHECK(igraph_vector_init_int(&vidv,0));
   cIGraph_vertex_arr_to_id_vec(self,vs,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);
 
   if(weights == Qnil){
-    igraph_vector_destroy(wght);
-    wght = NULL;
+    IGRAPH_CHECK(igraph_constraint(graph,&res,vids,NULL));
   } else {
     for(i=0;i<RARRAY(weights)->len;i++){
-      igraph_vector_push_back(wght,NUM2DBL(RARRAY(weights)->ptr[i]));
+      IGRAPH_CHECK(igraph_vector_push_back(&wght,NUM2DBL(RARRAY(weights)->ptr[i])));
     }
+    IGRAPH_CHECK(igraph_constraint(graph,&res,vids,&wght));
   }
-
-  igraph_constraint(graph,&res,vids,wght);
 
   for(i=0;i<igraph_vector_size(&res);i++){
     rb_ary_push(constraints,rb_float_new(VECTOR(res)[i]));
@@ -214,11 +225,10 @@ VALUE cIGraph_constraint(int argc, VALUE *argv, VALUE self){
 
   igraph_vector_destroy(&vidv);
   igraph_vector_destroy(&res);
-  if(wght != NULL)
-    igraph_vector_destroy(wght);
+  igraph_vector_destroy(&wght);
   igraph_vs_destroy(&vids);
 
-  free(wght);
+  IGRAPH_FINALLY_CLEAN(3);
 
   return constraints;
 
@@ -250,6 +260,7 @@ VALUE cIGraph_maxdegree(VALUE self, VALUE vs, VALUE mode, VALUE loops){
   Data_Get_Struct(self, igraph_t, graph);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,vs,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);

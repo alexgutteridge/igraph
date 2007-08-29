@@ -29,6 +29,7 @@ VALUE cIGraph_neighborhood_size(VALUE self, VALUE from, VALUE order, VALUE mode)
   igraph_vector_init(&res,0);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,from,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);
@@ -74,14 +75,18 @@ VALUE cIGraph_neighborhood(VALUE self, VALUE from, VALUE order, VALUE mode){
 
   Data_Get_Struct(self, igraph_t, graph);
 
-  igraph_vector_ptr_init(&res,0);
+  IGRAPH_FINALLY(igraph_vector_ptr_destroy,&res);
+  IGRAPH_CHECK(igraph_vector_ptr_init(&res,0));
 
   //Convert an array of vertices to a vector of vertex ids
+  IGRAPH_FINALLY(igraph_vector_destroy,&vidv);
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,from,&vidv);
   //create vertex selector from the vecotr of ids
-  igraph_vs_vector(&vids,&vidv);
+  IGRAPH_FINALLY(igraph_vs_destroy,&vids);
+  IGRAPH_CHECK(igraph_vs_vector(&vids,&vidv));
 
-  igraph_neighborhood(graph,&res,vids,NUM2INT(order),pmode);
+  IGRAPH_CHECK(igraph_neighborhood(graph,&res,vids,NUM2INT(order),pmode));
 
   for(i=0; i<igraph_vector_ptr_size(&res); i++){
     neighbourhood = rb_ary_new();
@@ -94,11 +99,14 @@ VALUE cIGraph_neighborhood(VALUE self, VALUE from, VALUE order, VALUE mode){
 
   for(i=0;i<igraph_vector_ptr_size(&res);i++){
     igraph_vector_destroy(VECTOR(res)[i]);
+    free(VECTOR(res)[i]);
   }  
 
   igraph_vector_destroy(&vidv);
   igraph_vector_ptr_destroy(&res);
   igraph_vs_destroy(&vids);
+
+  IGRAPH_FINALLY_CLEAN(3);
 
   return matrix;
 
@@ -133,6 +141,7 @@ VALUE cIGraph_neighborhood_graphs(VALUE self, VALUE from, VALUE order, VALUE mod
   igraph_vector_ptr_init(&res,0);
 
   //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,from,&vidv);
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);
