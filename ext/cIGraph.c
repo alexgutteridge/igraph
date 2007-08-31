@@ -198,6 +198,11 @@ void Init_igraph(){
   rb_define_const(cIGraph, "WEAK",   INT2NUM(1));
   rb_define_const(cIGraph, "STRONG", INT2NUM(2));  
 
+  rb_define_const(cIGraph, "ARBITRARY", INT2NUM(0));
+  rb_define_const(cIGraph, "MUTUAL",    INT2NUM(1));
+  rb_define_const(cIGraph, "EACH",      INT2NUM(0));
+  rb_define_const(cIGraph, "COLLAPSE",  INT2NUM(1));
+
   rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2); /* in cIGraph_attribute_handler.c */
   rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3); /* in cIGraph_attribute_handler.c */
   rb_define_alias (cIGraph, "get_edge_attr", "[]");
@@ -269,9 +274,16 @@ void Init_igraph(){
   rb_define_method(cIGraph, "minimum_spanning_tree_unweighted", cIGraph_minimum_spanning_tree_unweighted, 0); /* in cIGraph_spanning.c */
   rb_define_method(cIGraph, "minimum_spanning_tree_prim",       cIGraph_minimum_spanning_tree_prim,       1); /* in cIGraph_spanning.c */
 
-  rb_define_method(cIGraph, "transitivity",          cIGraph_transitivity,          0);
-  rb_define_method(cIGraph, "transitivity_local",    cIGraph_transitivity_local,    1);
-  rb_define_method(cIGraph, "transitivity_avglocal", cIGraph_transitivity_avglocal, 0);
+  rb_define_method(cIGraph, "transitivity",          cIGraph_transitivity,          0); /* in cIGraph_transitivity.c */
+  rb_define_method(cIGraph, "transitivity_local",    cIGraph_transitivity_local,    1); /* in cIGraph_transitivity.c */
+  rb_define_method(cIGraph, "transitivity_avglocal", cIGraph_transitivity_avglocal, 0); /* in cIGraph_transitivity.c */
+
+  rb_define_method(cIGraph, "to_directed",   cIGraph_to_directed,   1); /* in cIGraph_direction.c */
+  rb_define_method(cIGraph, "to_undirected", cIGraph_to_undirected, 1); /* in cIGraph_direction.c */  
+
+  rb_define_method(cIGraph, "laplacian", cIGraph_laplacian, 1); /* in cIGraph_spectral.c */
+
+  rb_define_method(cIGraph, "coreness", cIGraph_coreness, 1); /* in cIGraph_kcores.c */
 
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 

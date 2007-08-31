@@ -109,6 +109,16 @@ VALUE cIGraph_transitivity         (VALUE self);
 VALUE cIGraph_transitivity_local   (VALUE self, VALUE vs);
 VALUE cIGraph_transitivity_avglocal(VALUE self);
 
+//Directedness conversion
+VALUE cIGraph_to_directed  (VALUE self, VALUE mode);
+VALUE cIGraph_to_undirected(VALUE self, VALUE mode);
+
+//Spectral properties
+VALUE cIGraph_laplacian(VALUE self, VALUE mode);
+
+//K-Cores
+VALUE cIGraph_coreness(VALUE self, VALUE mode);
+
 //Topological sorting
 VALUE cIGraph_topological_sorting(VALUE self, VALUE mode);
 
