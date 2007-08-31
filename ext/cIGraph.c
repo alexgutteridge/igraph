@@ -184,7 +184,7 @@ void Init_igraph(){
 
   rb_include_module(cIGraph, rb_mEnumerable);
 
-  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.3"));
+  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.3.1"));
 
   rb_define_const(cIGraph, "EDGEORDER_ID",   INT2NUM(1));
   rb_define_const(cIGraph, "EDGEORDER_FROM", INT2NUM(2));
