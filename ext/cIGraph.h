@@ -122,6 +122,14 @@ VALUE cIGraph_coreness(VALUE self, VALUE mode);
 //Topological sorting
 VALUE cIGraph_topological_sorting(VALUE self, VALUE mode);
 
+//Other operations
+VALUE cIGraph_density      (VALUE self, VALUE loops);
+VALUE cIGraph_simplify     (VALUE self, VALUE mult, VALUE loops);
+VALUE cIGraph_reciprocity  (VALUE self, VALUE loops);
+VALUE cIGraph_bibcoupling  (VALUE self, VALUE vs);
+VALUE cIGraph_cocitation   (VALUE self, VALUE vs);
+VALUE cIGraph_get_adjacency(VALUE self, VALUE mode);
+
 //File handling
 VALUE cIGraph_read_graph_edgelist (VALUE self, VALUE file, VALUE mode);
 VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file);

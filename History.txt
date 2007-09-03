@@ -1,3 +1,11 @@
+= 0.3.2 2007-09-03
+
+* All 'structural property' functions now complete.
+
+= 0.3.1 2007-08-31
+
+* New functions added
+
 = 0.3 2007-08-16
 
 * Over-hauled attribute code
