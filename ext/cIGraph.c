@@ -184,7 +184,7 @@ void Init_igraph(){
 
   rb_include_module(cIGraph, rb_mEnumerable);
 
-  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.3.1"));
+  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.3.2"));
 
   rb_define_const(cIGraph, "EDGEORDER_ID",   INT2NUM(1));
   rb_define_const(cIGraph, "EDGEORDER_FROM", INT2NUM(2));
@@ -202,6 +202,10 @@ void Init_igraph(){
   rb_define_const(cIGraph, "MUTUAL",    INT2NUM(1));
   rb_define_const(cIGraph, "EACH",      INT2NUM(0));
   rb_define_const(cIGraph, "COLLAPSE",  INT2NUM(1));
+
+  rb_define_const(cIGraph, "GET_ADJACENCY_UPPER", INT2NUM(0));
+  rb_define_const(cIGraph, "GET_ADJACENCY_LOWER", INT2NUM(1));
+  rb_define_const(cIGraph, "GET_ADJACENCY_BOTH",  INT2NUM(2));  
 
   rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2); /* in cIGraph_attribute_handler.c */
   rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3); /* in cIGraph_attribute_handler.c */
