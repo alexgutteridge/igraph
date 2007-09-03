@@ -285,6 +285,13 @@ void Init_igraph(){
 
   rb_define_method(cIGraph, "coreness", cIGraph_coreness, 1); /* in cIGraph_kcores.c */
 
+  rb_define_method(cIGraph, "density",       cIGraph_density,       1); /* in cIGraph_other_ops.c */
+  rb_define_method(cIGraph, "simplify",      cIGraph_simplify,      2); /* in cIGraph_other_ops.c */
+  rb_define_method(cIGraph, "reciprocity",   cIGraph_reciprocity,   1); /* in cIGraph_other_ops.c */
+  rb_define_method(cIGraph, "bibcoupling",   cIGraph_bibcoupling,   1); /* in cIGraph_other_ops.c */
+  rb_define_method(cIGraph, "cocitation",    cIGraph_cocitation,    1); /* in cIGraph_other_ops.c */
+  rb_define_method(cIGraph, "get_adjacency", cIGraph_get_adjacency, 1); /* in cIGraph_other_ops.c */
+  
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */
