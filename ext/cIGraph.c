@@ -296,6 +296,11 @@ void Init_igraph(){
   rb_define_method(cIGraph, "cocitation",    cIGraph_cocitation,    1); /* in cIGraph_other_ops.c */
   rb_define_method(cIGraph, "get_adjacency", cIGraph_get_adjacency, 1); /* in cIGraph_other_ops.c */
   
+  rb_define_method(cIGraph, "cliques",         cIGraph_cliques,         2); /* in cIGraph_cliques.c */
+  rb_define_method(cIGraph, "largest_cliques", cIGraph_largest_cliques, 0); /* in cIGraph_cliques.c */ 
+  rb_define_method(cIGraph, "maximal_cliques", cIGraph_maximal_cliques, 0); /* in cIGraph_cliques.c */ 
+  rb_define_method(cIGraph, "clique_number",   cIGraph_clique_number,   0); /* in cIGraph_cliques.c */ 
+
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */

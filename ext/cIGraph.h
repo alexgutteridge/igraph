@@ -130,6 +130,12 @@ VALUE cIGraph_bibcoupling  (VALUE self, VALUE vs);
 VALUE cIGraph_cocitation   (VALUE self, VALUE vs);
 VALUE cIGraph_get_adjacency(VALUE self, VALUE mode);
 
+//Cliques
+VALUE cIGraph_cliques(VALUE self, VALUE min, VALUE max);
+VALUE cIGraph_largest_cliques(VALUE self);
+VALUE cIGraph_maximal_cliques(VALUE self);
+VALUE cIGraph_clique_number(VALUE self);
+
 //File handling
 VALUE cIGraph_read_graph_edgelist (VALUE self, VALUE file, VALUE mode);
 VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file);
