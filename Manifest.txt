@@ -10,6 +10,7 @@ ext/cIGraph_attribute_handler.c
 ext/cIGraph_basic_properties.c
 ext/cIGraph_basic_query.c
 ext/cIGraph_centrality.c
+ext/cIGraph_cliques.c
 ext/cIGraph_components.c
 ext/cIGraph_direction.c
 ext/cIGraph_error_handlers.c
@@ -34,6 +35,7 @@ test/tc_attributes.rb
 test/tc_basic_properties.rb
 test/tc_basic_query.rb
 test/tc_centrality.rb
+test/tc_cliques.rb
 test/tc_components.rb
 test/tc_copy.rb
 test/tc_cores.rb
