@@ -81,6 +81,13 @@ VALUE cIGraph_average_path_length   (VALUE self, VALUE directed, VALUE unconn);
 VALUE cIGraph_diameter              (VALUE self, VALUE directed, VALUE unconn);
 VALUE cIGraph_girth                 (VALUE self);
 
+VALUE cIGraph_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE weights, VALUE mode);
+int igraph_dijkstra_shortest_paths(const igraph_t *graph, 
+				   igraph_matrix_t *res, 
+				   const igraph_vs_t from, 
+				   const igraph_vector_t *wghts,
+				   igraph_neimode_t mode);
+
 //Vertex neighbourhood functions
 VALUE cIGraph_neighborhood_size  (VALUE self, VALUE from, VALUE order, VALUE mode);
 VALUE cIGraph_neighborhood       (VALUE self, VALUE from, VALUE order, VALUE mode);
@@ -135,6 +142,25 @@ VALUE cIGraph_cliques(VALUE self, VALUE min, VALUE max);
 VALUE cIGraph_largest_cliques(VALUE self);
 VALUE cIGraph_maximal_cliques(VALUE self);
 VALUE cIGraph_clique_number(VALUE self);
+
+//Independent vertex sets
+VALUE cIGraph_independent_vertex_sets(VALUE self, VALUE min, VALUE max);
+VALUE cIGraph_largest_independent_vertex_sets(VALUE self);
+VALUE cIGraph_maximal_independent_vertex_sets(VALUE self);
+VALUE cIGraph_independence_number(VALUE self);
+
+//Graph isomorphism
+VALUE cIGraph_isomorphic       (VALUE self, VALUE g);
+VALUE cIGraph_isomorphic_vf2   (VALUE self, VALUE g);
+VALUE cIGraph_isoclass         (VALUE self);
+VALUE cIGraph_isoclass_subgraph(VALUE self, VALUE vs);
+VALUE cIGraph_isoclass_create  (VALUE self, VALUE vn, VALUE iso, VALUE dir);
+
+//Motifs
+VALUE cIGraph_motifs_randesu         (VALUE self, VALUE size, VALUE cuts);
+VALUE cIGraph_motifs_randesu_no      (VALUE self, VALUE size, VALUE cuts);
+VALUE cIGraph_motifs_randesu_estimate(VALUE self, VALUE size, VALUE cuts, 
+				      VALUE samplen, VALUE samplev);
 
 //File handling
 VALUE cIGraph_read_graph_edgelist (VALUE self, VALUE file, VALUE mode);
