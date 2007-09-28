@@ -256,6 +256,9 @@ void Init_igraph(){
   rb_define_method(cIGraph, "diameter",               cIGraph_diameter,               2); /* in cIGraph_shortest_paths.c */
   rb_define_method(cIGraph, "girth",                  cIGraph_girth,                  0); /* in cIGraph_shortest_paths.c */
 
+
+  rb_define_method(cIGraph, "dijkstra_shortest_paths", cIGraph_dijkstra_shortest_paths, 3);
+
   rb_define_method(cIGraph, "neighbourhood_size",   cIGraph_neighborhood_size,   3); /* in cIGraph_vertex_neighbourhood.c */
   rb_define_method(cIGraph, "neighbourhood",        cIGraph_neighborhood,        3); /* in cIGraph_vertex_neighbourhood.c */
   rb_define_method(cIGraph, "neighbourhood_graphs", cIGraph_neighborhood_graphs, 3); /* in cIGraph_vertex_neighbourhood.c */
@@ -300,6 +303,21 @@ void Init_igraph(){
   rb_define_method(cIGraph, "largest_cliques", cIGraph_largest_cliques, 0); /* in cIGraph_cliques.c */ 
   rb_define_method(cIGraph, "maximal_cliques", cIGraph_maximal_cliques, 0); /* in cIGraph_cliques.c */ 
   rb_define_method(cIGraph, "clique_number",   cIGraph_clique_number,   0); /* in cIGraph_cliques.c */ 
+
+  rb_define_method(cIGraph, "independent_vertex_sets", cIGraph_independent_vertex_sets, 2); /* in cIGraph_independent_vertex_sets.c */
+  rb_define_method(cIGraph, "largest_independent_vertex_sets", cIGraph_largest_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
+  rb_define_method(cIGraph, "maximal_independent_vertex_sets", cIGraph_maximal_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
+  rb_define_method(cIGraph, "independence_number", cIGraph_independence_number, 0); /* in cIGraph_independent_vertex_sets.c */
+
+  rb_define_method(cIGraph, "isomorphic",     cIGraph_isomorphic,     1); /* in cIGraph_isomorphic.c */
+  rb_define_method(cIGraph, "isomorphic_vf2", cIGraph_isomorphic_vf2, 1); /* in cIGraph_isomorphic.c */
+  rb_define_method(cIGraph, "isoclass", cIGraph_isoclass, 0); /* in cIGraph_isomorphic.c */
+  rb_define_method(cIGraph, "isoclass_subgraph", cIGraph_isoclass_subgraph, 1); /* in cIGraph_isomorphic.c */
+  rb_define_singleton_method(cIGraph, "isoclass_create", cIGraph_isoclass_create, 3); /* in cIGraph_isomorphic.c */
+
+  rb_define_method(cIGraph, "motifs_randesu",          cIGraph_motifs_randesu,          2); /* in cIGraph_motif.c */ 
+  rb_define_method(cIGraph, "motifs_randesu_no",       cIGraph_motifs_randesu_no,       2); /* in cIGraph_motif.c */ 
+  rb_define_method(cIGraph, "motifs_randesu_estimate", cIGraph_motifs_randesu_estimate, 4); /* in cIGraph_motif.c */ 
 
   rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 

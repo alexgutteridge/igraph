@@ -189,6 +189,7 @@ int cIGraph_attribute_add_vertices(igraph_t *graph, long int nv, igraph_vector_p
   VALUE values;
 
   if(attr){
+
     if(igraph_vector_ptr_size(attr) > 0 && ((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->type == IGRAPH_ATTRIBUTE_PY_OBJECT){
 
       values = (VALUE)((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->value;
@@ -233,6 +234,11 @@ int cIGraph_attribute_add_vertices(igraph_t *graph, long int nv, igraph_vector_p
 	}
 	rb_ary_push(vertex_array,record);
       }
+    }
+  } else {
+    //Default: Add numbered vertices.
+    for(i=0;i<nv;i++){
+      rb_ary_push(vertex_array,INT2NUM(i));
     }
   }
  

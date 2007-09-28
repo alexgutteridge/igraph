@@ -31,7 +31,7 @@ VALUE cIGraph_laplacian(VALUE self, VALUE mode){
   VALUE val;
   VALUE matrix = rb_ary_new();
 
-  if(mode = Qtrue)
+  if(mode == Qtrue)
     pmode = 1;
 
   Data_Get_Struct(self, igraph_t, graph);
