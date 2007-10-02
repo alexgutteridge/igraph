@@ -184,7 +184,7 @@ void Init_igraph(){
 
   rb_include_module(cIGraph, rb_mEnumerable);
 
-  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.3.2"));
+  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.3.3"));
 
   rb_define_const(cIGraph, "EDGEORDER_ID",   INT2NUM(1));
   rb_define_const(cIGraph, "EDGEORDER_FROM", INT2NUM(2));
@@ -317,11 +317,11 @@ rb_define_singleton_method(cIGraph, "erdos_renyi_game", cIGraph_erdos_renyi_game
   rb_define_method(cIGraph, "maximal_independent_vertex_sets", cIGraph_maximal_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
   rb_define_method(cIGraph, "independence_number", cIGraph_independence_number, 0); /* in cIGraph_independent_vertex_sets.c */
 
-  rb_define_method(cIGraph, "isomorphic",     cIGraph_isomorphic,     1); /* in cIGraph_isomorphic.c */
-  rb_define_method(cIGraph, "isomorphic_vf2", cIGraph_isomorphic_vf2, 1); /* in cIGraph_isomorphic.c */
-  rb_define_method(cIGraph, "isoclass", cIGraph_isoclass, 0); /* in cIGraph_isomorphic.c */
-  rb_define_method(cIGraph, "isoclass_subgraph", cIGraph_isoclass_subgraph, 1); /* in cIGraph_isomorphic.c */
-  rb_define_singleton_method(cIGraph, "isoclass_create", cIGraph_isoclass_create, 3); /* in cIGraph_isomorphic.c */
+  rb_define_method(cIGraph, "isomorphic",     cIGraph_isomorphic,     1); /* in cIGraph_isomorphism.c */
+  rb_define_method(cIGraph, "isomorphic_vf2", cIGraph_isomorphic_vf2, 1); /* in cIGraph_isomorphism.c */
+  rb_define_method(cIGraph, "isoclass", cIGraph_isoclass, 0); /* in cIGraph_isomorphism.c */
+  rb_define_method(cIGraph, "isoclass_subgraph", cIGraph_isoclass_subgraph, 1); /* in cIGraph_isomorphism.c */
+  rb_define_singleton_method(cIGraph, "isoclass_create", cIGraph_isoclass_create, 3); /* in cIGraph_isomorphism.c */
 
   rb_define_method(cIGraph, "motifs_randesu",          cIGraph_motifs_randesu,          2); /* in cIGraph_motif.c */ 
   rb_define_method(cIGraph, "motifs_randesu_no",       cIGraph_motifs_randesu_no,       2); /* in cIGraph_motif.c */ 
