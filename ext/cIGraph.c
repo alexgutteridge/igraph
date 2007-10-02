@@ -207,6 +207,14 @@ void Init_igraph(){
   rb_define_const(cIGraph, "GET_ADJACENCY_LOWER", INT2NUM(1));
   rb_define_const(cIGraph, "GET_ADJACENCY_BOTH",  INT2NUM(2));  
 
+  rb_define_const(cIGraph, "ERDOS_RENYI_GNP", INT2NUM(0));
+  rb_define_const(cIGraph, "ERDOS_RENYI_GNM", INT2NUM(1));  
+
+  rb_define_singleton_method(cIGraph, "grg_game", cIGraph_grg_game, 3); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "barabasi_game", cIGraph_barabasi_game, 4); /* in cIGraph_generators_random.c */ 
+  rb_define_singleton_method(cIGraph, "nonlinear_barabasi_game", cIGraph_nonlinear_barabasi_game, 6); /* in cIGraph_generators_random.c */ 
+rb_define_singleton_method(cIGraph, "erdos_renyi_game", cIGraph_erdos_renyi_game, 5); /* in cIGraph_generators_random.c */ 
+
   rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2); /* in cIGraph_attribute_handler.c */
   rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3); /* in cIGraph_attribute_handler.c */
   rb_define_alias (cIGraph, "get_edge_attr", "[]");
@@ -328,9 +336,14 @@ void Init_igraph(){
   rb_define_method(cIGraph, "write_graph_graphml", cIGraph_write_graph_graphml,   1);         /* in cIGraph_file.c */  
   rb_define_method(cIGraph, "write_graph_pajek", cIGraph_write_graph_pajek, 1);               /* in cIGraph_file.c */
 
-  rb_define_method(cIGraph, "layout_random",               cIGraph_layout_random,               0); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_circle",               cIGraph_layout_circle,               0); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_fruchterman_reingold", cIGraph_layout_fruchterman_reingold, 6); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_random",                    cIGraph_layout_random,                        0); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_circle",                    cIGraph_layout_circle,                        0); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_fruchterman_reingold",      cIGraph_layout_fruchterman_reingold,          6); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_kamada_kawai",              cIGraph_layout_kamada_kawai,                  5); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_reingold_tilford",          cIGraph_layout_reingold_tilford,              1); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_reingold_tilford_circular", cIGraph_layout_reingold_tilford_circular, 1); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_grid_fruchterman_reingold", cIGraph_layout_grid_fruchterman_reingold,     7); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph, "layout_lgl",                       cIGraph_layout_lgl,                           7); /* in cIGraph_layout.c */
 
   //Matrix class
   cIGraphMatrix = rb_define_class("IGraphMatrix", rb_cObject);
