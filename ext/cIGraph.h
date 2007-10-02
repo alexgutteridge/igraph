@@ -30,6 +30,15 @@ VALUE cIGraph_alloc(VALUE klass);
 VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self);
 VALUE cIGraph_init_copy(VALUE copy, VALUE orig);
 
+//Random graph generators
+VALUE cIGraph_grg_game     (VALUE self, VALUE nodes, 
+			    VALUE radius, VALUE torus);
+VALUE cIGraph_barabasi_game(VALUE self, VALUE nodes, 
+			    VALUE m, VALUE outpref, VALUE directed);
+VALUE cIGraph_nonlinear_barabasi_game(VALUE self, VALUE nodes, VALUE power, 
+				      VALUE m, VALUE outpref, VALUE zeroappeal, VALUE directed);
+VALUE cIGraph_erdos_renyi_game       (VALUE self, VALUE type, VALUE nodes, VALUE mp, VALUE directed, VALUE loops);
+
 //Attribute accessors
 int replace_i(VALUE key, VALUE val, VALUE hash);
 VALUE cIGraph_get_edge_attr(VALUE self, VALUE from, VALUE to);
@@ -171,8 +180,8 @@ VALUE cIGraph_read_graph_pajek    (VALUE self, VALUE file);
 VALUE cIGraph_write_graph_pajek   (VALUE self, VALUE file);
 
 //Layouts
-VALUE cIGraph_layout_random(VALUE self);
-VALUE cIGraph_layout_circle(VALUE self);
+VALUE cIGraph_layout_random              (VALUE self);
+VALUE cIGraph_layout_circle              (VALUE self);
 VALUE cIGraph_layout_fruchterman_reingold(VALUE self,
 					  VALUE niter,
 					  VALUE maxdelta,
@@ -180,6 +189,33 @@ VALUE cIGraph_layout_fruchterman_reingold(VALUE self,
 					  VALUE coolexp,
 					  VALUE repulserad,
 					  VALUE use_seed);
+VALUE cIGraph_layout_kamada_kawai        (VALUE self,
+				          VALUE niter,
+				          VALUE sigma,
+				          VALUE initemp,
+				          VALUE coolexp,
+				          VALUE kkconst);
+VALUE cIGraph_layout_reingold_tilford    (VALUE self,
+				          VALUE root);
+VALUE cIGraph_layout_reingold_tilford_circular(VALUE self,
+					       VALUE root);
+VALUE cIGraph_layout_grid_fruchterman_reingold(VALUE self,
+					       VALUE niter,
+					       VALUE maxdelta,
+					       VALUE area,
+					       VALUE coolexp,
+					       VALUE repulserad,
+					       VALUE cellsize,
+					       VALUE use_seed);
+VALUE cIGraph_layout_lgl(VALUE self,
+			 VALUE maxit,
+			 VALUE maxdelta,
+			 VALUE area,
+			 VALUE coolexp,
+			 VALUE repulserad,
+			 VALUE cellsize,
+			 VALUE proot);
+
 
 //Attributes
 int cIGraph_attribute_init(igraph_t *graph, 
