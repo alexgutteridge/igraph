@@ -208,12 +208,53 @@ void Init_igraph(){
   rb_define_const(cIGraph, "GET_ADJACENCY_BOTH",  INT2NUM(2));  
 
   rb_define_const(cIGraph, "ERDOS_RENYI_GNP", INT2NUM(0));
-  rb_define_const(cIGraph, "ERDOS_RENYI_GNM", INT2NUM(1));  
+  rb_define_const(cIGraph, "ERDOS_RENYI_GNM", INT2NUM(1));
+
+  rb_define_const(cIGraph, "ADJ_DIRECTED",   INT2NUM(0));
+  rb_define_const(cIGraph, "ADJ_UNDIRECTED", INT2NUM(1));
+  rb_define_const(cIGraph, "ADJ_MAX",        INT2NUM(2));
+  rb_define_const(cIGraph, "ADJ_MIN",        INT2NUM(3));
+  rb_define_const(cIGraph, "ADJ_PLUS",       INT2NUM(4));
+  rb_define_const(cIGraph, "ADJ_UPPER",      INT2NUM(5));
+  rb_define_const(cIGraph, "ADJ_LOWER",      INT2NUM(6));
+
+  rb_define_const(cIGraph, "STAR_OUT",        INT2NUM(0));
+  rb_define_const(cIGraph, "STAR_IN",         INT2NUM(1));
+  rb_define_const(cIGraph, "STAR_UNDIRECTED", INT2NUM(2));
+
+  rb_define_const(cIGraph, "TREE_OUT",        INT2NUM(0));
+  rb_define_const(cIGraph, "TREE_IN",         INT2NUM(1));
+  rb_define_const(cIGraph, "TREE_UNDIRECTED", INT2NUM(2));
+
+  rb_define_singleton_method(cIGraph, "adjacency", cIGraph_adjacency, 2); /* in cIGraph_generators_deterministic.c */
+  rb_define_singleton_method(cIGraph, "star", cIGraph_star, 3); /* in cIGraph_generators_deterministic.c */ 
+  rb_define_singleton_method(cIGraph, "lattice", cIGraph_lattice, 4); /* in cIGraph_generators_deterministic.c */ 
+  rb_define_singleton_method(cIGraph, "ring", cIGraph_ring, 4); /* in cIGraph_generators_deterministic.c */ 
+  rb_define_singleton_method(cIGraph, "tree", cIGraph_tree, 3); /* in cIGraph_generators_deterministic.c */ 
+  rb_define_singleton_method(cIGraph, "full", cIGraph_full, 3); /* in cIGraph_generators_deterministic.c */ 
+  rb_define_singleton_method(cIGraph, "atlas", cIGraph_atlas, 1); /* in cIGraph_generators_deterministic.c */ 
+  rb_define_singleton_method(cIGraph, "extended_chordal_ring", cIGraph_extended_chordal_ring, 2); /* in cIGraph_generators_deterministic.c */ 
+  rb_define_method(cIGraph, "connect_neighborhood", cIGraph_connect_neighborhood, 2); /* in cIGraph_generators_deterministic.c */
 
   rb_define_singleton_method(cIGraph, "grg_game", cIGraph_grg_game, 3); /* in cIGraph_generators_random.c */
   rb_define_singleton_method(cIGraph, "barabasi_game", cIGraph_barabasi_game, 4); /* in cIGraph_generators_random.c */ 
   rb_define_singleton_method(cIGraph, "nonlinear_barabasi_game", cIGraph_nonlinear_barabasi_game, 6); /* in cIGraph_generators_random.c */ 
-rb_define_singleton_method(cIGraph, "erdos_renyi_game", cIGraph_erdos_renyi_game, 5); /* in cIGraph_generators_random.c */ 
+  rb_define_singleton_method(cIGraph, "erdos_renyi_game", cIGraph_erdos_renyi_game, 5); /* in cIGraph_generators_random.c */ 
+  rb_define_singleton_method(cIGraph, "watts_strogatz_game", cIGraph_watts_strogatz_game, 4); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "degree_sequence_game", cIGraph_degree_sequence_game, 2); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "growing_random_game", cIGraph_growing_random_game, 4); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "callaway_traits_game", cIGraph_callaway_traits_game, 6); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "establishment_game", cIGraph_establishment_game, 6); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "preference_game", cIGraph_preference_game, 6); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "asymmetric_preference_game", cIGraph_asymmetric_preference_game, 5); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "recent_degree_game", cIGraph_recent_degree_game, 7); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "barabasi_aging_game", cIGraph_barabasi_aging_game, 11); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "recent_degree_aging_game", cIGraph_recent_degree_aging_game, 9); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "cited_type_game", cIGraph_cited_type_game, 5); /* in cIGraph_generators_random.c */
+  rb_define_singleton_method(cIGraph, "citing_cited_type_game", cIGraph_citing_cited_type_game, 5); /* in cIGraph_generators_random.c */
+
+ rb_define_method(cIGraph, "rewire_edges", cIGraph_rewire_edges, 1); /* cIGraph_randomisation.c */
+ rb_define_method(cIGraph, "rewire", cIGraph_rewire, 1); /* cIGraph_randomisation.c */
 
   rb_define_method(cIGraph, "[]",            cIGraph_get_edge_attr, 2); /* in cIGraph_attribute_handler.c */
   rb_define_method(cIGraph, "[]=",           cIGraph_set_edge_attr, 3); /* in cIGraph_attribute_handler.c */
@@ -344,6 +385,14 @@ rb_define_singleton_method(cIGraph, "erdos_renyi_game", cIGraph_erdos_renyi_game
   rb_define_method(cIGraph, "layout_reingold_tilford_circular", cIGraph_layout_reingold_tilford_circular, 1); /* in cIGraph_layout.c */
   rb_define_method(cIGraph, "layout_grid_fruchterman_reingold", cIGraph_layout_grid_fruchterman_reingold,     7); /* in cIGraph_layout.c */
   rb_define_method(cIGraph, "layout_lgl",                       cIGraph_layout_lgl,                           7); /* in cIGraph_layout.c */
+
+  rb_define_method(cIGraph, "layout_random_3d",               cIGraph_layout_random_3d,               0); /* in cIGraph_layout3d.c */
+  rb_define_method(cIGraph, "layout_sphere",                  cIGraph_layout_sphere,                  0); /* in cIGraph_layout3d.c */
+  rb_define_method(cIGraph, "layout_fruchterman_reingold_3d", cIGraph_layout_fruchterman_reingold_3d, 6); /* in cIGraph_layout3d.c */
+  rb_define_method(cIGraph, "layout_kamada_kawai_3d",         cIGraph_layout_kamada_kawai_3d,         5); /* in cIGraph_layout3d.c */
+
+
+  rb_define_singleton_method(cIGraph, "layout_merge_dla", cIGraph_layout_merge_dla, 2); /* in cIGraph_layout.c */
 
   //Matrix class
   cIGraphMatrix = rb_define_class("IGraphMatrix", rb_cObject);

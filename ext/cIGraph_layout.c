@@ -247,3 +247,33 @@ VALUE cIGraph_layout_lgl(VALUE self,
 
 }
 
+VALUE cIGraph_layout_merge_dla(VALUE self, VALUE graphs, VALUE layouts){
+
+  igraph_vector_ptr_t thegraphs;
+  igraph_vector_ptr_t coords;
+  int i;
+  igraph_t *graph;
+  igraph_matrix_t *coord;
+  igraph_matrix_t *res = malloc(sizeof(igraph_matrix_t));
+
+  igraph_vector_ptr_init(&thegraphs,0);
+  igraph_vector_ptr_init(&coords,0);
+  igraph_matrix_init(res,0,0);
+
+  for(i=0;i<RARRAY(graphs)->len;i++){
+    Data_Get_Struct(RARRAY(graphs)->ptr[i], igraph_t, graph);
+    igraph_vector_ptr_push_back(&thegraphs,graph);
+  }
+  for(i=0;i<RARRAY(layouts)->len;i++){
+    Data_Get_Struct(RARRAY(layouts)->ptr[i], igraph_matrix_t, coord);
+    igraph_vector_ptr_push_back(&coords,coord);
+  }
+ 
+  igraph_layout_merge_dla(&thegraphs, &coords, res);
+ 
+  igraph_vector_ptr_destroy(&thegraphs);
+  igraph_vector_ptr_destroy(&coords);
+
+  return Data_Wrap_Struct(cIGraphMatrix, 0, cIGraph_matrix_free, res);
+  
+}
