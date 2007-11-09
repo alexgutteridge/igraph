@@ -30,6 +30,17 @@ VALUE cIGraph_alloc(VALUE klass);
 VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self);
 VALUE cIGraph_init_copy(VALUE copy, VALUE orig);
 
+//Graph generators
+VALUE cIGraph_adjacency(VALUE self, VALUE matrix, VALUE mode);
+VALUE cIGraph_star     (VALUE self, VALUE n,      VALUE mode, VALUE center);
+VALUE cIGraph_lattice  (VALUE self, VALUE dim, VALUE directed, VALUE mutual, VALUE circular);
+VALUE cIGraph_ring(VALUE self, VALUE n, VALUE directed, VALUE mutual, VALUE circular);
+VALUE cIGraph_tree(VALUE self, VALUE n, VALUE children, VALUE type);
+VALUE cIGraph_full(VALUE self, VALUE n, VALUE directed, VALUE loops);
+VALUE cIGraph_atlas(VALUE self, VALUE n);
+VALUE cIGraph_extended_chordal_ring(VALUE self, VALUE n, VALUE matrix);
+VALUE cIGraph_connect_neighborhood(VALUE self, VALUE order, VALUE mode);
+
 //Random graph generators
 VALUE cIGraph_grg_game     (VALUE self, VALUE nodes, 
 			    VALUE radius, VALUE torus);
@@ -38,6 +49,21 @@ VALUE cIGraph_barabasi_game(VALUE self, VALUE nodes,
 VALUE cIGraph_nonlinear_barabasi_game(VALUE self, VALUE nodes, VALUE power, 
 				      VALUE m, VALUE outpref, VALUE zeroappeal, VALUE directed);
 VALUE cIGraph_erdos_renyi_game       (VALUE self, VALUE type, VALUE nodes, VALUE mp, VALUE directed, VALUE loops);
+VALUE cIGraph_watts_strogatz_game(VALUE self, VALUE dim, VALUE size, VALUE nei, VALUE p);
+VALUE cIGraph_degree_sequence_game(VALUE self, VALUE out_deg, VALUE in_deg);
+VALUE cIGraph_growing_random_game(VALUE self, VALUE n, VALUE m, VALUE directed, VALUE citation);
+VALUE cIGraph_callaway_traits_game(VALUE self, VALUE nodes, VALUE types, VALUE e_per_step, VALUE type_dist, VALUE pref_matrix, VALUE directed);
+VALUE cIGraph_establishment_game(VALUE self, VALUE nodes, VALUE types, VALUE k, VALUE type_dist, VALUE pref_matrix, VALUE directed);
+VALUE cIGraph_preference_game(VALUE self, VALUE nodes, VALUE types, VALUE type_dist, VALUE pref_matrix, VALUE directed, VALUE loops);
+VALUE cIGraph_asymmetric_preference_game(VALUE self, VALUE nodes, VALUE types, VALUE type_dist_matrix, VALUE pref_matrix, VALUE loops);
+VALUE cIGraph_recent_degree_game(VALUE self, VALUE n, VALUE power, VALUE window, VALUE m, VALUE outpref, VALUE zero_appeal, VALUE directed);
+VALUE cIGraph_barabasi_aging_game(VALUE self, VALUE nodes, VALUE m, VALUE outpref, VALUE pa_exp, VALUE aging_exp, VALUE aging_bin, VALUE zero_deg_appeal, VALUE zero_age_appeal, VALUE deg_coef, VALUE age_coef, VALUE directed);
+VALUE cIGraph_recent_degree_aging_game(VALUE self, VALUE nodes, VALUE m, VALUE outpref, VALUE pa_exp, VALUE aging_exp, VALUE aging_bin, VALUE time_window, VALUE zero_appeal, VALUE directed);
+VALUE cIGraph_cited_type_game(VALUE self, VALUE nodes, VALUE types, VALUE pref, VALUE e_per_s, VALUE directed);
+VALUE cIGraph_citing_cited_type_game(VALUE self, VALUE nodes, VALUE types, VALUE pref, VALUE e_per_s, VALUE directed);
+
+VALUE cIGraph_rewire_edges(VALUE self, VALUE prop);
+VALUE cIGraph_rewire(VALUE self, VALUE n, VALUE mode);
 
 //Attribute accessors
 int replace_i(VALUE key, VALUE val, VALUE hash);
@@ -216,6 +242,23 @@ VALUE cIGraph_layout_lgl(VALUE self,
 			 VALUE cellsize,
 			 VALUE proot);
 
+VALUE cIGraph_layout_random_3d(VALUE self);
+VALUE cIGraph_layout_sphere   (VALUE self);
+VALUE cIGraph_layout_fruchterman_reingold_3d(VALUE self,
+					     VALUE niter,
+					     VALUE maxdelta,
+					     VALUE volume,
+					     VALUE coolexp,
+					     VALUE repulserad,
+					     VALUE use_seed);
+VALUE cIGraph_layout_kamada_kawai_3d        (VALUE self,
+					     VALUE niter,
+					     VALUE sigma,
+					     VALUE initemp,
+					     VALUE coolexp,
+					     VALUE kkconst);
+
+VALUE cIGraph_layout_merge_dla(VALUE self, VALUE graphs, VALUE layouts);
 
 //Attributes
 int cIGraph_attribute_init(igraph_t *graph, 

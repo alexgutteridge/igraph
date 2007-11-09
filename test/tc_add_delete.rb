@@ -56,6 +56,27 @@ class TestGraph < Test::Unit::TestCase
     assert_equal 1, graph.ecount
   end
 
+  def test_delete_large
+    vs = (0..99).to_a
+    h = IGraph.new([],true)
+    vs.each do |id|
+      h.add_vertex(id)
+    end
+    
+    g = h.dup
+
+    delete_ids = (0..99).to_a.sort_by{rand}[0..19]
+    assert_nothing_raised do 
+      delete_ids.each do |id|
+	g.delete_vertex(id)
+      end
+    end
+    delete_ids.each do |id|
+      assert_equal false, g.include?(id)
+    end
+    assert_equal 80, g.vcount
+  end
+
   def test_delete_edge
     graph = IGraph.new(['A','B','C','D'],true)
     assert_equal true, graph.are_connected?('A','B')
