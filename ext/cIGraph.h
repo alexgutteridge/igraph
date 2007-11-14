@@ -200,8 +200,17 @@ VALUE cIGraph_motifs_randesu_estimate(VALUE self, VALUE size, VALUE cuts,
 //File handling
 VALUE cIGraph_read_graph_edgelist (VALUE self, VALUE file, VALUE mode);
 VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file);
+VALUE cIGraph_read_graph_ncol     (VALUE self, VALUE file, VALUE predefnames, VALUE names, VALUE weights, VALUE directed);
+VALUE cIGraph_write_graph_ncol    (VALUE self, VALUE file, VALUE names, VALUE weights);
+VALUE cIGraph_read_graph_lgl      (VALUE self, VALUE file, VALUE names, VALUE weights);
+VALUE cIGraph_write_graph_lgl     (VALUE self, VALUE file, VALUE names, VALUE weights, VALUE isolates);
+VALUE cIGraph_read_graph_dimacs   (VALUE self, VALUE file, VALUE directed);
+VALUE cIGraph_write_graph_dimacs  (VALUE self, VALUE file, VALUE source, VALUE target, VALUE capacity);
+VALUE cIGraph_read_graph_graphdb  (VALUE self, VALUE file, VALUE directed);
 VALUE cIGraph_read_graph_graphml  (VALUE self, VALUE file, VALUE index);
 VALUE cIGraph_write_graph_graphml (VALUE self, VALUE file);
+VALUE cIGraph_read_graph_gml      (VALUE self, VALUE file);
+VALUE cIGraph_write_graph_gml     (VALUE self, VALUE file);
 VALUE cIGraph_read_graph_pajek    (VALUE self, VALUE file);
 VALUE cIGraph_write_graph_pajek   (VALUE self, VALUE file);
 
@@ -259,6 +268,45 @@ VALUE cIGraph_layout_kamada_kawai_3d        (VALUE self,
 					     VALUE kkconst);
 
 VALUE cIGraph_layout_merge_dla(VALUE self, VALUE graphs, VALUE layouts);
+
+//Min cuts
+VALUE cIGraph_maxflow_value  (VALUE self, VALUE source, VALUE target, VALUE capacity);
+VALUE cIGraph_st_mincut_value(VALUE self, VALUE source, VALUE target, VALUE capacity);
+VALUE cIGraph_mincut_value   (VALUE self, VALUE capacity);
+VALUE cIGraph_mincut         (VALUE self, VALUE capacity);
+
+//Connectivity
+VALUE cIGraph_st_edge_connectivity  (VALUE self, VALUE source, VALUE target);
+VALUE cIGraph_edge_connectivity     (VALUE self);
+VALUE cIGraph_st_vertex_connectivity(VALUE self, VALUE source, VALUE target, VALUE neighbours);
+VALUE cIGraph_vertex_connectivity   (VALUE self);
+VALUE cIGraph_edge_disjoint_paths   (VALUE self, VALUE source, VALUE target);
+VALUE cIGraph_vertex_disjoint_paths (VALUE self, VALUE source, VALUE target);
+VALUE cIGraph_adhesion(VALUE self);
+VALUE cIGraph_cohesion(VALUE self);
+
+//Community
+VALUE cIGraph_modularity                         (VALUE self, VALUE groups);
+VALUE cIGraph_community_to_membership            (VALUE self, VALUE merge, 
+						  VALUE steps);
+VALUE cIGraph_community_spinglass                (VALUE self, VALUE weights, 
+						  VALUE spins, 
+						  VALUE parupdate,
+						  VALUE starttemp, 
+						  VALUE stoptemp, 
+						  VALUE coolfact, 
+						  VALUE update_rule, 
+						  VALUE gamma);
+VALUE cIGraph_community_spinglass_single         (VALUE self, VALUE weights, 
+						  VALUE vertex, 
+						  VALUE spins, 
+						  VALUE update_rule, 
+						  VALUE gamma);
+VALUE cIGraph_community_leading_eigenvector      (VALUE self, VALUE steps);
+VALUE cIGraph_community_leading_eigenvector_naive(VALUE self, VALUE steps);
+VALUE cIGraph_community_leading_eigenvector_step (VALUE self, 
+						  VALUE membership, 
+						  VALUE steps);
 
 //Attributes
 int cIGraph_attribute_init(igraph_t *graph, 

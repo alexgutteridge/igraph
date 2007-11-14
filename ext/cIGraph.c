@@ -171,6 +171,18 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
 
 void Init_igraph(){
 
+  //Modules
+  VALUE cIGraph_connectivity;
+  VALUE cIGraph_mincuts;
+  VALUE cIGraph_layout;
+  VALUE cIGraph_clique;
+  VALUE cIGraph_indyver;
+  VALUE cIGraph_isomor;
+  VALUE cIGraph_motifs;
+  VALUE cIGraph_sorting;
+  VALUE cIGraph_filewrite; 
+  VALUE cIGraph_community;
+
   igraph_i_set_attribute_table(&cIGraph_attribute_table);
   igraph_set_error_handler(cIGraph_error_handler);
   igraph_set_warning_handler(cIGraph_warning_handler);  
@@ -225,6 +237,13 @@ void Init_igraph(){
   rb_define_const(cIGraph, "TREE_OUT",        INT2NUM(0));
   rb_define_const(cIGraph, "TREE_IN",         INT2NUM(1));
   rb_define_const(cIGraph, "TREE_UNDIRECTED", INT2NUM(2));
+
+  rb_define_const(cIGraph, "VCONN_NEI_ERROR",    INT2NUM(0));
+  rb_define_const(cIGraph, "VCONN_NEI_INFINITY", INT2NUM(1));
+  rb_define_const(cIGraph, "VCONN_NEI_IGNORE",   INT2NUM(2));  
+
+  rb_define_const(cIGraph, "SPINCOMM_UPDATE_SIMPLE", INT2NUM(0));
+  rb_define_const(cIGraph, "SPINCOMM_UPDATE_CONFIG", INT2NUM(1));  
 
   rb_define_singleton_method(cIGraph, "adjacency", cIGraph_adjacency, 2); /* in cIGraph_generators_deterministic.c */
   rb_define_singleton_method(cIGraph, "star", cIGraph_star, 3); /* in cIGraph_generators_deterministic.c */ 
@@ -348,51 +367,127 @@ void Init_igraph(){
   rb_define_method(cIGraph, "cocitation",    cIGraph_cocitation,    1); /* in cIGraph_other_ops.c */
   rb_define_method(cIGraph, "get_adjacency", cIGraph_get_adjacency, 1); /* in cIGraph_other_ops.c */
   
-  rb_define_method(cIGraph, "cliques",         cIGraph_cliques,         2); /* in cIGraph_cliques.c */
-  rb_define_method(cIGraph, "largest_cliques", cIGraph_largest_cliques, 0); /* in cIGraph_cliques.c */ 
-  rb_define_method(cIGraph, "maximal_cliques", cIGraph_maximal_cliques, 0); /* in cIGraph_cliques.c */ 
-  rb_define_method(cIGraph, "clique_number",   cIGraph_clique_number,   0); /* in cIGraph_cliques.c */ 
+  //cliques
+  cIGraph_clique = rb_define_module_under(cIGraph, "Cliques");
+  rb_include_module(cIGraph, cIGraph_clique);   
 
-  rb_define_method(cIGraph, "independent_vertex_sets", cIGraph_independent_vertex_sets, 2); /* in cIGraph_independent_vertex_sets.c */
-  rb_define_method(cIGraph, "largest_independent_vertex_sets", cIGraph_largest_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
-  rb_define_method(cIGraph, "maximal_independent_vertex_sets", cIGraph_maximal_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
-  rb_define_method(cIGraph, "independence_number", cIGraph_independence_number, 0); /* in cIGraph_independent_vertex_sets.c */
+  rb_define_method(cIGraph_clique, "cliques",         cIGraph_cliques,         2); /* in cIGraph_cliques.c */
+  rb_define_method(cIGraph_clique, "largest_cliques", cIGraph_largest_cliques, 0); /* in cIGraph_cliques.c */ 
+  rb_define_method(cIGraph_clique, "maximal_cliques", cIGraph_maximal_cliques, 0); /* in cIGraph_cliques.c */ 
+  rb_define_method(cIGraph_clique, "clique_number",   cIGraph_clique_number,   0); /* in cIGraph_cliques.c */ 
 
-  rb_define_method(cIGraph, "isomorphic",     cIGraph_isomorphic,     1); /* in cIGraph_isomorphism.c */
-  rb_define_method(cIGraph, "isomorphic_vf2", cIGraph_isomorphic_vf2, 1); /* in cIGraph_isomorphism.c */
-  rb_define_method(cIGraph, "isoclass", cIGraph_isoclass, 0); /* in cIGraph_isomorphism.c */
-  rb_define_method(cIGraph, "isoclass_subgraph", cIGraph_isoclass_subgraph, 1); /* in cIGraph_isomorphism.c */
+  //Motifs
+  cIGraph_indyver = rb_define_module_under(cIGraph, "IndependentVertexSets");
+  rb_include_module(cIGraph, cIGraph_indyver);  
+
+  rb_define_method(cIGraph_indyver, "independent_vertex_sets", cIGraph_independent_vertex_sets, 2); /* in cIGraph_independent_vertex_sets.c */
+  rb_define_method(cIGraph_indyver, "largest_independent_vertex_sets", cIGraph_largest_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
+  rb_define_method(cIGraph_indyver, "maximal_independent_vertex_sets", cIGraph_maximal_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
+  rb_define_method(cIGraph_indyver, "independence_number", cIGraph_independence_number, 0); /* in cIGraph_independent_vertex_sets.c */
+
+  //Motifs
+  cIGraph_isomor = rb_define_module_under(cIGraph, "Isomorphism");
+  rb_include_module(cIGraph, cIGraph_isomor);  
+
+  rb_define_method(cIGraph_isomor, "isomorphic",     cIGraph_isomorphic,     1); /* in cIGraph_isomorphism.c */
+  rb_define_method(cIGraph_isomor, "isomorphic_vf2", cIGraph_isomorphic_vf2, 1); /* in cIGraph_isomorphism.c */
+  rb_define_method(cIGraph_isomor, "isoclass", cIGraph_isoclass, 0); /* in cIGraph_isomorphism.c */
+  rb_define_method(cIGraph_isomor, "isoclass_subgraph", cIGraph_isoclass_subgraph, 1); /* in cIGraph_isomorphism.c */
   rb_define_singleton_method(cIGraph, "isoclass_create", cIGraph_isoclass_create, 3); /* in cIGraph_isomorphism.c */
 
-  rb_define_method(cIGraph, "motifs_randesu",          cIGraph_motifs_randesu,          2); /* in cIGraph_motif.c */ 
-  rb_define_method(cIGraph, "motifs_randesu_no",       cIGraph_motifs_randesu_no,       2); /* in cIGraph_motif.c */ 
-  rb_define_method(cIGraph, "motifs_randesu_estimate", cIGraph_motifs_randesu_estimate, 4); /* in cIGraph_motif.c */ 
+  //Motifs
+  cIGraph_motifs = rb_define_module_under(cIGraph, "Motifs");
+  rb_include_module(cIGraph, cIGraph_motifs);  
 
-  rb_define_method(cIGraph, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
+  rb_define_method(cIGraph_motifs, "motifs_randesu",          cIGraph_motifs_randesu,          2); /* in cIGraph_motif.c */ 
+  rb_define_method(cIGraph_motifs, "motifs_randesu_no",       cIGraph_motifs_randesu_no,       2); /* in cIGraph_motif.c */ 
+  rb_define_method(cIGraph_motifs, "motifs_randesu_estimate", cIGraph_motifs_randesu_estimate, 4); /* in cIGraph_motif.c */ 
+
+  //File write
+  cIGraph_sorting = rb_define_module_under(cIGraph, "Sorting");
+  rb_include_module(cIGraph, cIGraph_sorting);  
+
+  rb_define_method(cIGraph_sorting, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
+
+  //File read
 
   rb_define_singleton_method(cIGraph, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */
-  rb_define_singleton_method(cIGraph, "read_graph_graphml", cIGraph_read_graph_graphml, 2);   /* in cIGraph_file.c */  
-  rb_define_singleton_method(cIGraph, "read_graph_pajek", cIGraph_read_graph_pajek, 2);       /* in cIGraph_file.c */  
-  rb_define_method(cIGraph, "write_graph_edgelist", cIGraph_write_graph_edgelist, 1);         /* in cIGraph_file.c */
-  rb_define_method(cIGraph, "write_graph_graphml", cIGraph_write_graph_graphml,   1);         /* in cIGraph_file.c */  
-  rb_define_method(cIGraph, "write_graph_pajek", cIGraph_write_graph_pajek, 1);               /* in cIGraph_file.c */
+  rb_define_singleton_method(cIGraph, "read_graph_graphml",  cIGraph_read_graph_graphml, 2);  /* in cIGraph_file.c */  
+  rb_define_singleton_method(cIGraph, "read_graph_ncol",     cIGraph_read_graph_ncol, 5);     /* in cIGraph_file.c */ 
+  rb_define_singleton_method(cIGraph, "read_graph_lgl",      cIGraph_read_graph_lgl,  3);     /* in cIGraph_file.c */ 
+  rb_define_singleton_method(cIGraph, "read_graph_dimacs",   cIGraph_read_graph_dimacs, 2);     /* in cIGraph_file.c */ 
+  rb_define_singleton_method(cIGraph, "read_graph_graphdb",  cIGraph_read_graph_graphdb, 2);     /* in cIGraph_file.c */ 
+  rb_define_singleton_method(cIGraph, "read_graph_gml",      cIGraph_read_graph_gml,  1);     /* in cIGraph_file.c */ 
+  rb_define_singleton_method(cIGraph, "read_graph_pajek",    cIGraph_read_graph_pajek, 2);    /* in cIGraph_file.c */
+  
+  //File write
+  cIGraph_filewrite = rb_define_module_under(cIGraph, "FileWrite");
+  rb_include_module(cIGraph, cIGraph_filewrite);
 
-  rb_define_method(cIGraph, "layout_random",                    cIGraph_layout_random,                        0); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_circle",                    cIGraph_layout_circle,                        0); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_fruchterman_reingold",      cIGraph_layout_fruchterman_reingold,          6); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_kamada_kawai",              cIGraph_layout_kamada_kawai,                  5); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_reingold_tilford",          cIGraph_layout_reingold_tilford,              1); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_reingold_tilford_circular", cIGraph_layout_reingold_tilford_circular, 1); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_grid_fruchterman_reingold", cIGraph_layout_grid_fruchterman_reingold,     7); /* in cIGraph_layout.c */
-  rb_define_method(cIGraph, "layout_lgl",                       cIGraph_layout_lgl,                           7); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_filewrite, "write_graph_edgelist", cIGraph_write_graph_edgelist, 1);  /* in cIGraph_file.c */
+  rb_define_method(cIGraph_filewrite, "write_graph_graphml",  cIGraph_write_graph_graphml,   1); /* in cIGraph_file.c */  
+  rb_define_method(cIGraph_filewrite, "write_graph_gml",      cIGraph_write_graph_gml,    1); /* in cIGraph_file.c */  
+  rb_define_method(cIGraph_filewrite, "write_graph_ncol",     cIGraph_write_graph_ncol,   3);    /* in cIGraph_file.c */    
+  rb_define_method(cIGraph_filewrite, "write_graph_lgl",      cIGraph_write_graph_lgl,   4);    /* in cIGraph_file.c */ 
+  rb_define_method(cIGraph_filewrite, "write_graph_dimacs",   cIGraph_write_graph_dimacs, 4);    /* in cIGraph_file.c */ 
+  rb_define_method(cIGraph_filewrite, "write_graph_pajek",    cIGraph_write_graph_pajek, 1);     /* in cIGraph_file.c */
 
-  rb_define_method(cIGraph, "layout_random_3d",               cIGraph_layout_random_3d,               0); /* in cIGraph_layout3d.c */
-  rb_define_method(cIGraph, "layout_sphere",                  cIGraph_layout_sphere,                  0); /* in cIGraph_layout3d.c */
-  rb_define_method(cIGraph, "layout_fruchterman_reingold_3d", cIGraph_layout_fruchterman_reingold_3d, 6); /* in cIGraph_layout3d.c */
-  rb_define_method(cIGraph, "layout_kamada_kawai_3d",         cIGraph_layout_kamada_kawai_3d,         5); /* in cIGraph_layout3d.c */
+  //Layouts
+  cIGraph_layout = rb_define_module_under(cIGraph, "Layout");
+  rb_include_module(cIGraph, cIGraph_layout);
 
+  rb_define_method(cIGraph_layout, "layout_random",                    cIGraph_layout_random,                        0); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_layout, "layout_circle",                    cIGraph_layout_circle,                        0); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_layout, "layout_fruchterman_reingold",      cIGraph_layout_fruchterman_reingold,          6); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_layout, "layout_kamada_kawai",              cIGraph_layout_kamada_kawai,                  5); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_layout, "layout_reingold_tilford",          cIGraph_layout_reingold_tilford,              1); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_layout, "layout_reingold_tilford_circular", cIGraph_layout_reingold_tilford_circular, 1); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_layout, "layout_grid_fruchterman_reingold", cIGraph_layout_grid_fruchterman_reingold,     7); /* in cIGraph_layout.c */
+  rb_define_method(cIGraph_layout, "layout_lgl",                       cIGraph_layout_lgl,                           7); /* in cIGraph_layout.c */
+
+  rb_define_method(cIGraph_layout, "layout_random_3d",               cIGraph_layout_random_3d,               0); /* in cIGraph_layout3d.c */
+  rb_define_method(cIGraph_layout, "layout_sphere",                  cIGraph_layout_sphere,                  0); /* in cIGraph_layout3d.c */
+  rb_define_method(cIGraph_layout, "layout_fruchterman_reingold_3d", cIGraph_layout_fruchterman_reingold_3d, 6); /* in cIGraph_layout3d.c */
+  rb_define_method(cIGraph_layout, "layout_kamada_kawai_3d",         cIGraph_layout_kamada_kawai_3d,         5); /* in cIGraph_layout3d.c */
 
   rb_define_singleton_method(cIGraph, "layout_merge_dla", cIGraph_layout_merge_dla, 2); /* in cIGraph_layout.c */
+
+  //Min cuts
+  cIGraph_mincuts = rb_define_module_under(cIGraph, "MinimumCuts");
+  rb_include_module(cIGraph, cIGraph_mincuts);
+
+  rb_define_method(cIGraph_mincuts, "maxflow_value",   cIGraph_maxflow_value,   3); /* in cIGraph_min_cuts.c */ 
+  rb_define_method(cIGraph_mincuts, "st_mincut_value", cIGraph_st_mincut_value, 3); /* in cIGraph_min_cuts.c */  
+  rb_define_method(cIGraph_mincuts, "mincut_value",    cIGraph_mincut_value,    1); /* in cIGraph_min_cuts.c */
+  rb_define_method(cIGraph_mincuts, "mincut",          cIGraph_mincut,          1); /* in cIGraph_min_cuts.c */
+
+  //Connectivity
+  cIGraph_connectivity = rb_define_module_under(cIGraph, "Connectivity");
+  rb_include_module(cIGraph, cIGraph_connectivity);
+
+  rb_define_method(cIGraph_connectivity, "st_edge_connectivity",   cIGraph_st_edge_connectivity,   2); /* in cIGraph_connectivity.c */   
+  rb_define_method(cIGraph_connectivity, "edge_connectivity",      cIGraph_edge_connectivity,      0); /* in cIGraph_connectivity.c */   
+  rb_define_method(cIGraph_connectivity, "st_vertex_connectivity", cIGraph_st_vertex_connectivity, 3); /* in cIGraph_connectivity.c */   
+  rb_define_method(cIGraph_connectivity, "vertex_connectivity",    cIGraph_vertex_connectivity,    0); /* in cIGraph_connectivity.c */   
+  rb_define_method(cIGraph_connectivity, "edge_disjoint_paths",    cIGraph_edge_disjoint_paths,    2); /* in cIGraph_connectivity.c */ 
+  rb_define_method(cIGraph_connectivity, "vertex_disjoint_paths",  cIGraph_vertex_disjoint_paths,  2); /* in cIGraph_connectivity.c */ 
+  rb_define_method(cIGraph_connectivity, "adhesion",               cIGraph_adhesion,               0); /* in cIGraph_connectivity.c */    
+  rb_define_method(cIGraph_connectivity, "cohesion",               cIGraph_cohesion,               0); /* in cIGraph_connectivity.c */   
+
+  //Community
+  cIGraph_community = rb_define_module_under(cIGraph, "Community");
+  rb_include_module(cIGraph, cIGraph_community);
+  
+  rb_define_method(cIGraph_community, "modularity",   cIGraph_modularity,   1); /* in cIGraph_community.c */
+  rb_define_method(cIGraph_community, "community_to_membership", cIGraph_community_to_membership, 2);  /* in cIGraph_community.c */
+  rb_define_method(cIGraph_community, "community_spinglass", cIGraph_community_spinglass, 8);  /* in cIGraph_community.c */
+  rb_define_method(cIGraph_community, "community_spinglass_single", cIGraph_community_spinglass_single, 5);  /* in cIGraph_community.c */
+  rb_define_method(cIGraph_community, "community_leading_eigenvector", cIGraph_community_leading_eigenvector, 1);  /* in cIGraph_community.c */      
+  rb_define_method(cIGraph_community, "community_leading_eigenvector_naive", cIGraph_community_leading_eigenvector_naive, 1);  /* in cIGraph_community.c */
+  rb_define_method(cIGraph_community, "community_leading_eigenvector_step", cIGraph_community_leading_eigenvector_step, 2);  /* in cIGraph_community.c */       //rb_define_method(cIGraph_community, "community_walktrap", cIGraph_community_walktrap, 2);  /* in cIGraph_community.c */      
+  //rb_define_method(cIGraph_community, "community_edge_betweenness", cIGraph_community_edge_betweenness, 1);  /* in cIGraph_community.c */  
+  //rb_define_method(cIGraph_community, "community_eb_get_merges", cIGraph_community_eb_get_merges, 1);  /* in cIGraph_community.c */  
+  //rb_define_method(cIGraph_community, "community_fastgreedy", cIGraph_community_fastgreedy, 0);  /* in cIGraph_community.c */  
 
   //Matrix class
   cIGraphMatrix = rb_define_class("IGraphMatrix", rb_cObject);
