@@ -497,9 +497,9 @@ igraph_bool_t cIGraph_attribute_has_attr(const igraph_t *graph,
   VALUE obj;
 
   switch (type) {
-  case IGRAPH_ATTRIBUTE_GRAPH: attrnum=0; break;
-  case IGRAPH_ATTRIBUTE_VERTEX: attrnum=1; break;
-  case IGRAPH_ATTRIBUTE_EDGE: attrnum=2; break;
+  case IGRAPH_ATTRIBUTE_GRAPH:  attrnum = 2; break;
+  case IGRAPH_ATTRIBUTE_VERTEX: attrnum = 0; break;
+  case IGRAPH_ATTRIBUTE_EDGE:   attrnum = 1; break;
   default: return 0; break;
   }
 
@@ -507,14 +507,14 @@ igraph_bool_t cIGraph_attribute_has_attr(const igraph_t *graph,
   if (attrnum != 2)
     obj = RARRAY(obj)->ptr[0];
 
-  if(rb_funcall(obj,rb_intern("include?"), 1, rb_str_new2(name))){
+  if(TYPE(obj) == T_HASH && rb_funcall(obj,rb_intern("include?"), 1, rb_str_new2(name))){
     res = 1;
   }
 
 #ifdef DEBUG
   printf("Leaving cIGraph_attribute_has_attr\n");
 #endif
-
+  
   return res;
 }
 
@@ -533,9 +533,9 @@ int cIGraph_attribute_get_type(const igraph_t *graph,
   VALUE val;
 
   switch (elemtype) {
-  case IGRAPH_ATTRIBUTE_GRAPH: attrnum=0; break;
-  case IGRAPH_ATTRIBUTE_VERTEX: attrnum=1; break;
-  case IGRAPH_ATTRIBUTE_EDGE: attrnum=2; break;
+  case IGRAPH_ATTRIBUTE_GRAPH:  attrnum = 2; break;
+  case IGRAPH_ATTRIBUTE_VERTEX: attrnum = 0; break;
+  case IGRAPH_ATTRIBUTE_EDGE:   attrnum = 1; break;
   default: return 0; break;
   }
 
@@ -543,7 +543,9 @@ int cIGraph_attribute_get_type(const igraph_t *graph,
   if (attrnum != 2)
     obj = RARRAY(obj)->ptr[0];
 
-  if(rb_funcall(obj,rb_intern("includes"), rb_str_new2(name))){
+  rb_funcall(obj,rb_intern("include?"), 1, rb_str_new2(name));
+
+  if(rb_funcall(obj,rb_intern("include?"), 1, rb_str_new2(name))){
     val = rb_hash_aref(obj,rb_str_new2(name));
     if (TYPE(val) == T_STRING){
       *type = IGRAPH_ATTRIBUTE_STRING;
@@ -552,7 +554,9 @@ int cIGraph_attribute_get_type(const igraph_t *graph,
     } else {
       *type = IGRAPH_ATTRIBUTE_PY_OBJECT;
     }
-  }  
+  } else {
+    *type = IGRAPH_ATTRIBUTE_PY_OBJECT;
+  }
 
 #ifdef DEBUG
   printf("Leaving cIGraph_attribute_get_type\n");
@@ -736,7 +740,7 @@ int cIGraph_get_string_edge_attr(const igraph_t *graph,
 #endif
 
   VALUE array = ((VALUE*)graph->attr)[1];
-  VALUE val, vertex;
+  VALUE val, edge;
   igraph_eit_t it;
   int i=0;
 
@@ -745,10 +749,16 @@ int cIGraph_get_string_edge_attr(const igraph_t *graph,
   IGRAPH_CHECK(igraph_strvector_resize(value, IGRAPH_EIT_SIZE(it)));
 
   while(!IGRAPH_EIT_END(it)){
-    vertex = RARRAY(array)->ptr[(int)IGRAPH_EIT_GET(it)];
-    val = rb_hash_aref(vertex,rb_str_new2(name));
+    edge = RARRAY(array)->ptr[(int)IGRAPH_EIT_GET(it)];
+
+    val = rb_hash_aref(edge,rb_str_new2(name));
+
     if(val == Qnil)
       val = rb_str_new2("");
+
+    //Fix for floats when required by ncol write
+    val = rb_funcall(val,rb_intern("to_s"),0);
+
     igraph_strvector_set(value,i,RSTRING(val)->ptr);
     IGRAPH_EIT_NEXT(it);
     i++;

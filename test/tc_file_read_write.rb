@@ -21,6 +21,93 @@ class TestGraph < Test::Unit::TestCase
     assert_equal "0 1\n2 3\n", s.read
   end
 
+  def test_ncol_read
+    g = nil
+    assert_nothing_raised{
+      g = IGraph.read_graph_ncol(StringIO.new("0 1\n2 3\n"),[],
+				 false,false,false)
+    }
+    assert_instance_of IGraph, g
+    assert_equal 4, g.vcount
+    assert g.are_connected?(0,1)   
+
+    assert_nothing_raised{
+      g = IGraph.read_graph_ncol(StringIO.new("A B\nC D\n"),[],
+				 true,false,false)
+    }
+    assert_instance_of IGraph, g
+    assert_equal 4, g.vcount
+    assert g.are_connected?('A','B')   
+    
+    assert_nothing_raised{
+      g = IGraph.read_graph_ncol(StringIO.new("A B 1\nC D 2\n"),[],
+				 true,true,false)
+    }
+    assert_instance_of IGraph, g
+    assert_equal 4, g.vcount
+    assert g.are_connected?('A','B')       
+    assert_equal 1, g['A','B']
+  end
+
+  def test_ncol_write
+    g = IGraph.new(["A","B","C","D"],true,[1,2])
+    s = StringIO.new("")
+    str = g.write_graph_ncol(s,true,true)
+    s.rewind
+    assert_equal "A B 1.0\nC D 2.0\n", s.read
+  end
+
+  def test_lgl_read
+    g = nil
+    assert_nothing_raised{
+      g = IGraph.read_graph_lgl(StringIO.new("#A\nB\n#C\nD\n"),
+				 false,false)
+    }
+    assert_instance_of IGraph, g
+    assert_equal 4, g.vcount
+    assert g.are_connected?(0,1)   
+
+    assert_nothing_raised{
+      g = IGraph.read_graph_lgl(StringIO.new("#A\nB 1\n#C\nD 1\n"),
+				 true,true)
+    }
+    assert_instance_of IGraph, g
+    assert_equal 4, g.vcount
+    assert g.are_connected?('A','B')       
+    assert_equal 1, g['A','B']
+  end
+
+  def test_lgl_write
+    g = IGraph.new(["A","B","C","D"],true,[1,2])
+    s = StringIO.new("")
+    str = g.write_graph_lgl(s,true,true,false)
+    s.rewind
+    assert_equal "# A\nB 1.0\n# C\nD 2.0\n", s.read
+  end
+
+  def test_dimacs_read
+    g = nil
+    assert_nothing_raised{
+      s = StringIO.new("c com\np min 4 2\nn 1 s\nn 2 t\na 1 2 1\na 3 4 2\n")
+      g = IGraph.read_graph_dimacs(s,
+				   false)
+    }
+    assert_instance_of IGraph, g
+    assert_equal 4, g.vcount
+    assert g.are_connected?(0,1)   
+    assert_equal 0, g.attributes['source']
+    assert_equal 1, g.attributes['target']
+    assert_equal [1,2], g.attributes['capacity']
+  end
+
+  def test_dimacs_write
+    g = IGraph.new(["A","B","C","D"],true,[1,2])
+    s = StringIO.new("")
+    str = g.write_graph_dimacs(s,0,1,[1,2])
+    s.rewind
+    assert_equal "c created by igraph\np max 4 2\nn 1 s\nn 2 t\na 1 2 1\na 3 4 2\n", s.read
+  end
+
   def test_graphml_read
     g = nil
     g = IGraph.read_graph_graphml(StringIO.new(Graphml),0)
@@ -44,6 +131,28 @@ class TestGraph < Test::Unit::TestCase
     str = g.write_graph_graphml(s)
     s.rewind
     assert_equal Graphml_out, s.read
+  end
+
+  def test_gml_read
+    g = IGraph.read_graph_gml(StringIO.new(Gml))
+    assert_instance_of IGraph, g
+  end
+
+  def test_gml_write
+    g = IGraph.new([{'id'=>0,'name'=>'a','type' => 4.0},
+                    {'id'=>1,'name'=>'b','type' => 5},
+                    {'id'=>2,'type' => 6},
+                    {'id'=>3,'name'=>'d'}],
+                   true,
+                   [{'eid'=>'e1'},
+                    {'eid'=>'e2'}])
+    g.attributes['date'] = 'Friday'
+    s = StringIO.new("")
+    str = g.write_graph_gml(s)
+    s.rewind
+    s = s.read
+    s = s.split(/\n/)[1..-1].join("\n")
+    assert_equal Gml_out, s
   end
 
   def test_pajek_read_write
@@ -157,5 +266,86 @@ awing.org/xmlns/1.0/graphml.xsd">
 1 3 2
 2 3 2
 }
+
+  Gml = %q{graph [
+    comment "This is a sample graph"
+    directed 1
+    id 42
+    label "Hello, I am a graph"
+    node [
+        id 1
+        label "Node 1"
+        thisIsASampleAttribute 42
+    ]
+    node [
+        id 2
+        label "node 2"
+        thisIsASampleAttribute 43
+    ]
+    node [
+        id 3
+        label "node 3"
+        thisIsASampleAttribute 44
+    ]
+    edge [
+        source 1
+        target 2
+        label "Edge from node 1 to node 2"
+    ]
+    edge [
+        source 2
+        target 3
+        label "Edge from node 2 to node 3"
+    ]
+    edge [
+        source 3
+        target 1
+        label "Edge from node 3 to node 1"
+    ]
+]
+}
+
+  Gml_out = %q{Version 1
+graph
+[
+  directed 0
+  date "Friday"
+  node
+  [
+    id 0
+    name "a"
+    type 4
+  ]
+  node
+  [
+    id 1
+    name "b"
+    type 5
+  ]
+  node
+  [
+    id 2
+    name ""
+    type 6
+  ]
+  node
+  [
+    id 3
+    name "d"
+    type nan
+  ]
+  edge
+  [
+    source 0
+    target 1
+    eid "e1"
+  ]
+  edge
+  [
+    source 2
+    target 3
+    eid "e2"
+  ]
+]}
 
 end
