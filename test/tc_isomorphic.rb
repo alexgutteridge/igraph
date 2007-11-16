@@ -27,7 +27,7 @@ class TestGraph < Test::Unit::TestCase
   end
   def test_igraph_isoclass_create
     g = IGraph.new([1,2,3,4],false)
-    h = IGraph.isoclass_create(4,g.isoclass,false)
+    h = IGraph::Generate.isoclass_create(4,g.isoclass,false)
     assert_equal g.isoclass, h.isoclass
   end
 end

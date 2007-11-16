@@ -63,7 +63,7 @@ VALUE cIGraph_cited_type_game(VALUE self, VALUE nodes, VALUE types, VALUE pref, 
 VALUE cIGraph_citing_cited_type_game(VALUE self, VALUE nodes, VALUE types, VALUE pref, VALUE e_per_s, VALUE directed);
 
 VALUE cIGraph_rewire_edges(VALUE self, VALUE prop);
-VALUE cIGraph_rewire(VALUE self, VALUE n, VALUE mode);
+VALUE cIGraph_rewire(VALUE self, VALUE n);
 
 //Attribute accessors
 int replace_i(VALUE key, VALUE val, VALUE hash);
@@ -258,8 +258,7 @@ VALUE cIGraph_layout_fruchterman_reingold_3d(VALUE self,
 					     VALUE maxdelta,
 					     VALUE volume,
 					     VALUE coolexp,
-					     VALUE repulserad,
-					     VALUE use_seed);
+					     VALUE repulserad);
 VALUE cIGraph_layout_kamada_kawai_3d        (VALUE self,
 					     VALUE niter,
 					     VALUE sigma,
@@ -307,6 +306,14 @@ VALUE cIGraph_community_leading_eigenvector_naive(VALUE self, VALUE steps);
 VALUE cIGraph_community_leading_eigenvector_step (VALUE self, 
 						  VALUE membership, 
 						  VALUE steps);
+VALUE cIGraph_community_walktrap                 (VALUE self, 
+						  VALUE weights, 
+						  VALUE steps);
+VALUE cIGraph_community_edge_betweenness         (VALUE self, 
+						  VALUE directed);
+VALUE cIGraph_community_eb_get_merges            (VALUE self, 
+						  VALUE edges);
+VALUE cIGraph_community_fastgreedy               (VALUE self);
 
 //Attributes
 int cIGraph_attribute_init(igraph_t *graph, 

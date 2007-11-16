@@ -8,6 +8,8 @@ igraph_integer_t cIGraph_get_vertex_id(VALUE graph, VALUE v){
   VALUE idx;
   igraph_t *igraph;
 
+  VALUE str;
+
   Data_Get_Struct(graph, igraph_t, igraph);
   v_ary = ((VALUE*)igraph->attr)[0];
 
