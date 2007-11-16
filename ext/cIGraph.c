@@ -193,7 +193,8 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
  * - Connectivity: IGraph::Connectivity
  * - Community: IGraph::Community
  *
- * And so on.
+ * Some methods return (or require as a paramter) an IGraphMatrix object. This
+ * class wraps the igraph C matrix type.
  */
 
 void Init_igraph(){
@@ -348,7 +349,7 @@ void Init_igraph(){
   rb_define_alias (cIGraph_neighborhoodm, "neighborhood_graphs", "neighbourhood_graphs");
   rb_define_method(cIGraph_neighborhoodm, "connect_neighborhood", cIGraph_connect_neighborhood, 2); /* in cIGraph_generators_deterministic.c */
 
-  //Components
+  /* Functions for splitting the graph into components */
   cIGraph_components = rb_define_module_under(cIGraph, "Components");
   rb_include_module(cIGraph, cIGraph_components);     
 
@@ -357,7 +358,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_components, "clusters",     cIGraph_clusters,     1); /* in cIGraph_components.c */
   rb_define_method(cIGraph_components, "decompose",    cIGraph_decompose,   -1); /* in cIGraph_components.c */
 
-  //closeness
+  /* Graph centrality functions */
   cIGraph_closenessm = rb_define_module_under(cIGraph, "Closeness");
   rb_include_module(cIGraph, cIGraph_closenessm);     
 
@@ -368,14 +369,14 @@ void Init_igraph(){
   rb_define_method(cIGraph_closenessm, "constraint",       cIGraph_constraint,      -1); /* in cIGraph_centrality.c */  
   rb_define_method(cIGraph_closenessm, "maxdegree",        cIGraph_maxdegree,        3); /* in cIGraph_centrality.c */    
 
-  //spanning
+  /* Minimum spanning tree functions */
   cIGraph_spanning = rb_define_module_under(cIGraph, "Spanning");
   rb_include_module(cIGraph, cIGraph_spanning);     
 
   rb_define_method(cIGraph_spanning, "minimum_spanning_tree_unweighted", cIGraph_minimum_spanning_tree_unweighted, 0); /* in cIGraph_spanning.c */
   rb_define_method(cIGraph_spanning, "minimum_spanning_tree_prim",       cIGraph_minimum_spanning_tree_prim,       1); /* in cIGraph_spanning.c */
   
-  //transitivity
+  /* Graph transitivity functions */
   cIGraph_transitivitym = rb_define_module_under(cIGraph, "Transitivity");
   rb_include_module(cIGraph, cIGraph_transitivitym);     
 
@@ -383,19 +384,19 @@ void Init_igraph(){
   rb_define_method(cIGraph_transitivitym, "transitivity_local",    cIGraph_transitivity_local,    1); /* in cIGraph_transitivity.c */
   rb_define_method(cIGraph_transitivitym, "transitivity_avglocal", cIGraph_transitivity_avglocal, 0); /* in cIGraph_transitivity.c */
 
-  //spectral
+  /* Functions for the Laplacian matrix. */
   cIGraph_spectral = rb_define_module_under(cIGraph, "Spectral");
   rb_include_module(cIGraph, cIGraph_spectral);     
 
   rb_define_method(cIGraph_spectral, "laplacian", cIGraph_laplacian, 1); /* in cIGraph_spectral.c */
 
-  //kcores
+  /* Functions for finding the coreness of a graph */
   cIGraph_kcore = rb_define_module_under(cIGraph, "KCores");
   rb_include_module(cIGraph, cIGraph_kcore);     
 
   rb_define_method(cIGraph_kcore, "coreness", cIGraph_coreness, 1); /* in cIGraph_kcores.c */
 
-  //cliques
+  /* Other general graph operations */
   cIGraph_otherop = rb_define_module_under(cIGraph, "OtherOperations");
   rb_include_module(cIGraph, cIGraph_otherop);   
 
@@ -406,7 +407,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_otherop, "cocitation",    cIGraph_cocitation,    1); /* in cIGraph_other_ops.c */
   rb_define_method(cIGraph_otherop, "get_adjacency", cIGraph_get_adjacency, 1); /* in cIGraph_other_ops.c */
   
-  //cliques
+  /* Clique finding functions */
   cIGraph_clique = rb_define_module_under(cIGraph, "Cliques");
   rb_include_module(cIGraph, cIGraph_clique);   
 
@@ -415,7 +416,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_clique, "maximal_cliques", cIGraph_maximal_cliques, 0); /* in cIGraph_cliques.c */ 
   rb_define_method(cIGraph_clique, "clique_number",   cIGraph_clique_number,   0); /* in cIGraph_cliques.c */ 
 
-  //Motifs
+  /* Independent vertex set finding functions */
   cIGraph_indyver = rb_define_module_under(cIGraph, "IndependentVertexSets");
   rb_include_module(cIGraph, cIGraph_indyver);  
 
@@ -424,7 +425,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_indyver, "maximal_independent_vertex_sets", cIGraph_maximal_independent_vertex_sets, 0); /* in cIGraph_independent_vertex_sets.c */
   rb_define_method(cIGraph_indyver, "independence_number", cIGraph_independence_number, 0); /* in cIGraph_independent_vertex_sets.c */
 
-  //Motifs
+  /* Functions for isomorphism and isoclasses */
   cIGraph_isomor = rb_define_module_under(cIGraph, "Isomorphism");
   rb_include_module(cIGraph, cIGraph_isomor);  
 
@@ -434,7 +435,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_isomor, "isoclass_subgraph", cIGraph_isoclass_subgraph, 1); /* in cIGraph_isomorphism.c */
   rb_define_singleton_method(cIGraph_generate, "isoclass_create", cIGraph_isoclass_create, 3); /* in cIGraph_isomorphism.c */
 
-  //Motifs
+  /* Motif finding functions */
   cIGraph_motifs = rb_define_module_under(cIGraph, "Motifs");
   rb_include_module(cIGraph, cIGraph_motifs);  
 
@@ -442,13 +443,13 @@ void Init_igraph(){
   rb_define_method(cIGraph_motifs, "motifs_randesu_no",       cIGraph_motifs_randesu_no,       2); /* in cIGraph_motif.c */ 
   rb_define_method(cIGraph_motifs, "motifs_randesu_estimate", cIGraph_motifs_randesu_estimate, 4); /* in cIGraph_motif.c */ 
 
-  //File write
+  /* Graph sorting functions. */
   cIGraph_sorting = rb_define_module_under(cIGraph, "Sorting");
   rb_include_module(cIGraph, cIGraph_sorting);  
 
   rb_define_method(cIGraph_sorting, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
-  //File read
+  /* Functions for reading graphs from files */
   cIGraph_fileread = rb_define_module_under(cIGraph, "FileRead");
   rb_include_module(cIGraph, cIGraph_fileread);  
 
@@ -461,7 +462,7 @@ void Init_igraph(){
   rb_define_singleton_method(cIGraph_fileread, "read_graph_gml",      cIGraph_read_graph_gml,  1);     /* in cIGraph_file.c */ 
   rb_define_singleton_method(cIGraph_fileread, "read_graph_pajek",    cIGraph_read_graph_pajek, 2);    /* in cIGraph_file.c */
   
-  //File write
+  /* Functions for writing graphs to files */
   cIGraph_filewrite = rb_define_module_under(cIGraph, "FileWrite");
   rb_include_module(cIGraph, cIGraph_filewrite);
 
@@ -473,7 +474,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_filewrite, "write_graph_dimacs",   cIGraph_write_graph_dimacs, 4);    /* in cIGraph_file.c */ 
   rb_define_method(cIGraph_filewrite, "write_graph_pajek",    cIGraph_write_graph_pajek, 1);     /* in cIGraph_file.c */
 
-  //Layouts
+  /* Graph layout functions */
   cIGraph_layout = rb_define_module_under(cIGraph, "Layout");
   rb_include_module(cIGraph, cIGraph_layout);
 
@@ -493,7 +494,7 @@ void Init_igraph(){
 
   rb_define_singleton_method(cIGraph_layout, "layout_merge_dla", cIGraph_layout_merge_dla, 2); /* in cIGraph_layout.c */
 
-  //Min cuts
+  /* Minimum cuts related functions */
   cIGraph_mincuts = rb_define_module_under(cIGraph, "MinimumCuts");
   rb_include_module(cIGraph, cIGraph_mincuts);
 
@@ -502,7 +503,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_mincuts, "mincut_value",    cIGraph_mincut_value,    1); /* in cIGraph_min_cuts.c */
   rb_define_method(cIGraph_mincuts, "mincut",          cIGraph_mincut,          1); /* in cIGraph_min_cuts.c */
 
-  //Connectivity
+  /* Vertex and edge connectivity functions */
   cIGraph_connectivity = rb_define_module_under(cIGraph, "Connectivity");
   rb_include_module(cIGraph, cIGraph_connectivity);
 
@@ -515,7 +516,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_connectivity, "adhesion",               cIGraph_adhesion,               0); /* in cIGraph_connectivity.c */    
   rb_define_method(cIGraph_connectivity, "cohesion",               cIGraph_cohesion,               0); /* in cIGraph_connectivity.c */   
 
-  //Community
+  /* Community and modularity related functions */
   cIGraph_community = rb_define_module_under(cIGraph, "Community");
   rb_include_module(cIGraph, cIGraph_community);
   
@@ -579,7 +580,9 @@ void Init_igraph(){
   rb_define_const(cIGraph_community, "SPINCOMM_UPDATE_SIMPLE", INT2NUM(0));
   rb_define_const(cIGraph_community, "SPINCOMM_UPDATE_CONFIG", INT2NUM(1));  
 
-  //Matrix class
+  /* This class wraps the igraph matrix type. It can be created from and 
+   * converted to an Array of Ruby Arrays.
+   */
   cIGraphMatrix = rb_define_class("IGraphMatrix", rb_cObject);
 
   rb_define_alloc_func(cIGraphMatrix, cIGraph_matrix_alloc);
