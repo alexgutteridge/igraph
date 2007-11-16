@@ -3,7 +3,7 @@
 #include "cIGraph.h"
 
 /* call-seq:
- *   IGraph.read_graph_edgelist(file,mode) -> IGraph
+ *   IGraph::FileRead.read_graph_edgelist(file,mode) -> IGraph
  *
  *  Reads an edge list from a File (or any IO) and creates a graph.
  *
@@ -89,6 +89,42 @@ VALUE cIGraph_write_graph_edgelist(VALUE self, VALUE file){
 
 }
 
+/* call-seq:
+ *   IGraph::FileRead.read_graph_ncol(file,predefnames,names,weights,directed) -> IGraph
+ *
+ * Reads a .ncol file used by LGL, also useful for creating graphs from 
+ * 'named' (and optionally weighted) edge lists.
+ *
+ * This format is used by the Large Graph Layout program 
+ * (http://bioinformatics.icmb.utexas.edu/lgl/), and it is simply a symbolic 
+ * weighted edge list. It is a simple text file with one edge per line. An 
+ * edge is defined by two symbolic vertex names separated by whitespace. 
+ * (The symbolic vertex names themselves cannot contain whitespace. They 
+ * might follow by an optional number, this will be the weight of the edge; 
+ * the number can be negative and can be in scientific notation. If there is 
+ * no weight specified to an edge it is assumed to be zero.
+ *
+ * The resulting graph is always undirected. LGL cannot deal with files which 
+ * contain multiple or loop edges, this is however not checked here, as 
+ * igraph is happy with these. 
+ *
+ * file: A File or IO object to read from.
+ *
+ * predefnames: Array of the symbolic names of the vertices in the file.
+ * If empty then vertex ids will be assigned to vertex names in the order of 
+ * their appearence in the .ncol file.
+ *
+ * names: Logical value, if TRUE the symbolic names of the vertices will be 
+ * added to the graph as a vertex attribute called 'name'.
+ *
+ * weights: Logical value, if TRUE the weights of the edges is added to the 
+ * graph as an edge attribute called 'weight'.
+ *
+ * directed: Whether to create a directed graph. As this format was originally
+ * used only for undirected graphs there is no information in the file about 
+ * the directedness of the graph. Set this parameter to IGRAPH_DIRECTED or 
+ * IGRAPH_UNDIRECTED to create a directed or undirected graph. 
+ */
 VALUE cIGraph_read_graph_ncol(VALUE self, VALUE file, VALUE predefnames, VALUE names, VALUE weights, VALUE directed){
 
   VALUE string;
@@ -160,6 +196,24 @@ VALUE cIGraph_read_graph_ncol(VALUE self, VALUE file, VALUE predefnames, VALUE n
 
 }
 
+/* call-seq:
+ *   graph.write_graph_ncol(file,names,weights) -> Integer
+ *
+ * Writes the graph to a file in .ncol format
+ *
+ * .ncol is a format used by LGL, see igraph_read_graph_ncol() for details.
+ *
+ * Note that having multiple or loop edges in an .ncol file breaks the LGL 
+ * software but igraph does not check for this condition. 
+ *
+ * file: The file object to write to, it should be writable.
+ *
+ * names: The name of the vertex attribute, if symbolic names are to be 
+ * written to the file.
+ *
+ * weights: The name of the edge attribute, if they are also written to the 
+ * file.
+ */
 VALUE cIGraph_write_graph_ncol(VALUE self, VALUE file, VALUE names, VALUE weights){
 
   char *buf;
@@ -228,6 +282,39 @@ VALUE cIGraph_write_graph_ncol(VALUE self, VALUE file, VALUE names, VALUE weight
 
 }
 
+/* call-seq:
+ *   IGraph::FileRead.read_graph_lgl(file,predefnames,names,weights) -> IGraph
+ *
+ * Reads a graph from an .lgl file
+ *
+ * The .lgl format is used by the Large Graph Layout visualization software 
+ * (http://bioinformatics.icmb.utexas.edu/lgl/), it can describe undirected 
+ * optionally weighted graphs. From the LGL manual:
+ *
+ * The second format is the LGL file format ( .lgl file suffix). This is yet 
+ * another graph file format that tries to be as stingy as possible with 
+ * space, yet keeping the edge file in a human readable (not binary) format. 
+ * The format itself is like the following:
+ *
+ *  # vertex1name
+ *    vertex2name [optionalWeight]
+ *    vertex3name [optionalWeight] 
+ *
+ * Here, the first vertex of an edge is preceded with a pound sign '#'. 
+ * Then each vertex that shares an edge with that vertex is listed one per 
+ * line on subsequent lines.
+ *
+ * LGL cannot handle loop and multiple edges or directed graphs, but in 
+ * igraph it is not an error to have multiple and loop edges.
+ *
+ * file: A File or IO object to read from.
+ *
+ * names: Logical value, if TRUE the symbolic names of the vertices will be 
+ * added to the graph as a vertex attribute called “name”.
+ *
+ * weights: Logical value, if TRUE the weights of the edges is added to the 
+ * graph as an edge attribute called “weight”. 
+ */
 VALUE cIGraph_read_graph_lgl(VALUE self, VALUE file, VALUE names, VALUE weights){
 
   VALUE string;
@@ -282,6 +369,27 @@ VALUE cIGraph_read_graph_lgl(VALUE self, VALUE file, VALUE names, VALUE weights)
 
 }
 
+/* call-seq:
+ *   graph.write_graph_lgl(file,names,weights,isolates) -> Integer
+ *
+ * Writes the graph to a file in .lgl format
+ *
+ * .lgl is a format used by LGL, see read_graph_lgl() for details.
+ *
+ * Note that having multiple or loop edges in an .lgl file breaks the LGL 
+ * software but igraph does not check for this condition. 
+ *
+ * file: The File object to write to, it should be writable.
+ *
+ * names: The name of the vertex attribute, if symbolic names are written to 
+ * the file.
+ *
+ * weights: The name of the edge attribute, if they are also written to the 
+ * file.
+ * 
+ * isolates: Logical, if TRUE isolated vertices are also written to the file. 
+ * If FALSE they will be omitted. 
+ */
 VALUE cIGraph_write_graph_lgl(VALUE self, VALUE file, VALUE names, VALUE weights, VALUE isolates){
 
   char *buf;
@@ -355,6 +463,33 @@ VALUE cIGraph_write_graph_lgl(VALUE self, VALUE file, VALUE names, VALUE weights
 
 }
 
+/* call-seq:
+ *   IGraph::FileRead.read_graph_dimacs(file,directed) -> IGraph
+ *
+ * This function reads the DIMACS file format, more specifically the version 
+ * for network flow problems, see the files at 
+ * ftp://dimacs.rutgers.edu/pub/netflow/general-info/
+ *
+ * This is a line-oriented text file (ASCII) format. The first character of 
+ * each line defines the type of the line. If the first character is c the 
+ * line is a comment line and it is ignored. There is one problem line ( p in 
+ * the file, it must appear before any node and arc descriptor lines. The 
+ * problem line has three fields separated by spaces: the problem type 
+ * ( min , max or asn ), the number of vertices and number of edges in the 
+ * graph. Exactly two node identification lines are expected ( n ), one for 
+ * the source, one for the target vertex. These have two fields: the id of 
+ * the vertex and the type of the vertex, either s (=source) or t (=target). 
+ * Arc lines start with a and have three fields: the source vertex, the 
+ * target vertex and the edge capacity.
+ *
+ * Vertex ids are numbered from 1. The source, target vertices and edge 
+ * capacities are added as attributes of the graph. 
+ * I.e: g.attributes['source'].
+ *
+ * file: The File to read from.
+ *
+ * directed: Boolean, whether to create a directed graph. 
+ */
 VALUE cIGraph_read_graph_dimacs(VALUE self, VALUE file, VALUE directed){
 
   VALUE string;
@@ -421,6 +556,24 @@ VALUE cIGraph_read_graph_dimacs(VALUE self, VALUE file, VALUE directed){
 
 }
 
+/* call-seq:
+ *   graph.write_graph_dimacs(file,source,target,capacity) -> Integer
+ *
+ * This function writes a graph to an output stream in DIMACS format, 
+ * describing a maximum flow problem. See 
+ * ftp://dimacs.rutgers.edu/pub/netflow/general-info/
+ *
+ * This file format is discussed in the documentation of read_graph_dimacs(), 
+ * see that for more information.
+ *
+ * file: IO object to write to. 	
+ *
+ * source: The source vertex for the maximum flow.
+ *
+ * target: The target vertex.
+ *
+ * capacity: Array containing the edge capacity values. 
+ */
 VALUE cIGraph_write_graph_dimacs(VALUE self, VALUE file, VALUE source, VALUE target, VALUE capacity){
 
   char *buf;
@@ -449,6 +602,15 @@ VALUE cIGraph_write_graph_dimacs(VALUE self, VALUE file, VALUE source, VALUE tar
 
 }
 
+/* call-seq:
+ *   IGraph::FileRead.read_graph_graphdb(file,directed) -> IGraph
+ *
+ * Read a graph in the binary graph database format.
+ *
+ * file: The IO object to read from.
+ *
+ * directed: Boolean, whether to create a directed graph. 
+ */
 VALUE cIGraph_read_graph_graphdb(VALUE self, VALUE file, VALUE directed){
 
   VALUE string;
@@ -498,7 +660,7 @@ VALUE cIGraph_read_graph_graphdb(VALUE self, VALUE file, VALUE directed){
 }
 
 /* call-seq:
- *   IGraph.read_graph_graphml(file,index) -> IGraph
+ *   IGraph::FileRead.read_graph_graphml(file,index) -> IGraph
  *
  * Reads a graph from a GraphML file specified as the File object file.
  *
@@ -563,6 +725,17 @@ VALUE cIGraph_write_graph_graphml(VALUE self, VALUE file){
 
 }
 
+/* call-seq:
+ *   IGraph::FileRead.read_graph_gml(file) -> IGraph
+ *
+ * Reads a graph from a GraphML file.
+ *
+ * GraphML is an XML-based file format for representing various types of 
+ * graphs. Currently only the most basic import functionality is implemented 
+ * in igraph: it can read GraphML files without nested graphs and hyperedges.
+ *
+ * file: IO object to read from
+ */
 VALUE cIGraph_read_graph_gml(VALUE self, VALUE file){
 
   VALUE string;
@@ -584,6 +757,13 @@ VALUE cIGraph_read_graph_gml(VALUE self, VALUE file){
 
 }
 
+/* call-seq:
+ *   graph.write_graph_gml(file) -> IGraph
+ *
+ * Writes the graph to a file in GraphML format.
+ *
+ * file: IO object to write to
+ */
 VALUE cIGraph_write_graph_gml(VALUE self, VALUE file){
 
   char *buf;
@@ -607,7 +787,7 @@ VALUE cIGraph_write_graph_gml(VALUE self, VALUE file){
 }
 
 /* call-seq:
- *   IGraph.read_graph_pajek(file) -> IGraph
+ *   IGraph::FileRead.read_graph_pajek(file) -> IGraph
  *
  * Reads a file in Pajek format
  *

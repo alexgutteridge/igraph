@@ -18,7 +18,7 @@ class TestGraph < Test::Unit::TestCase
   end
   def test_fruchterman_reingold_3d
     g = IGraph.new([1,2,3,4],true)
-    l = g.layout_fruchterman_reingold_3d(10,1,1,2,1,false)
+    l = g.layout_fruchterman_reingold_3d(10,1,1,2,1)
     assert_instance_of IGraphMatrix, l
     assert_equal g.vcount, l.nrow
     assert_equal 3,        l.ncol

@@ -63,7 +63,7 @@ class TestGraph < Test::Unit::TestCase
     l = g.layout_lgl(10,1,1,2,1,1,1)
     h = IGraph.new([1,2,3,4],true)
     m = h.layout_lgl(10,1,1,2,1,1,1)
-    f = IGraph.layout_merge_dla([g,h],[l,m])
+    f = IGraph::Layout.layout_merge_dla([g,h],[l,m])
     assert_instance_of IGraphMatrix, f
     assert_equal g.vcount + h.vcount, f.nrow
     assert_equal 2,                   f.ncol

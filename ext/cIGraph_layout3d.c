@@ -5,7 +5,7 @@
 /* call-seq:
  *   graph.layout_random -> IGraphMatrix
  * 
- * Returns a random layout
+ * Returns a random layout in 3D.
  */
 VALUE cIGraph_layout_random_3d(VALUE self){
 
@@ -21,6 +21,15 @@ VALUE cIGraph_layout_random_3d(VALUE self){
 
 }
 
+/* call-seq:
+ *   graph.layout_sphere -> IGraphMatrix
+ *
+ * Places vertices (more or less) uniformly on a sphere.
+ *
+ * The algorithm was described in the following paper: Distributing many 
+ * points on a sphere by E.B. Saff and A.B.J. Kuijlaars, Mathematical 
+ * Intelligencer 19.1 (1997) 5--11.  
+ */
 VALUE cIGraph_layout_sphere(VALUE self){
 
   igraph_t *graph;
@@ -35,13 +44,28 @@ VALUE cIGraph_layout_sphere(VALUE self){
 
 }
 
+/* call-seq:
+ *   graph.layout_fruchterman_reingold_3d(niter,maxdelta,volume,coolexp,repulserad) -> IGraphMatrix
+ *
+ * This is the 3D version of the force based Fruchterman-Reingold layout.
+ *
+ * niter: The number of iterations to do.
+ *
+ * maxdelta: The maximum distance to move a vertex in an iteration.
+ *
+ * volume: The volume parameter of the algorithm.
+ *
+ * coolexp: The cooling exponent of the simulated annealing.
+ *
+ * repulserad: Determines the radius at which vertex-vertex repulsion 
+ * cancels out attraction of adjacent vertices.
+ */
 VALUE cIGraph_layout_fruchterman_reingold_3d(VALUE self,
 					     VALUE niter,
 					     VALUE maxdelta,
 					     VALUE volume,
 					     VALUE coolexp,
-					     VALUE repulserad,
-					     VALUE use_seed){
+					     VALUE repulserad){
 
   igraph_t *graph;
   igraph_matrix_t *res = malloc(sizeof(igraph_matrix_t));
@@ -55,7 +79,7 @@ VALUE cIGraph_layout_fruchterman_reingold_3d(VALUE self,
 					NUM2DBL(volume),
 					NUM2DBL(coolexp),
 					NUM2DBL(repulserad),
-					use_seed == Qtrue ? 1: 0);
+					1);
 
   return Data_Wrap_Struct(cIGraphMatrix, 0, cIGraph_matrix_free, res);
 

@@ -6,7 +6,7 @@ class TestGraph < Test::Unit::TestCase
   def test_edgelist_read
     g = nil
     assert_nothing_raised{
-      g = IGraph.read_graph_edgelist(StringIO.new("0 1 2 3"),true)
+      g = IGraph::FileRead.read_graph_edgelist(StringIO.new("0 1 2 3"),true)
     }
     assert_instance_of IGraph, g
     assert_equal 4, g.vcount
@@ -24,7 +24,7 @@ class TestGraph < Test::Unit::TestCase
   def test_ncol_read
     g = nil
     assert_nothing_raised{
-      g = IGraph.read_graph_ncol(StringIO.new("0 1\n2 3\n"),[],
+      g = IGraph::FileRead.read_graph_ncol(StringIO.new("0 1\n2 3\n"),[],
 				 false,false,false)
     }
     assert_instance_of IGraph, g
@@ -32,7 +32,7 @@ class TestGraph < Test::Unit::TestCase
     assert g.are_connected?(0,1)   
 
     assert_nothing_raised{
-      g = IGraph.read_graph_ncol(StringIO.new("A B\nC D\n"),[],
+      g = IGraph::FileRead.read_graph_ncol(StringIO.new("A B\nC D\n"),[],
 				 true,false,false)
     }
     assert_instance_of IGraph, g
@@ -40,7 +40,7 @@ class TestGraph < Test::Unit::TestCase
     assert g.are_connected?('A','B')   
     
     assert_nothing_raised{
-      g = IGraph.read_graph_ncol(StringIO.new("A B 1\nC D 2\n"),[],
+      g = IGraph::FileRead.read_graph_ncol(StringIO.new("A B 1\nC D 2\n"),[],
 				 true,true,false)
     }
     assert_instance_of IGraph, g
@@ -60,7 +60,7 @@ class TestGraph < Test::Unit::TestCase
   def test_lgl_read
     g = nil
     assert_nothing_raised{
-      g = IGraph.read_graph_lgl(StringIO.new("#A\nB\n#C\nD\n"),
+      g = IGraph::FileRead.read_graph_lgl(StringIO.new("#A\nB\n#C\nD\n"),
 				 false,false)
     }
     assert_instance_of IGraph, g
@@ -68,7 +68,7 @@ class TestGraph < Test::Unit::TestCase
     assert g.are_connected?(0,1)   
 
     assert_nothing_raised{
-      g = IGraph.read_graph_lgl(StringIO.new("#A\nB 1\n#C\nD 1\n"),
+      g = IGraph::FileRead.read_graph_lgl(StringIO.new("#A\nB 1\n#C\nD 1\n"),
 				 true,true)
     }
     assert_instance_of IGraph, g
@@ -89,7 +89,7 @@ class TestGraph < Test::Unit::TestCase
     g = nil
     assert_nothing_raised{
       s = StringIO.new("c com\np min 4 2\nn 1 s\nn 2 t\na 1 2 1\na 3 4 2\n")
-      g = IGraph.read_graph_dimacs(s,
+      g = IGraph::FileRead.read_graph_dimacs(s,
 				   false)
     }
     assert_instance_of IGraph, g
@@ -110,7 +110,7 @@ class TestGraph < Test::Unit::TestCase
 
   def test_graphml_read
     g = nil
-    g = IGraph.read_graph_graphml(StringIO.new(Graphml),0)
+    g = IGraph::FileRead.read_graph_graphml(StringIO.new(Graphml),0)
     assert_instance_of IGraph, g
     assert_equal '2006-11-12', g.attributes['date']
     h = g.dup
@@ -134,7 +134,7 @@ class TestGraph < Test::Unit::TestCase
   end
 
   def test_gml_read
-    g = IGraph.read_graph_gml(StringIO.new(Gml))
+    g = IGraph::FileRead.read_graph_gml(StringIO.new(Gml))
     assert_instance_of IGraph, g
   end
 
@@ -157,7 +157,7 @@ class TestGraph < Test::Unit::TestCase
 
   def test_pajek_read_write
     g = nil
-    g = IGraph.read_graph_pajek(StringIO.new(Pajek),0)
+    g = IGraph::FileRead.read_graph_pajek(StringIO.new(Pajek),0)
     assert_instance_of IGraph, g
     assert_equal 4, g.vcount
     assert_equal 1, g[4,1]['weight']

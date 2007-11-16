@@ -247,6 +247,19 @@ VALUE cIGraph_layout_lgl(VALUE self,
 
 }
 
+/* call-seq:
+ *   graph.layout_merge_dla(graphs,layouts) -> IGraphMatrix
+ * 
+ * Merge multiple layouts by using a DLA algorithm
+ *
+ * First each layout is covered by a circle. Then the layout of the largest 
+ * graph is placed at the origin. Then the other layouts are placed by the 
+ * DLA algorithm, larger ones first and smaller ones last. 
+ *
+ * graphs: Array of IGraph objects
+ *
+ * layouts: Array of IGraphMatrix layouts
+ */
 VALUE cIGraph_layout_merge_dla(VALUE self, VALUE graphs, VALUE layouts){
 
   igraph_vector_ptr_t thegraphs;
