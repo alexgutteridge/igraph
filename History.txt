@@ -1,3 +1,8 @@
+= 0.9   2007-11-19
+
+* All igraph functions wrapped
+* Documentation updated with examples
+
 = 0.3.2 2007-09-03
 
 * All 'structural property' functions now complete.
