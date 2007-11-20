@@ -1,4 +1,6 @@
 #Tests all test cases for rsruby
+require 'rbconfig'
+include Config
 
 require 'test/unit'
 
@@ -17,7 +19,11 @@ require 'tc_cores'
 require 'tc_dijkstra'
 require 'tc_directedness'
 require 'tc_error_handling'
-require 'tc_file_read_write'
+
+unless CONFIG['host'] =~ /apple/
+  require 'tc_file_read_write'
+end
+
 require 'tc_generators_deterministic'
 require 'tc_generators_random'
 require 'tc_independent_vertex_sets'
