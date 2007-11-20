@@ -1,10 +1,18 @@
 require 'test/unit'
 require 'igraph'
 require 'stringio'
+require 'rbconfig'
+include Config
 
 class TestGraph < Test::Unit::TestCase
   def test_edgelist_read
     g = nil
+    if CONFIG['host'] =~ /apple/
+      assert_raises(NoMethodError){
+        IGraph::FileRead.read_graph_edgelist(StringIO.new("0 1 2 3"),true)
+      }
+      return
+    end
     assert_nothing_raised{
       g = IGraph::FileRead.read_graph_edgelist(StringIO.new("0 1 2 3"),true)
     }
@@ -16,6 +24,12 @@ class TestGraph < Test::Unit::TestCase
   def test_edgelist_write
     g = IGraph.new([0,1,2,3])
     s = StringIO.new("")
+    if CONFIG['host'] =~ /apple/
+      assert_raises(NoMethodError){
+        g.write_graph_edgelist(s)
+      }
+      return
+    end
     str = g.write_graph_edgelist(s)
     s.rewind
     assert_equal "0 1\n2 3\n", s.read
@@ -23,9 +37,16 @@ class TestGraph < Test::Unit::TestCase
 
   def test_ncol_read
     g = nil
+    if CONFIG['host'] =~ /apple/
+      assert_raises(NoMethodError){
+        IGraph::FileRead.read_graph_ncol(StringIO.new("0 1\n2 3\n"),[],
+  				  false,false,false)
+      }
+      return
+    end
     assert_nothing_raised{
       g = IGraph::FileRead.read_graph_ncol(StringIO.new("0 1\n2 3\n"),[],
-				 false,false,false)
+				  false,false,false)
     }
     assert_instance_of IGraph, g
     assert_equal 4, g.vcount
@@ -33,7 +54,7 @@ class TestGraph < Test::Unit::TestCase
 
     assert_nothing_raised{
       g = IGraph::FileRead.read_graph_ncol(StringIO.new("A B\nC D\n"),[],
-				 true,false,false)
+				  true,false,false)
     }
     assert_instance_of IGraph, g
     assert_equal 4, g.vcount
@@ -52,6 +73,12 @@ class TestGraph < Test::Unit::TestCase
   def test_ncol_write
     g = IGraph.new(["A","B","C","D"],true,[1,2])
     s = StringIO.new("")
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         g.write_graph_ncol(s,true,true)
+       }
+       return
+    end
     str = g.write_graph_ncol(s,true,true)
     s.rewind
     assert_equal "A B 1.0\nC D 2.0\n", s.read
@@ -59,6 +86,12 @@ class TestGraph < Test::Unit::TestCase
 
   def test_lgl_read
     g = nil
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         IGraph::FileRead.read_graph_lgl(StringIO.new("#A\nB\n#C\nD\n"))
+       }
+       return
+    end
     assert_nothing_raised{
       g = IGraph::FileRead.read_graph_lgl(StringIO.new("#A\nB\n#C\nD\n"),
 				 false,false)
@@ -80,15 +113,27 @@ class TestGraph < Test::Unit::TestCase
   def test_lgl_write
     g = IGraph.new(["A","B","C","D"],true,[1,2])
     s = StringIO.new("")
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         g.write_graph_lgl(s,true,true,false)
+       }
+       return
+    end
     str = g.write_graph_lgl(s,true,true,false)
     s.rewind
     assert_equal "# A\nB 1.0\n# C\nD 2.0\n", s.read
   end
 
   def test_dimacs_read
+    s = StringIO.new("c com\np min 4 2\nn 1 s\nn 2 t\na 1 2 1\na 3 4 2\n")
     g = nil
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         IGraph::FileRead.read_graph_dimacs(s,false)
+       }
+       return
+    end
     assert_nothing_raised{
-      s = StringIO.new("c com\np min 4 2\nn 1 s\nn 2 t\na 1 2 1\na 3 4 2\n")
       g = IGraph::FileRead.read_graph_dimacs(s,
 				   false)
     }
@@ -103,12 +148,24 @@ class TestGraph < Test::Unit::TestCase
   def test_dimacs_write
     g = IGraph.new(["A","B","C","D"],true,[1,2])
     s = StringIO.new("")
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         g.write_graph_dimacs(s,0,1,[1,2])
+       }
+       return
+    end
     str = g.write_graph_dimacs(s,0,1,[1,2])
     s.rewind
     assert_equal "c created by igraph\np max 4 2\nn 1 s\nn 2 t\na 1 2 1\na 3 4 2\n", s.read
   end
 
   def test_graphml_read
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         IGraph::FileRead.read_graph_graphml(StringIO.new(Graphml),0)
+       }
+       return
+    end
     g = nil
     g = IGraph::FileRead.read_graph_graphml(StringIO.new(Graphml),0)
     assert_instance_of IGraph, g
@@ -128,12 +185,24 @@ class TestGraph < Test::Unit::TestCase
                     {'eid'=>'e2'}])
     g.attributes['date'] = 'Friday'
     s = StringIO.new("")
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         g.write_graph_graphml(s)
+       }
+       return
+    end
     str = g.write_graph_graphml(s)
     s.rewind
     assert_equal Graphml_out, s.read
   end
 
   def test_gml_read
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         IGraph::FileRead.read_graph_gml(StringIO.new(Gml))
+       }
+       return
+    end
     g = IGraph::FileRead.read_graph_gml(StringIO.new(Gml))
     assert_instance_of IGraph, g
   end
@@ -148,6 +217,12 @@ class TestGraph < Test::Unit::TestCase
                     {'eid'=>'e2'}])
     g.attributes['date'] = 'Friday'
     s = StringIO.new("")
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         g.write_graph_gml(s)
+       }
+       return
+    end
     str = g.write_graph_gml(s)
     s.rewind
     s = s.read
@@ -156,6 +231,12 @@ class TestGraph < Test::Unit::TestCase
   end
 
   def test_pajek_read_write
+    if CONFIG['host'] =~ /apple/
+       assert_raises(NoMethodError){
+         IGraph::FileRead.read_graph_pajek(StringIO.new(Pajek),0)
+       }
+       return
+    end
     g = nil
     g = IGraph::FileRead.read_graph_pajek(StringIO.new(Pajek),0)
     assert_instance_of IGraph, g
