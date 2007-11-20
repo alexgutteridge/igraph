@@ -164,6 +164,10 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
 
 }
 
+VALUE cIGraph_unavailable_method(int argc, VALUE *argv, VALUE self){
+	rb_raise(rb_eNoMethodError,"Method not available on OSX");
+}
+
 /* Interface to the iGraph[http://cneurocvs.rmki.kfki.hu/igraph/] library
  * for graph and network computation.
  *
@@ -449,12 +453,20 @@ void Init_igraph(){
 
   rb_define_method(cIGraph_sorting, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
-  #ifdef __APPLE__
-  #else
   /* Functions for reading graphs from files */
   cIGraph_fileread = rb_define_module_under(cIGraph, "FileRead");
   rb_include_module(cIGraph, cIGraph_fileread);  
 
+  #ifdef __APPLE__
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_edgelist", cIGraph_unavailable_method, -1);
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_graphml",  cIGraph_unavailable_method, -1);
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_ncol",     cIGraph_unavailable_method, -1);
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_lgl",      cIGraph_unavailable_method, -1);
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_dimacs",   cIGraph_unavailable_method, -1);
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_graphdb",  cIGraph_unavailable_method, -1);
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_gml",      cIGraph_unavailable_method, -1);
+  rb_define_singleton_method(cIGraph_fileread, "read_graph_pajek",    cIGraph_unavailable_method, -1);
+  #else
   rb_define_singleton_method(cIGraph_fileread, "read_graph_edgelist", cIGraph_read_graph_edgelist, 2); /* in cIGraph_file.c */
   rb_define_singleton_method(cIGraph_fileread, "read_graph_graphml",  cIGraph_read_graph_graphml, 2);  /* in cIGraph_file.c */  
   rb_define_singleton_method(cIGraph_fileread, "read_graph_ncol",     cIGraph_read_graph_ncol, 5);     /* in cIGraph_file.c */ 
@@ -463,11 +475,21 @@ void Init_igraph(){
   rb_define_singleton_method(cIGraph_fileread, "read_graph_graphdb",  cIGraph_read_graph_graphdb, 2);     /* in cIGraph_file.c */ 
   rb_define_singleton_method(cIGraph_fileread, "read_graph_gml",      cIGraph_read_graph_gml,  1);     /* in cIGraph_file.c */ 
   rb_define_singleton_method(cIGraph_fileread, "read_graph_pajek",    cIGraph_read_graph_pajek, 2);    /* in cIGraph_file.c */
-  
+  #endif
+
   /* Functions for writing graphs to files */
   cIGraph_filewrite = rb_define_module_under(cIGraph, "FileWrite");
   rb_include_module(cIGraph, cIGraph_filewrite);
 
+  #ifdef __APPLE__
+  rb_define_method(cIGraph_filewrite, "write_graph_edgelist", cIGraph_unavailable_method, -1);
+  rb_define_method(cIGraph_filewrite, "write_graph_graphml",  cIGraph_unavailable_method, -1);  
+  rb_define_method(cIGraph_filewrite, "write_graph_gml",      cIGraph_unavailable_method, -1);  
+  rb_define_method(cIGraph_filewrite, "write_graph_ncol",     cIGraph_unavailable_method, -1);    
+  rb_define_method(cIGraph_filewrite, "write_graph_lgl",      cIGraph_unavailable_method, -1); 
+  rb_define_method(cIGraph_filewrite, "write_graph_dimacs",   cIGraph_unavailable_method, -1); 
+  rb_define_method(cIGraph_filewrite, "write_graph_pajek",    cIGraph_unavailable_method, -1);
+  #else
   rb_define_method(cIGraph_filewrite, "write_graph_edgelist", cIGraph_write_graph_edgelist, 1);  /* in cIGraph_file.c */
   rb_define_method(cIGraph_filewrite, "write_graph_graphml",  cIGraph_write_graph_graphml,   1); /* in cIGraph_file.c */  
   rb_define_method(cIGraph_filewrite, "write_graph_gml",      cIGraph_write_graph_gml,    1); /* in cIGraph_file.c */  
@@ -534,7 +556,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_community, "community_eb_get_merges", cIGraph_community_eb_get_merges, 1);  /* in cIGraph_community.c */  
   rb_define_method(cIGraph_community, "community_fastgreedy", cIGraph_community_fastgreedy, 0);  /* in cIGraph_community.c */  
 
-  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.9.0"));
+  rb_define_const(cIGraph, "VERSION", rb_str_new2("0.9.1"));
 
   rb_define_const(cIGraph, "EDGEORDER_ID",   INT2NUM(1));
   rb_define_const(cIGraph, "EDGEORDER_FROM", INT2NUM(2));
