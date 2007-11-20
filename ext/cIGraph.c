@@ -449,6 +449,8 @@ void Init_igraph(){
 
   rb_define_method(cIGraph_sorting, "topological_sorting", cIGraph_topological_sorting, 1); /* in cIGraph_topological_sort.c */
 
+  #ifdef __APPLE__
+  #else
   /* Functions for reading graphs from files */
   cIGraph_fileread = rb_define_module_under(cIGraph, "FileRead");
   rb_include_module(cIGraph, cIGraph_fileread);  
@@ -473,6 +475,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_filewrite, "write_graph_lgl",      cIGraph_write_graph_lgl,   4);    /* in cIGraph_file.c */ 
   rb_define_method(cIGraph_filewrite, "write_graph_dimacs",   cIGraph_write_graph_dimacs, 4);    /* in cIGraph_file.c */ 
   rb_define_method(cIGraph_filewrite, "write_graph_pajek",    cIGraph_write_graph_pajek, 1);     /* in cIGraph_file.c */
+  #endif
 
   /* Graph layout functions */
   cIGraph_layout = rb_define_module_under(cIGraph, "Layout");

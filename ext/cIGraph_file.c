@@ -2,6 +2,8 @@
 #include "ruby.h"
 #include "cIGraph.h"
 
+#ifdef __APPLE__
+#else
 /* call-seq:
  *   IGraph::FileRead.read_graph_edgelist(file,mode) -> IGraph
  *
@@ -842,3 +844,4 @@ VALUE cIGraph_write_graph_pajek(VALUE self, VALUE file){
   return e;
 
 }
+#endif
