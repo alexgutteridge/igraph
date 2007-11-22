@@ -167,7 +167,11 @@ class TestGraph < Test::Unit::TestCase
        return
     end
     g = nil
+    err = StringIO.open('','w')
+    $stderr = err
     g = IGraph::FileRead.read_graph_graphml(StringIO.new(Graphml),0)
+    assert_equal "warning: unknown attribute key in GraphML file, ignoring attribute\n", err.string.sub(/.*?:\d+: /,'')
+    $stderr = STDERR
     assert_instance_of IGraph, g
     assert_equal '2006-11-12', g.attributes['date']
     h = g.dup
