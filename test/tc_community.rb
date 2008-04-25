@@ -31,15 +31,15 @@ class TestGraph < Test::Unit::TestCase
       g.community_leading_eigenvector_step([['A','B','C','D','E','F']],0)
     assert_equal [['A','B','C'],['D','E','F']], groups
     assert split
-    assert_in_delta 0.433, eigenvec[0], 0.001
-    assert_in_delta 2.100, eigenval,    0.001
+    assert_in_delta 0.433, eigenvec[0], 0.02
+    assert_in_delta 1.730, eigenval,    0.02
 
   end
 
   def test_random_walk
     g = IGraph.new(['A','B','B','C','A','C','C','D','D','E','E','F','D','F'],false)
     merges,modularity = g.community_walktrap([],10)
-    groups = g.community_to_membership(merges,4)
+    groups = g.community_to_membership(merges,4,6)
     assert_equal [['A','B','C'],['D','E','F']], groups.sort
     assert_in_delta 0.19, modularity[3], 0.1
   end
@@ -48,14 +48,14 @@ class TestGraph < Test::Unit::TestCase
 
     g = IGraph.new(['A','B','B','C','A','C','C','D','D','E','E','F','D','F'],false)
     merges,result,edge_betw,bridges = g.community_edge_betweenness(false)    
-    groups = g.community_to_membership(merges,4)
+    groups = g.community_to_membership(merges,4,6)
     assert_equal [['A','B','C'],['D','E','F']], groups.sort
     assert_equal 3, result[0]
     assert_equal 9, edge_betw[0]
     assert_equal 7, bridges[0]
 
     merges,bridges = g.community_eb_get_merges(result)
-    groups = g.community_to_membership(merges,4)
+    groups = g.community_to_membership(merges,4,6)
     assert_equal [['A','B','C'],['D','E','F']], groups.sort
     assert_equal 7, bridges[0]    
     
@@ -64,7 +64,7 @@ class TestGraph < Test::Unit::TestCase
   def test_fastgreedy
     g = IGraph.new(['A','B','B','C','A','C','C','D','D','E','E','F','D','F'],false)
     merges,mod = g.community_fastgreedy
-    groups = g.community_to_membership(merges,4)
+    groups = g.community_to_membership(merges,4,6)
     assert_equal [['A','B','C'],['D','E','F']], groups.sort
     assert_in_delta 0.19, mod[3], 0.1
   end

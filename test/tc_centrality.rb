@@ -16,7 +16,7 @@ class TestGraph < Test::Unit::TestCase
   end    
   def test_pagerank
     g = IGraph.new(['A','B','C','D','E','B','F','B'],true)
-    assert_equal 67, (g.pagerank(['B'],true,100,0.01,0.8)[0] * 100).to_i
+    assert_equal 48, (g.pagerank(['B'],true,100,0.01,0.8)[0] * 100).to_i
   end 
   def test_constraint
     g = IGraph.new(['A','B','C','D'],true)

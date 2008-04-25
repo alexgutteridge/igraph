@@ -70,7 +70,7 @@ VALUE cIGraph_layout_fruchterman_reingold(VALUE self,
 				     NUM2DBL(area),
 				     NUM2DBL(coolexp),
 				     NUM2DBL(repulserad),
-				     use_seed == Qtrue ? 1: 0);
+				     use_seed == Qtrue ? 1: 0, NULL);
 
   return Data_Wrap_Struct(cIGraphMatrix, 0, cIGraph_matrix_free, res);
 
@@ -103,7 +103,7 @@ VALUE cIGraph_layout_kamada_kawai(VALUE self,
 			     NUM2DBL(sigma),
 			     NUM2DBL(initemp),
 			     NUM2DBL(coolexp),
-			     NUM2DBL(kkconst));
+			     NUM2DBL(kkconst),0);
 
   return Data_Wrap_Struct(cIGraphMatrix, 0, cIGraph_matrix_free, res);
 

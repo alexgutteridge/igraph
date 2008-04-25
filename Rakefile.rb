@@ -3,7 +3,7 @@ require 'hoe'
 $LOAD_PATH.unshift("./ext")
 
 class IGraph
-  VERSION = "0.9.1"
+  VERSION = "0.9.5"
 end
 
 begin 
@@ -14,7 +14,7 @@ end
 hoe = Hoe.new("igraph",IGraph::VERSION) do |p|
   
   p.author = "Alex Gutteridge"
-  p.email = "alexg@kuicr.kyoto-u.ac.jp"
+  p.email = "ag357@cam.ac.uk"
   p.url = "http://igraph.rubyforge.org/"
   
   p.description = p.paragraphs_of("README.txt",1..3)[0]

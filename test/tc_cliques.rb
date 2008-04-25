@@ -8,7 +8,7 @@ class TestGraph < Test::Unit::TestCase
    end
    def test_largest_cliques
      g = IGraph.new(['A','B','C','D','A','E','B','E'],false)
-     assert_equal [['A','B','E','B','E']], g.largest_cliques()
+     assert_equal [['A','B','E']], g.largest_cliques()
    end
    def test_maximal_cliques
      g = IGraph.new(['A','B','C','D','A','E','B','E'],false)

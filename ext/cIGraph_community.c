@@ -34,7 +34,7 @@ VALUE cIGraph_modularity(VALUE self, VALUE groups){
     }
   }
 
-  igraph_modularity(graph,&membership,&value);
+  igraph_modularity(graph,&membership,&value,NULL);
   
   igraph_vector_destroy(&membership);
 
@@ -53,7 +53,7 @@ VALUE cIGraph_modularity(VALUE self, VALUE groups){
  *
  */
 
-VALUE cIGraph_community_to_membership(VALUE self, VALUE merge, VALUE steps){
+VALUE cIGraph_community_to_membership(VALUE self, VALUE merge, VALUE steps, VALUE nodes){
 
   igraph_t *graph;
   igraph_matrix_t *merges;
@@ -69,7 +69,7 @@ VALUE cIGraph_community_to_membership(VALUE self, VALUE merge, VALUE steps){
 
   igraph_vector_init(&membership,0);
 
-  igraph_community_to_membership(graph,merges,NUM2INT(steps),&membership,NULL);
+  igraph_community_to_membership(merges,NUM2INT(nodes),NUM2INT(steps),&membership,NULL);
 
   max_groupid = 0;
   for(i=0;i<igraph_vector_size(&membership);i++){
@@ -253,6 +253,9 @@ VALUE cIGraph_community_leading_eigenvector(VALUE self, VALUE steps){
 
   igraph_vector_t membership;
   igraph_matrix_t *merges = malloc(sizeof(igraph_matrix_t));
+  
+igraph_arpack_options_t arpack_opt;
+igraph_arpack_options_init(&arpack_opt);
 
   int i,groupid,max_groupid;
 
@@ -264,7 +267,7 @@ VALUE cIGraph_community_leading_eigenvector(VALUE self, VALUE steps){
   igraph_vector_init(&membership,0);
 
   igraph_community_leading_eigenvector(graph,merges,&membership,
-				       NUM2INT(steps));
+				       NUM2INT(steps),&arpack_opt);
 
   max_groupid = 0;
   for(i=0;i<igraph_vector_size(&membership);i++){
@@ -316,6 +319,9 @@ VALUE cIGraph_community_leading_eigenvector_naive(VALUE self, VALUE steps){
   igraph_vector_t membership;
   igraph_matrix_t *merges = malloc(sizeof(igraph_matrix_t));
 
+igraph_arpack_options_t arpack_opt;
+igraph_arpack_options_init(&arpack_opt);
+
   int i,groupid,max_groupid;
 
   VALUE groups, group, res;
@@ -326,7 +332,7 @@ VALUE cIGraph_community_leading_eigenvector_naive(VALUE self, VALUE steps){
   igraph_vector_init(&membership,0);
 
   igraph_community_leading_eigenvector_naive(graph,merges,&membership,
-					     NUM2INT(steps));
+					     NUM2INT(steps), &arpack_opt);
 
   max_groupid = 0;
   for(i=0;i<igraph_vector_size(&membership);i++){
@@ -380,6 +386,9 @@ VALUE cIGraph_community_leading_eigenvector_step(VALUE self, VALUE membership, V
 
   int i,j,groupid,max_groupid,vid;
 
+igraph_arpack_options_t arpack_opt;
+igraph_arpack_options_init(&arpack_opt);
+
   VALUE groups, group, res, eigenvector_a, obj;
 
   Data_Get_Struct(self, igraph_t, graph);
@@ -402,7 +411,7 @@ VALUE cIGraph_community_leading_eigenvector_step(VALUE self, VALUE membership, V
 
   igraph_community_leading_eigenvector_step(graph,&membership_vec,
 					    NUM2INT(community),
-					    &split,&eigenvector,&eigenvalue);
+					    &split,&eigenvector,&eigenvalue,&arpack_opt,NULL);
 
   max_groupid = 0;
   for(i=0;i<igraph_vector_size(&membership_vec);i++){
@@ -634,7 +643,7 @@ VALUE cIGraph_community_fastgreedy(VALUE self){
   igraph_matrix_init(merges,0,0);
   igraph_vector_init(&modularity,0);
 
-  igraph_community_fastgreedy(graph,
+  igraph_community_fastgreedy(graph,NULL,
 			      merges,&modularity);
 
   modularity_a = rb_ary_new();

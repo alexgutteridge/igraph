@@ -546,7 +546,7 @@ void Init_igraph(){
   rb_include_module(cIGraph, cIGraph_community);
   
   rb_define_method(cIGraph_community, "modularity",   cIGraph_modularity,   1); /* in cIGraph_community.c */
-  rb_define_method(cIGraph_community, "community_to_membership", cIGraph_community_to_membership, 2);  /* in cIGraph_community.c */
+  rb_define_method(cIGraph_community, "community_to_membership", cIGraph_community_to_membership, 3);  /* in cIGraph_community.c */
   rb_define_method(cIGraph_community, "community_spinglass", cIGraph_community_spinglass, 8);  /* in cIGraph_community.c */
   rb_define_method(cIGraph_community, "community_spinglass_single", cIGraph_community_spinglass_single, 5);  /* in cIGraph_community.c */
   rb_define_method(cIGraph_community, "community_leading_eigenvector", cIGraph_community_leading_eigenvector, 1);  /* in cIGraph_community.c */      
@@ -624,7 +624,7 @@ void Init_igraph(){
   rb_define_method(cIGraphMatrix, "ncol", cIGraph_matrix_ncol, 0); /* in cIGraph_matrix.c */
   rb_define_method(cIGraphMatrix, "max",  cIGraph_matrix_max,  0); /* in cIGraph_matrix.c */
 
-  rb_define_method(cIGraphMatrix, "*", cIGraph_matrix_multiply, 1); /* in cIGraph_matrix.c */
+  rb_define_method(cIGraphMatrix, "*", cIGraph_matrix_scale, 1); /* in cIGraph_matrix.c */
 
   rb_define_method(cIGraphMatrix, "to_a", cIGraph_matrix_toa, 0); /* in cIGraph_matrix.c */
 

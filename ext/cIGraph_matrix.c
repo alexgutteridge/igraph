@@ -191,11 +191,11 @@ VALUE cIGraph_matrix_max(VALUE self){
 }
 
 /* call-seq:
- *   matrix * matrix -> IGraphMatrix
+ *   matrix * num -> IGraphMatrix
  *
  * Multiples two IGraphMatrix objects together
  */
-VALUE cIGraph_matrix_multiply(VALUE self, VALUE x){
+VALUE cIGraph_matrix_scale(VALUE self, VALUE x){
 
   igraph_matrix_t *m;
   igraph_matrix_t *n = malloc(sizeof(igraph_matrix_t));
@@ -204,7 +204,7 @@ VALUE cIGraph_matrix_multiply(VALUE self, VALUE x){
   Data_Get_Struct(self, igraph_matrix_t, m);
 
   igraph_matrix_copy(n,m);
-  igraph_matrix_multiply(n, NUM2DBL(x));
+  igraph_matrix_scale(n, NUM2DBL(x));
 
   nobj = Data_Wrap_Struct(cIGraphMatrix, 0, cIGraph_matrix_free, n);
 

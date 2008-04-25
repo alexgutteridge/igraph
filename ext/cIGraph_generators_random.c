@@ -26,7 +26,7 @@ VALUE cIGraph_grg_game(VALUE self, VALUE nodes, VALUE radius, VALUE torus){
 
   igraph_destroy(graph);
   igraph_grg_game(graph, NUM2INT(nodes), NUM2DBL(radius), 
-		  torus == Qtrue ? 1: 0);
+		  torus == Qtrue ? 1: 0, NULL, NULL);
 
   return new_graph;
 

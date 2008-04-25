@@ -21,7 +21,7 @@ VALUE cIGraph_isomorphic(VALUE self, VALUE g){
   Data_Get_Struct(self, igraph_t, graph);
   Data_Get_Struct(g,    igraph_t, graph2);
 
-  IGRAPH_CHECK(igraph_isomorphic(graph,graph2,&res));
+  igraph_isomorphic(graph,graph2,&res);
 
   return res == 0 ? Qfalse : Qtrue;
 
@@ -46,7 +46,7 @@ VALUE cIGraph_isomorphic_vf2(VALUE self, VALUE g){
   Data_Get_Struct(self, igraph_t, graph);
   Data_Get_Struct(g,    igraph_t, graph2);
 
-  IGRAPH_CHECK(igraph_isomorphic_vf2(graph,graph2,&res));
+  IGRAPH_CHECK(igraph_isomorphic_vf2(graph,graph2,&res,NULL,NULL));
 
   return res == 0 ? Qfalse : Qtrue;
 
@@ -72,7 +72,7 @@ VALUE cIGraph_isomorphic_vf2(VALUE self, VALUE g){
  */
 VALUE cIGraph_isoclass(VALUE self){
 
-  int res = 0;
+  igraph_integer_t res = 0;
   igraph_t *graph;
 
   Data_Get_Struct(self, igraph_t, graph);
@@ -92,7 +92,7 @@ VALUE cIGraph_isoclass(VALUE self){
  */
 VALUE cIGraph_isoclass_subgraph(VALUE self, VALUE vs){
 
-  int res = 0;
+  igraph_integer_t res = 0;
   igraph_t *graph;
   igraph_vector_t vidv;
 

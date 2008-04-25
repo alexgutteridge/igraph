@@ -79,7 +79,7 @@ VALUE cIGraph_layout_fruchterman_reingold_3d(VALUE self,
 					NUM2DBL(volume),
 					NUM2DBL(coolexp),
 					NUM2DBL(repulserad),
-					1);
+					1, NULL);
 
   return Data_Wrap_Struct(cIGraphMatrix, 0, cIGraph_matrix_free, res);
 
@@ -112,7 +112,7 @@ VALUE cIGraph_layout_kamada_kawai_3d(VALUE self,
 				NUM2DBL(sigma),
 				NUM2DBL(initemp),
 				NUM2DBL(coolexp),
-				NUM2DBL(kkconst));
+				NUM2DBL(kkconst),0);
 
   return Data_Wrap_Struct(cIGraphMatrix, 0, cIGraph_matrix_free, res);
 

@@ -287,7 +287,7 @@ VALUE cIGraph_cohesion(VALUE self);
 //Community
 VALUE cIGraph_modularity                         (VALUE self, VALUE groups);
 VALUE cIGraph_community_to_membership            (VALUE self, VALUE merge, 
-						  VALUE steps);
+						  VALUE steps, VALUE nodes);
 VALUE cIGraph_community_spinglass                (VALUE self, VALUE weights, 
 						  VALUE spins, 
 						  VALUE parupdate,
@@ -390,7 +390,7 @@ VALUE cIGraph_matrix_nrow(VALUE self);
 VALUE cIGraph_matrix_ncol(VALUE self);
 VALUE cIGraph_matrix_max (VALUE self);
 
-VALUE cIGraph_matrix_multiply(VALUE self, VALUE x);
+VALUE cIGraph_matrix_scale(VALUE self, VALUE x);
 
 VALUE cIGraph_matrix_toa(VALUE self);
 

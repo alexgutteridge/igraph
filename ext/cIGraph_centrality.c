@@ -161,8 +161,8 @@ VALUE cIGraph_pagerank(VALUE self, VALUE vs, VALUE directed, VALUE niter, VALUE 
   //create vertex selector from the vecotr of ids
   igraph_vs_vector(&vids,&vidv);
 
-  igraph_pagerank(graph,&res,vids,dir,
-		  NUM2INT(niter),NUM2DBL(eps),NUM2DBL(damping));
+  igraph_pagerank_old(graph,&res,vids,dir,
+		  NUM2INT(niter),NUM2DBL(eps),NUM2DBL(damping),0);
 
   for(i=0;i<igraph_vector_size(&res);i++){
     rb_ary_push(pagerank,rb_float_new(VECTOR(res)[i]));
