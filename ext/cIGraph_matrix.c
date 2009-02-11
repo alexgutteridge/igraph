@@ -66,15 +66,15 @@ VALUE cIGraph_matrix_initialize(int argc, VALUE *argv, VALUE self){
 
   Data_Get_Struct(self, igraph_matrix_t, m);
 
-  nrows = RARRAY(rows)->len;
-  ncols = RARRAY(RARRAY(rows)->ptr[0])->len;
+  nrows = RARRAY_LEN(rows);
+  ncols = RARRAY_LEN(RARRAY_PTR(rows)[0]);
 
   igraph_matrix_resize(m, nrows, ncols);
 
   //Loop through rows
   for (i=0; i<nrows; i++) {
     for (j=0; j<ncols; j++){
-      MATRIX(*m,i,j) = NUM2DBL(RARRAY(RARRAY(rows)->ptr[i])->ptr[j]);
+      MATRIX(*m,i,j) = NUM2DBL(RARRAY_PTR(RARRAY_PTR(rows)[i])[j]);
     }
   }
 

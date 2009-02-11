@@ -2,7 +2,7 @@ require 'test/unit'
 require 'igraph'
 
 class TestGraph < Test::Unit::TestCase
-   def test_graph_size
+  def test_graph_size
     assert_equal 4, IGraph.new([1,2,3,4],true).vcount
     assert_equal 2, IGraph.new([1,2,3,4],true).ecount
   end

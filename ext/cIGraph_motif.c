@@ -20,8 +20,8 @@ VALUE cIGraph_motifs_randesu(VALUE self, VALUE size, VALUE cuts){
 
   //Convert an array of vertices to a vector of vertex ids
   igraph_vector_init(&cutsv,0);
-  for(i=0;i<RARRAY(cuts)->len;i++){
-    igraph_vector_push_back(&cutsv,NUM2DBL(RARRAY(cuts)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(cuts);i++){
+    igraph_vector_push_back(&cutsv,NUM2DBL(RARRAY_PTR(cuts)[i]));
   }
 
   igraph_motifs_randesu(graph,&res,NUM2INT(size),&cutsv);
@@ -52,8 +52,8 @@ VALUE cIGraph_motifs_randesu_no(VALUE self, VALUE size, VALUE cuts){
 
   //Convert an array of vertices to a vector of vertex ids
   igraph_vector_init(&cutsv,0);
-  for(i=0;i<RARRAY(cuts)->len;i++){
-    igraph_vector_push_back(&cutsv,NUM2DBL(RARRAY(cuts)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(cuts);i++){
+    igraph_vector_push_back(&cutsv,NUM2DBL(RARRAY_PTR(cuts)[i]));
   }
 
   igraph_motifs_randesu_no(graph,&res,NUM2INT(size),&cutsv);
@@ -87,8 +87,8 @@ VALUE cIGraph_motifs_randesu_estimate(VALUE self, VALUE size, VALUE cuts,
   Data_Get_Struct(self, igraph_t, graph);
 
   igraph_vector_init(&cutsv,0);
-  for(i=0;i<RARRAY(cuts)->len;i++){
-    igraph_vector_push_back(&cutsv,NUM2DBL(RARRAY(cuts)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(cuts);i++){
+    igraph_vector_push_back(&cutsv,NUM2DBL(RARRAY_PTR(cuts)[i]));
   }
 
   if(samplev == Qnil){

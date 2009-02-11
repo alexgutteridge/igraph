@@ -50,8 +50,8 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
   v_ary = ((VALUE*)graph->attr)[0];
 
   //Loop through objects in edge Array
-  for (i=0; i<RARRAY(edges)->len; i++) {
-    vertex = RARRAY(edges)->ptr[i];
+  for (i=0; i<RARRAY_LEN(edges); i++) {
+    vertex = RARRAY_PTR(edges)[i];
     if(rb_ary_includes(v_ary,vertex)){
       vid = cIGraph_get_vertex_id(self, vertex);
     } else {
@@ -60,7 +60,7 @@ VALUE cIGraph_add_edges(int argc, VALUE *argv, VALUE self){
     IGRAPH_CHECK(igraph_vector_push_back(&edge_v,vid));
     if (i % 2){
       if (attrs != Qnil){
-	rb_ary_push((VALUE)e_attr_rec.value,RARRAY(attrs)->ptr[i/2]);
+	rb_ary_push((VALUE)e_attr_rec.value,RARRAY_PTR(attrs)[i/2]);
       } else {
 	rb_ary_push((VALUE)e_attr_rec.value,Qnil);
       }
@@ -118,17 +118,17 @@ VALUE cIGraph_add_vertices(VALUE self, VALUE vs){
   Data_Get_Struct(self, igraph_t, graph);
   v_ary = ((VALUE*)graph->attr)[0];
 
-  to_add = RARRAY(vs)->len;
+  to_add = RARRAY_LEN(vs);
 
   //Loop through objects in vertex array
-  for (i=0; i<RARRAY(vs)->len; i++) {
-    vertex = RARRAY(vs)->ptr[i];
+  for (i=0; i<RARRAY_LEN(vs); i++) {
+    vertex = RARRAY_PTR(vs)[i];
     if(rb_ary_includes(v_ary,vertex)){
       //Silently ignore duplicated additions
       //rb_raise(cIGraphError, "Vertex already added to graph");
       to_add--;
     } else {
-      rb_ary_push((VALUE)v_attr_rec.value,RARRAY(vs)->ptr[i]);
+      rb_ary_push((VALUE)v_attr_rec.value,RARRAY_PTR(vs)[i]);
     }
   }
 

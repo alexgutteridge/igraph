@@ -213,8 +213,8 @@ VALUE cIGraph_constraint(int argc, VALUE *argv, VALUE self){
   if(weights == Qnil){
     IGRAPH_CHECK(igraph_constraint(graph,&res,vids,NULL));
   } else {
-    for(i=0;i<RARRAY(weights)->len;i++){
-      IGRAPH_CHECK(igraph_vector_push_back(&wght,NUM2DBL(RARRAY(weights)->ptr[i])));
+    for(i=0;i<RARRAY_LEN(weights);i++){
+      IGRAPH_CHECK(igraph_vector_push_back(&wght,NUM2DBL(RARRAY_PTR(weights)[i])));
     }
     IGRAPH_CHECK(igraph_constraint(graph,&res,vids,&wght));
   }

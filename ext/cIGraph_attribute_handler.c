@@ -194,8 +194,8 @@ int cIGraph_attribute_add_vertices(igraph_t *graph, long int nv, igraph_vector_p
 
       values = (VALUE)((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->value;
       Check_Type(values, T_ARRAY);
-      for(i=0;i<RARRAY(values)->len;i++){
-      rb_ary_push(vertex_array, RARRAY(values)->ptr[i]);
+      for(i=0;i<RARRAY_LEN(values);i++){
+      rb_ary_push(vertex_array, RARRAY_PTR(values)[i]);
       }
       //Otherwise read each attriute into hashes and use those
     } else {
@@ -302,8 +302,8 @@ int cIGraph_attribute_add_edges(igraph_t *graph,
     if(((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->type == IGRAPH_ATTRIBUTE_PY_OBJECT){
       values = (VALUE)((igraph_i_attribute_record_t*)VECTOR(*attr)[0])->value;
       Check_Type(values, T_ARRAY);
-      for(i=0;i<RARRAY(values)->len;i++){
-	rb_ary_push(edge_array, RARRAY(values)->ptr[i]);
+      for(i=0;i<RARRAY_LEN(values);i++){
+	rb_ary_push(edge_array, RARRAY_PTR(values)[i]);
       }
       //Otherwise read each attriute into hashes and use those
     } else {
@@ -452,7 +452,7 @@ int cIGraph_attribute_get_info(const igraph_t *graph,
     if (i != 2){
 
       VALUE store = ((VALUE*)graph->attr)[i];
-      VALUE obj   = RARRAY(store)->ptr[0];
+      VALUE obj   = RARRAY_PTR(store)[0];
 
       obj_hash = Qnil;
       if(rb_funcall(obj, rb_intern("respond_to?"), 1, rb_str_new2("to_hash")) == Qtrue){
@@ -468,9 +468,9 @@ int cIGraph_attribute_get_info(const igraph_t *graph,
     }
 
     //Push names onto n and types onto t
-    for(j=0;j<RARRAY(rb_names)->len;j++){
-      igraph_strvector_add(n, RSTRING(RARRAY(rb_names)->ptr[j])->ptr);
-      igraph_vector_push_back(t, NUM2INT(RARRAY(rb_types)->ptr[j]));
+    for(j=0;j<RARRAY_LEN(rb_names);j++){
+      igraph_strvector_add(n, RSTRING_PTR(RARRAY_PTR(rb_names)[j]));
+      igraph_vector_push_back(t, NUM2INT(RARRAY_PTR(rb_types)[j]));
     }
 
   }
@@ -505,7 +505,7 @@ igraph_bool_t cIGraph_attribute_has_attr(const igraph_t *graph,
 
   obj = ((VALUE*)graph->attr)[attrnum];
   if (attrnum != 2)
-    obj = RARRAY(obj)->ptr[0];
+    obj = RARRAY_PTR(obj)[0];
 
   if(TYPE(obj) == T_HASH && rb_funcall(obj,rb_intern("include?"), 1, rb_str_new2(name))){
     res = 1;
@@ -541,7 +541,7 @@ int cIGraph_attribute_get_type(const igraph_t *graph,
 
   obj = ((VALUE*)graph->attr)[attrnum];
   if (attrnum != 2)
-    obj = RARRAY(obj)->ptr[0];
+    obj = RARRAY_PTR(obj)[0];
 
   rb_funcall(obj,rb_intern("include?"), 1, rb_str_new2(name));
 
@@ -597,7 +597,7 @@ int cIGraph_get_string_graph_attr(const igraph_t *graph,
   VALUE val;
 
   val = rb_hash_aref(((VALUE*)graph->attr)[2],rb_str_new2(name));
-  igraph_strvector_set(value,0,RSTRING(val)->ptr);
+  igraph_strvector_set(value,0,RSTRING_PTR(val));
 
 #ifdef DEBUG
   printf("Leaving cIGraph_get_string_graph_attr\n");
@@ -626,7 +626,7 @@ int cIGraph_get_numeric_vertex_attr(const igraph_t *graph,
   IGRAPH_CHECK(igraph_vector_resize(value, IGRAPH_VIT_SIZE(it)));
 
   while(!IGRAPH_VIT_END(it)){
-    vertex = RARRAY(array)->ptr[(int)IGRAPH_VIT_GET(it)];
+    vertex = RARRAY_PTR(array)[(int)IGRAPH_VIT_GET(it)];
     val = rb_hash_aref(vertex,rb_str_new2(name));
 
     if(val == Qnil)
@@ -667,13 +667,13 @@ int cIGraph_get_string_vertex_attr(const igraph_t *graph,
   IGRAPH_CHECK(igraph_strvector_resize(value, IGRAPH_VIT_SIZE(it)));
 
   while(!IGRAPH_VIT_END(it)){
-    vertex = RARRAY(array)->ptr[(int)IGRAPH_VIT_GET(it)];
+    vertex = RARRAY_PTR(array)[(int)IGRAPH_VIT_GET(it)];
     val = rb_hash_aref(vertex,rb_str_new2(name));
 
     if(val == Qnil)
       val = rb_str_new2("");
 
-    igraph_strvector_set(value,i,RSTRING(val)->ptr);
+    igraph_strvector_set(value,i,RSTRING_PTR(val));
     IGRAPH_VIT_NEXT(it);
     i++;
   }	
@@ -708,7 +708,7 @@ int cIGraph_get_numeric_edge_attr(const igraph_t *graph,
   IGRAPH_CHECK(igraph_vector_resize(value, IGRAPH_EIT_SIZE(it)));
 
   while(!IGRAPH_EIT_END(it)){
-    vertex = RARRAY(array)->ptr[(int)IGRAPH_EIT_GET(it)];
+    vertex = RARRAY_PTR(array)[(int)IGRAPH_EIT_GET(it)];
     val = rb_hash_aref(vertex,rb_str_new2(name));
 
     if(val == Qnil)
@@ -749,7 +749,7 @@ int cIGraph_get_string_edge_attr(const igraph_t *graph,
   IGRAPH_CHECK(igraph_strvector_resize(value, IGRAPH_EIT_SIZE(it)));
 
   while(!IGRAPH_EIT_END(it)){
-    edge = RARRAY(array)->ptr[(int)IGRAPH_EIT_GET(it)];
+    edge = RARRAY_PTR(array)[(int)IGRAPH_EIT_GET(it)];
 
     val = rb_hash_aref(edge,rb_str_new2(name));
 
@@ -759,7 +759,7 @@ int cIGraph_get_string_edge_attr(const igraph_t *graph,
     //Fix for floats when required by ncol write
     val = rb_funcall(val,rb_intern("to_s"),0);
 
-    igraph_strvector_set(value,i,RSTRING(val)->ptr);
+    igraph_strvector_set(value,i,RSTRING_PTR(val));
     IGRAPH_EIT_NEXT(it);
     i++;
   }	

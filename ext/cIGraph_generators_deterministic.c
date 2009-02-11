@@ -112,8 +112,8 @@ VALUE cIGraph_lattice(VALUE self, VALUE dim, VALUE directed, VALUE mutual, VALUE
   Data_Get_Struct(new_graph, igraph_t, graph);
 
   igraph_vector_init(&dimvector,0);
-  for(i=0; i<RARRAY(dim)->len; i++){
-    igraph_vector_push_back(&dimvector,NUM2INT(RARRAY(dim)->ptr[i])); 
+  for(i=0; i<RARRAY_LEN(dim); i++){
+    igraph_vector_push_back(&dimvector,NUM2INT(RARRAY_PTR(dim)[i])); 
   }
 
   igraph_destroy(graph);

@@ -23,8 +23,6 @@ VALUE cIGraph_st_edge_connectivity(VALUE self, VALUE source, VALUE target){
   igraph_integer_t to_i;
   igraph_integer_t value;
   
-  int i;
-
   Data_Get_Struct(self, igraph_t, graph);
 
   from_i = cIGraph_get_vertex_id(self,source);
@@ -80,8 +78,6 @@ VALUE cIGraph_st_vertex_connectivity(VALUE self, VALUE source, VALUE target, VAL
   igraph_integer_t to_i;
   igraph_integer_t value;
   
-  int i;
-
   Data_Get_Struct(self, igraph_t, graph);
 
   from_i = cIGraph_get_vertex_id(self,source);
@@ -133,8 +129,6 @@ VALUE cIGraph_edge_disjoint_paths(VALUE self, VALUE source, VALUE target){
   igraph_integer_t to_i;
   igraph_integer_t value;
   
-  int i;
-
   Data_Get_Struct(self, igraph_t, graph);
 
   from_i = cIGraph_get_vertex_id(self,source);
@@ -165,8 +159,6 @@ VALUE cIGraph_vertex_disjoint_paths(VALUE self, VALUE source, VALUE target){
   igraph_integer_t to_i;
   igraph_integer_t value;
   
-  int i;
-
   Data_Get_Struct(self, igraph_t, graph);
 
   from_i = cIGraph_get_vertex_id(self,source);

@@ -30,5 +30,5 @@ class TestGraph < Test::Unit::TestCase
      g = IGraph.new(['A','B','C','D'],true)
      assert_equal [[0,1,0,0],[0,0,0,0],[0,0,0,1],[0,0,0,0]], g.get_adjacency(1)
    end
- end
+end
  

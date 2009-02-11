@@ -29,8 +29,8 @@ VALUE cIGraph_maxflow_value(VALUE self, VALUE source, VALUE target, VALUE capaci
   igraph_vector_t capacity_v;
 
   igraph_vector_init(&capacity_v, 0);
-  for(i=0;i<RARRAY(capacity)->len;i++){
-    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY(capacity)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(capacity);i++){
+    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY_PTR(capacity)[i]));
   }
 
   Data_Get_Struct(self, igraph_t, graph);
@@ -73,8 +73,8 @@ VALUE cIGraph_st_mincut_value(VALUE self, VALUE source, VALUE target, VALUE capa
   igraph_vector_t capacity_v;
 
   igraph_vector_init(&capacity_v, 0);
-  for(i=0;i<RARRAY(capacity)->len;i++){
-    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY(capacity)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(capacity);i++){
+    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY_PTR(capacity)[i]));
   }
 
   Data_Get_Struct(self, igraph_t, graph);
@@ -111,8 +111,8 @@ VALUE cIGraph_mincut_value(VALUE self, VALUE capacity){
   igraph_vector_t capacity_v;
 
   igraph_vector_init(&capacity_v, 0);
-  for(i=0;i<RARRAY(capacity)->len;i++){
-    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY(capacity)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(capacity);i++){
+    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY_PTR(capacity)[i]));
   }
 
   Data_Get_Struct(self, igraph_t, graph);
@@ -160,8 +160,8 @@ VALUE cIGraph_mincut(VALUE self, VALUE capacity){
   igraph_vector_init(&cut, 0);  
 
   igraph_vector_init(&capacity_v, 0);
-  for(i=0;i<RARRAY(capacity)->len;i++){
-    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY(capacity)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(capacity);i++){
+    igraph_vector_push_back(&capacity_v,NUM2DBL(RARRAY_PTR(capacity)[i]));
   }
 
   Data_Get_Struct(self, igraph_t, graph);

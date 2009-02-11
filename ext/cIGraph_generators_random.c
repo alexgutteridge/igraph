@@ -209,11 +209,11 @@ VALUE cIGraph_degree_sequence_game(VALUE self, VALUE out_deg, VALUE in_deg){
   igraph_vector_init(&out_degv,0);
   igraph_vector_init(&in_degv,0);
 
-  for(i=0;i<RARRAY(out_deg)->len;i++){
-    igraph_vector_push_back(&out_degv,NUM2INT(RARRAY(out_deg)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(out_deg);i++){
+    igraph_vector_push_back(&out_degv,NUM2INT(RARRAY_PTR(out_deg)[i]));
   }
-  for(i=0;i<RARRAY(in_deg)->len;i++){
-    igraph_vector_push_back(&in_degv,NUM2INT(RARRAY(in_deg)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(in_deg);i++){
+    igraph_vector_push_back(&in_degv,NUM2INT(RARRAY_PTR(in_deg)[i]));
   }  
 
   igraph_destroy(graph);
@@ -304,8 +304,8 @@ VALUE cIGraph_callaway_traits_game(VALUE self, VALUE nodes, VALUE types, VALUE e
 
   igraph_vector_init(&type_distv,0);
 
-  for(i=0;i<RARRAY(type_dist)->len;i++){
-    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY(type_dist)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(type_dist);i++){
+    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY_PTR(type_dist)[i]));
   }
   
   igraph_destroy(graph);
@@ -359,8 +359,8 @@ VALUE cIGraph_establishment_game(VALUE self, VALUE nodes, VALUE types, VALUE k, 
 
   igraph_vector_init(&type_distv,0);
 
-  for(i=0;i<RARRAY(type_dist)->len;i++){
-    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY(type_dist)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(type_dist);i++){
+    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY_PTR(type_dist)[i]));
   }
   
   igraph_destroy(graph);
@@ -417,8 +417,8 @@ VALUE cIGraph_preference_game(VALUE self, VALUE nodes, VALUE types, VALUE type_d
 
   igraph_vector_init(&type_distv,0);
 
-  for(i=0;i<RARRAY(type_dist)->len;i++){
-    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY(type_dist)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(type_dist);i++){
+    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY_PTR(type_dist)[i]));
   }
   
   igraph_destroy(graph);
@@ -699,11 +699,11 @@ VALUE cIGraph_cited_type_game(VALUE self, VALUE nodes, VALUE types, VALUE pref, 
   igraph_vector_init(&type_distv,0);
   igraph_vector_init(&prefv,0);
 
-  for(i=0;i<RARRAY(types)->len;i++){
-    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY(types)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(types);i++){
+    igraph_vector_push_back(&type_distv,NUM2DBL(RARRAY_PTR(types)[i]));
   }
-  for(i=0;i<RARRAY(pref)->len;i++){
-    igraph_vector_push_back(&prefv,NUM2DBL(RARRAY(pref)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(pref);i++){
+    igraph_vector_push_back(&prefv,NUM2DBL(RARRAY_PTR(pref)[i]));
   }
     
   igraph_destroy(graph);
@@ -767,8 +767,8 @@ VALUE cIGraph_citing_cited_type_game(VALUE self, VALUE nodes, VALUE types, VALUE
 
   igraph_vector_init(&typev,0);
 
-  for(i=0;i<RARRAY(types)->len;i++){
-    igraph_vector_push_back(&typev,NUM2INT(RARRAY(types)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(types);i++){
+    igraph_vector_push_back(&typev,NUM2INT(RARRAY_PTR(types)[i]));
   }
 
   printf("ok\n");

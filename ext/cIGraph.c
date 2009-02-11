@@ -121,8 +121,8 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
     IGRAPH_CHECK(igraph_to_undirected(graph,IGRAPH_TO_UNDIRECTED_COLLAPSE));
 
   //Loop through objects in edge Array
-  for (i=0; i<RARRAY(edges)->len; i++) {
-    vertex = RARRAY(edges)->ptr[i];
+  for (i=0; i<RARRAY_LEN(edges); i++) {
+    vertex = RARRAY_PTR(edges)[i];
     if(rb_ary_includes(v_ary,vertex)){
       //If @vertices includes this vertex then look up the vertex number
       current_vertex_id = NUM2INT(rb_funcall(v_ary,rb_intern("index"),1,vertex));
@@ -139,7 +139,7 @@ VALUE cIGraph_initialize(int argc, VALUE *argv, VALUE self){
     IGRAPH_CHECK(igraph_vector_push_back(&edge_v,current_vertex_id));
     if (i % 2){
       if (attrs != Qnil){
-	rb_ary_push((VALUE)e_attr_rec.value,RARRAY(attrs)->ptr[i/2]);
+	rb_ary_push((VALUE)e_attr_rec.value,RARRAY_PTR(attrs)[i/2]);
       } else {
 	rb_ary_push((VALUE)e_attr_rec.value,Qnil);
       }

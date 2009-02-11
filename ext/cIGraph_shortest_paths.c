@@ -48,7 +48,7 @@ VALUE cIGraph_shortest_paths(VALUE self, VALUE from, VALUE mode){
     row = rb_ary_new();
     rb_ary_push(matrix,row);
     for(j=0; j<igraph_matrix_ncol(&res); j++){
-      path_length = MATRIX(res,i,j) == n_col ? Qnil : INT2NUM(MATRIX(res,i,j));
+      path_length = MATRIX(res,i,j) == IGRAPH_INFINITY ? Qnil : INT2NUM(MATRIX(res,i,j));
       rb_ary_push(row,path_length);
     }
   }
@@ -93,7 +93,7 @@ VALUE cIGraph_get_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mode){
 
   Data_Get_Struct(self, igraph_t, graph);
 
-  n_paths = RARRAY(to)->len;
+  n_paths = RARRAY_LEN(to);
 
   //vector to hold the results of the calculations
   igraph_vector_ptr_init(&res,0);

@@ -2,7 +2,7 @@ require 'test/unit'
 require 'igraph'
 
 class TestGraph < Test::Unit::TestCase
-   def test_add_edges
+  def test_add_edges
     graph = IGraph.new(['A','B','C','D'],true)
     graph.add_edges(['A','C'])
     assert_equal [2], graph.degree(['A'],IGraph::ALL,true)
@@ -68,7 +68,7 @@ class TestGraph < Test::Unit::TestCase
     delete_ids = (0..99).to_a.sort_by{rand}[0..19]
     assert_nothing_raised do 
       delete_ids.each do |id|
-	g.delete_vertex(id)
+	     g.delete_vertex(id)
       end
     end
     delete_ids.each do |id|

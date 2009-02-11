@@ -273,12 +273,12 @@ VALUE cIGraph_layout_merge_dla(VALUE self, VALUE graphs, VALUE layouts){
   igraph_vector_ptr_init(&coords,0);
   igraph_matrix_init(res,0,0);
 
-  for(i=0;i<RARRAY(graphs)->len;i++){
-    Data_Get_Struct(RARRAY(graphs)->ptr[i], igraph_t, graph);
+  for(i=0;i<RARRAY_LEN(graphs);i++){
+    Data_Get_Struct(RARRAY_PTR(graphs)[i], igraph_t, graph);
     igraph_vector_ptr_push_back(&thegraphs,graph);
   }
-  for(i=0;i<RARRAY(layouts)->len;i++){
-    Data_Get_Struct(RARRAY(layouts)->ptr[i], igraph_matrix_t, coord);
+  for(i=0;i<RARRAY_LEN(layouts);i++){
+    Data_Get_Struct(RARRAY_PTR(layouts)[i], igraph_matrix_t, coord);
     igraph_vector_ptr_push_back(&coords,coord);
   }
  

@@ -59,12 +59,12 @@ VALUE cIGraph_minimum_spanning_tree_prim(VALUE self, VALUE weights){
   igraph_vector_t weights_vec;
   int i;
 
-  igraph_vector_init(&weights_vec,RARRAY(weights)->len);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
 
   Data_Get_Struct(self, igraph_t, graph);
 
-  for(i=0;i<RARRAY(weights)->len;i++){
-    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY(weights)->ptr[i]);
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
   }
 
   igraph_minimum_spanning_tree_prim(graph,n_graph,&weights_vec);

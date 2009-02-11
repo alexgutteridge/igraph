@@ -18,4 +18,4 @@ class TestGraph < Test::Unit::TestCase
      g = IGraph.new(['A','B','C','D','A','E','B','E'],false)
      assert_equal 3, g.clique_number
    end
- end
+end

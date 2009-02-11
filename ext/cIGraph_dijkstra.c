@@ -38,10 +38,10 @@ VALUE cIGraph_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE weights, VAL
   //matrix to hold the results of the calculations
   igraph_matrix_init(&res,n_row,n_col);
 
-  igraph_vector_init(&wghts,RARRAY(weights)->len);
+  igraph_vector_init(&wghts,RARRAY_LEN(weights));
 
-  for(i=0;i<RARRAY(weights)->len;i++){
-    VECTOR(wghts)[i] = NUM2DBL(RARRAY(weights)->ptr[i]);
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(wghts)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
   }
 
   //Convert an array of vertices to a vector of vertex ids
@@ -101,7 +101,7 @@ VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALU
 
   Data_Get_Struct(self, igraph_t, graph);
 
-  n_paths = RARRAY(to)->len;
+  n_paths = RARRAY_LEN(to);
 
   //vector to hold the results of the calculations
   igraph_vector_ptr_init(&res,0);

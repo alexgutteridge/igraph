@@ -26,11 +26,11 @@ VALUE cIGraph_modularity(VALUE self, VALUE groups){
 
   igraph_vector_init(&membership,igraph_vcount(graph));
 
-  for(i=0;i<RARRAY(groups)->len;i++){
-    group = RARRAY(groups)->ptr[i];
-    for(j=0;j<RARRAY(group)->len;j++){
+  for(i=0;i<RARRAY_LEN(groups);i++){
+    group = RARRAY_PTR(groups)[i];
+    for(j=0;j<RARRAY_LEN(group);j++){
       igraph_vector_set(&membership,
-			cIGraph_get_vertex_id(self,RARRAY(group)->ptr[j]),i);
+			cIGraph_get_vertex_id(self,RARRAY_PTR(group)[j]),i);
     }
   }
 
@@ -84,10 +84,10 @@ VALUE cIGraph_community_to_membership(VALUE self, VALUE merge, VALUE steps, VALU
 
   for(i=0;i<igraph_vector_size(&membership);i++){
     groupid = VECTOR(membership)[i];
-    if(RARRAY(groups)->ptr[groupid] == Qnil){
-      RARRAY(groups)->ptr[groupid] = rb_ary_new();
+    if(RARRAY_PTR(groups)[groupid] == Qnil){
+      RARRAY_PTR(groups)[groupid] = rb_ary_new();
     }
-    rb_ary_push(RARRAY(groups)->ptr[groupid],
+    rb_ary_push(RARRAY_PTR(groups)[groupid],
 		cIGraph_get_vertex_object(self, i));
   }
 
@@ -132,9 +132,9 @@ VALUE cIGraph_community_spinglass(VALUE self, VALUE weights, VALUE spins, VALUE 
 
   igraph_vector_init(&membership,0);
 
-  igraph_vector_init(&weights_vec,RARRAY(weights)->len);
-  for(i=0;i<RARRAY(weights)->len;i++){
-    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY(weights)->ptr[i]);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
   }
 
   igraph_community_spinglass(graph,
@@ -163,7 +163,7 @@ VALUE cIGraph_community_spinglass(VALUE self, VALUE weights, VALUE spins, VALUE 
     if(groupid == -1)
       groupid = 0;
 
-    group = RARRAY(groups)->ptr[groupid];
+    group = RARRAY_PTR(groups)[groupid];
     rb_ary_push(group,cIGraph_get_vertex_object(self, i));
   }
 
@@ -206,9 +206,9 @@ VALUE cIGraph_community_spinglass_single(VALUE self, VALUE weights, VALUE vertex
 
   igraph_vector_init(&community,0);
 
-  igraph_vector_init(&weights_vec,RARRAY(weights)->len);
-  for(i=0;i<RARRAY(weights)->len;i++){
-    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY(weights)->ptr[i]);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
   }
 
   igraph_community_spinglass_single(graph,
@@ -287,7 +287,7 @@ igraph_arpack_options_init(&arpack_opt);
     if(groupid == -1)
       groupid = 0;
 
-    group = RARRAY(groups)->ptr[groupid];
+    group = RARRAY_PTR(groups)[groupid];
     rb_ary_push(group,cIGraph_get_vertex_object(self, i));
   }
 
@@ -352,7 +352,7 @@ igraph_arpack_options_init(&arpack_opt);
     if(groupid == -1)
       groupid = 0;
 
-    group = RARRAY(groups)->ptr[groupid];
+    group = RARRAY_PTR(groups)[groupid];
     rb_ary_push(group,cIGraph_get_vertex_object(self, i));
   }
 
@@ -396,12 +396,12 @@ igraph_arpack_options_init(&arpack_opt);
   igraph_vector_init(&membership_vec,igraph_vcount(graph));
   igraph_vector_init(&eigenvector,0);
 
-  for(i=0;i<RARRAY(membership)->len;i++){
-    group = RARRAY(membership)->ptr[i];
+  for(i=0;i<RARRAY_LEN(membership);i++){
+    group = RARRAY_PTR(membership)[i];
 
-    for(j=0;j<RARRAY(group)->len;j++){
+    for(j=0;j<RARRAY_LEN(group);j++){
 
-      obj = RARRAY(group)->ptr[j];
+      obj = RARRAY_PTR(group)[j];
       vid = cIGraph_get_vertex_id(self,obj);
 
       VECTOR(membership_vec)[vid] = i;
@@ -431,7 +431,7 @@ igraph_arpack_options_init(&arpack_opt);
     if(groupid == -1)
       groupid = 0;
 
-    group = RARRAY(groups)->ptr[groupid];
+    group = RARRAY_PTR(groups)[groupid];
     rb_ary_push(group,cIGraph_get_vertex_object(self, i));
   }
 
@@ -478,8 +478,8 @@ VALUE cIGraph_community_walktrap(VALUE self, VALUE weights, VALUE steps){
   igraph_vector_init(&weights_vec,0);
   igraph_vector_init(&modularity,0);
 
-  for(i=0;i<RARRAY(weights)->len;i++){
-    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY(weights)->ptr[i]);
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
   }
 
   igraph_community_walktrap(graph,
@@ -593,8 +593,8 @@ VALUE cIGraph_community_eb_get_merges(VALUE self, VALUE edges){
   igraph_vector_init(&edges_vec,0);
   igraph_vector_init(&bridges_vec,0);
 
-  for(i=0;i<RARRAY(edges)->len;i++){
-    igraph_vector_push_back(&edges_vec,NUM2INT(RARRAY(edges)->ptr[i]));
+  for(i=0;i<RARRAY_LEN(edges);i++){
+    igraph_vector_push_back(&edges_vec,NUM2INT(RARRAY_PTR(edges)[i]));
   }
 
   igraph_community_eb_get_merges(graph,&edges_vec,res,&bridges_vec);

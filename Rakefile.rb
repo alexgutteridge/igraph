@@ -6,10 +6,10 @@ class IGraph
   VERSION = "0.9.5"
 end
 
-begin 
-  require 'igraph'
-rescue RuntimeError
-end
+#begin 
+#  require 'igraph'
+#rescue RuntimeError
+#end
 
 hoe = Hoe.new("igraph",IGraph::VERSION) do |p|
   
