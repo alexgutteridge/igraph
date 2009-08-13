@@ -29,7 +29,7 @@ VALUE cIGraph_coreness(VALUE self, VALUE mode){
   igraph_coreness(graph,&cores,pmode);
 
   for(i=0; i< igraph_vector_size(&cores); i++){
-    rb_ary_push(result,VECTOR(cores)[i]);
+    rb_ary_push(result,INT2NUM(VECTOR(cores)[i]));
   }
 
   igraph_vector_destroy(&cores);

@@ -3,7 +3,7 @@ require 'hoe'
 $LOAD_PATH.unshift("./ext")
 
 class IGraph
-  VERSION = "0.9.6"
+  VERSION = "0.9.7"
 end
 
 #begin 

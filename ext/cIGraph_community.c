@@ -121,8 +121,6 @@ VALUE cIGraph_community_spinglass(VALUE self, VALUE weights, VALUE spins, VALUE 
   VALUE groups;
   VALUE res;
 
-  VALUE str;
-
   int i,groupid,max_groupid;
 
   if(parupdate)
