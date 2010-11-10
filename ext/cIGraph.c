@@ -340,6 +340,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_shortestpaths, "girth",                  cIGraph_girth,                  0); /* in cIGraph_shortest_paths.c */
 
   rb_define_method(cIGraph_shortestpaths, "dijkstra_shortest_paths", cIGraph_dijkstra_shortest_paths, 3); /* in cIGraph_dijkstra.c */
+  rb_define_method(cIGraph_shortestpaths, "get_dijkstra_shortest_paths", cIGraph_get_dijkstra_shortest_paths, 4); /* in cIGraph_dijkstra.c */
 
   /* Functions for querying the neighborhood of vertices */
   cIGraph_neighborhoodm = rb_define_module_under(cIGraph, "Neighborhood");
@@ -554,7 +555,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_community, "community_leading_eigenvector_step", cIGraph_community_leading_eigenvector_step, 2);  /* in cIGraph_community.c */       rb_define_method(cIGraph_community, "community_walktrap", cIGraph_community_walktrap, 2);  /* in cIGraph_community.c */      
   rb_define_method(cIGraph_community, "community_edge_betweenness", cIGraph_community_edge_betweenness, 1);  /* in cIGraph_community.c */  
   rb_define_method(cIGraph_community, "community_eb_get_merges", cIGraph_community_eb_get_merges, 1);  /* in cIGraph_community.c */  
-  rb_define_method(cIGraph_community, "community_fastgreedy", cIGraph_community_fastgreedy, 0);  /* in cIGraph_community.c */  
+  rb_define_method(cIGraph_community, "community_fastgreedy", cIGraph_community_fastgreedy, 1);  /* in cIGraph_community.c */
 
   rb_define_const(cIGraph, "VERSION", rb_str_new2("0.9.1"));
 

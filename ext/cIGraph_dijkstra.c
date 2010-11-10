@@ -82,7 +82,7 @@ VALUE cIGraph_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE weights, VAL
  */
 VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE weights, VALUE mode){
 
-  igraph_t *graph;
+    igraph_t *graph;
 
   igraph_integer_t from_vid;
   igraph_vs_t to_vids;
@@ -151,6 +151,79 @@ VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALU
 
   return matrix;
 
+  /*
+  igraph_t *graph;
+
+  igraph_integer_t from_vid;
+  igraph_vs_t to_vids;
+  igraph_vector_t to_vidv;
+  igraph_vector_t wghts;
+
+  igraph_neimode_t pmode = NUM2INT(mode);
+
+  igraph_vector_ptr_t res;
+  igraph_vector_t *path_v;
+
+  int i;
+  int j;
+  VALUE path;
+  VALUE matrix = rb_ary_new();
+  int n_paths = 0;
+
+  Data_Get_Struct(self, igraph_t, graph);
+
+  n_paths = RARRAY_LEN(to);
+
+  //vector to hold the results of the calculations
+  igraph_vector_ptr_init(&res,0);
+
+  for(i=0;i<n_paths;i++)
+  {
+    path_v = malloc(sizeof(igraph_vector_t));
+    igraph_vector_init(path_v,0);
+    igraph_vector_ptr_push_back(&res,path_v);
+  }
+
+
+  igraph_vector_init(&wghts,RARRAY_LEN(weights));
+
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(wghts)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
+  }
+
+  //Convert an array of vertices to a vector of vertex ids
+  igraph_vector_init_int(&to_vidv,0);
+  cIGraph_vertex_arr_to_id_vec(self,to,&to_vidv);
+  //create vertex selector from the vecotr of ids
+  igraph_vs_vector(&to_vids,&to_vidv);
+
+  //The id of the vertex from where we are counting
+  from_vid = cIGraph_get_vertex_id(self, from);
+
+  igraph_get_shortest_paths(graph,&res,from_vid,to_vids,pmode);
+  //igraph_get_shortest_paths_dijkstra(graph,&res,from_vid,to_vids,igraph_vector_size(&wghts) > 0 ? &wghts : NULL,pmode);
+
+  for(i=0; i<n_paths; i++){
+    path = rb_ary_new();
+    rb_ary_push(matrix,path);
+    path_v = VECTOR(res)[i];
+    for(j=0; j<igraph_vector_size(VECTOR(res)[i]); j++){
+      rb_ary_push(path,cIGraph_get_vertex_object(self,VECTOR(*path_v)[j]));
+    }
+  }
+
+  for(i=0;i<n_paths;i++){
+    igraph_vector_destroy(VECTOR(res)[i]);
+    free(VECTOR(res)[i]);
+  }
+
+  igraph_vector_destroy(&to_vidv);
+  igraph_vector_ptr_destroy(&res);
+  igraph_vs_destroy(&to_vids);
+  igraph_vector_destroy(&wghts);
+
+  return matrix;
+    */
 }
 
 int igraph_dijkstra_shortest_paths(const igraph_t *graph, 
