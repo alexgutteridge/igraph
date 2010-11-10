@@ -625,10 +625,10 @@ VALUE cIGraph_community_eb_get_merges(VALUE self, VALUE edges){
  *
  */
 
-VALUE cIGraph_community_fastgreedy(VALUE self){
+VALUE cIGraph_community_fastgreedy(VALUE self, VALUE weights){
 
   igraph_t *graph;
-
+  igraph_vector_t weights_vec;
   igraph_vector_t modularity;
   igraph_matrix_t *merges = malloc(sizeof(igraph_matrix_t));
 
@@ -640,8 +640,13 @@ VALUE cIGraph_community_fastgreedy(VALUE self){
 
   igraph_matrix_init(merges,0,0);
   igraph_vector_init(&modularity,0);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
 
-  igraph_community_fastgreedy(graph,NULL,
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
+  }
+
+  igraph_community_fastgreedy(graph,igraph_vector_size(&weights_vec) > 0 ? &weights_vec : NULL,
 			      merges,&modularity);
 
   modularity_a = rb_ary_new();
@@ -655,6 +660,7 @@ VALUE cIGraph_community_fastgreedy(VALUE self){
 		    modularity_a);
 
   igraph_vector_destroy(&modularity);
+  igraph_vector_destroy(&weights_vec);
 
   return res;
 

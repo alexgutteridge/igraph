@@ -64,7 +64,7 @@ VALUE cIGraph_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE weights, VAL
   igraph_vector_destroy(&vidv);
   igraph_matrix_destroy(&res);
   igraph_vs_destroy(&vids);
-
+  igraph_vector_destroy(&wghts);
   return matrix;
 
 }
@@ -80,13 +80,14 @@ VALUE cIGraph_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE weights, VAL
  * calculated. IGraph::ALL the directed graph is considered as an undirected 
  * one for the computation. 
  */
-VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE mode){
+VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE weights, VALUE mode){
 
   igraph_t *graph;
 
   igraph_integer_t from_vid;
   igraph_vs_t to_vids;
   igraph_vector_t to_vidv;
+  igraph_vector_t wghts;
 
   igraph_neimode_t pmode = NUM2INT(mode);
 
@@ -111,6 +112,12 @@ VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALU
     igraph_vector_ptr_push_back(&res,path_v);
   }
 
+  igraph_vector_init(&wghts,RARRAY_LEN(weights));
+
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(wghts)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
+  }
+
   //Convert an array of vertices to a vector of vertex ids
   igraph_vector_init_int(&to_vidv,0);
   cIGraph_vertex_arr_to_id_vec(self,to,&to_vidv);
@@ -120,7 +127,8 @@ VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALU
   //The id of the vertex from where we are counting
   from_vid = cIGraph_get_vertex_id(self, from);
 
-  igraph_get_shortest_paths(graph,&res,from_vid,to_vids,pmode);
+  //igraph_get_shortest_paths(graph,&res,from_vid,to_vids,pmode);
+  igraph_get_shortest_paths_dijkstra(graph,&res,from_vid,to_vids,igraph_vector_size(&wghts) > 0 ? &wghts : NULL,pmode);
 
   for(i=0; i<n_paths; i++){
     path = rb_ary_new();
@@ -139,6 +147,7 @@ VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALU
   igraph_vector_destroy(&to_vidv);
   igraph_vector_ptr_destroy(&res);
   igraph_vs_destroy(&to_vids);
+  igraph_vector_destroy(&wghts);
 
   return matrix;
 

@@ -117,6 +117,7 @@ VALUE cIGraph_diameter              (VALUE self, VALUE directed, VALUE unconn);
 VALUE cIGraph_girth                 (VALUE self);
 
 VALUE cIGraph_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE weights, VALUE mode);
+VALUE cIGraph_get_dijkstra_shortest_paths(VALUE self, VALUE from, VALUE to, VALUE weights, VALUE mode);
 int igraph_dijkstra_shortest_paths(const igraph_t *graph, 
 				   igraph_matrix_t *res, 
 				   const igraph_vs_t from, 
@@ -313,7 +314,7 @@ VALUE cIGraph_community_edge_betweenness         (VALUE self,
 						  VALUE directed);
 VALUE cIGraph_community_eb_get_merges            (VALUE self, 
 						  VALUE edges);
-VALUE cIGraph_community_fastgreedy               (VALUE self);
+VALUE cIGraph_community_fastgreedy               (VALUE self,VALUE weights);
 
 //Attributes
 int cIGraph_attribute_init(igraph_t *graph, 
