@@ -1,4 +1,3 @@
-(in /home/ag357/Projects/igraph)
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
