@@ -556,6 +556,7 @@ void Init_igraph(){
   rb_define_method(cIGraph_community, "community_edge_betweenness", cIGraph_community_edge_betweenness, 1);  /* in cIGraph_community.c */  
   rb_define_method(cIGraph_community, "community_eb_get_merges", cIGraph_community_eb_get_merges, 1);  /* in cIGraph_community.c */  
   rb_define_method(cIGraph_community, "community_fastgreedy", cIGraph_community_fastgreedy, 1);  /* in cIGraph_community.c */
+  rb_define_method(cIGraph_community, "community_label_propagation", cIGraph_community_label_propagation, 1);  /* in cIGraph_community.c */
 
   rb_define_const(cIGraph, "VERSION", rb_str_new2("0.9.1"));
 

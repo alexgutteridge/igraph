@@ -315,6 +315,7 @@ VALUE cIGraph_community_edge_betweenness         (VALUE self,
 VALUE cIGraph_community_eb_get_merges            (VALUE self, 
 						  VALUE edges);
 VALUE cIGraph_community_fastgreedy               (VALUE self,VALUE weights);
+VALUE cIGraph_community_label_propagation        (VALUE self,VALUE weights);
 
 //Attributes
 int cIGraph_attribute_init(igraph_t *graph, 

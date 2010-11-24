@@ -149,7 +149,22 @@ class TestGraph < Test::Unit::TestCase
                         8,4,3,5,4,6,7,8,3,7,\
                         3,3]
 
-    res = graph.community_leading_eigenvector(10)[0].sort
+    res = graph.community_leading_eigenvector(14)[0].sort
+    assert_equal [["A1", "B1", "C1", "D1"], ["A2", "B2", "C2", "D2", "E2"], ["A3", "B3", "C3", "D3", "E3"]], res
+  end
+
+   def test_extend_label
+    graph = IGraph.new(['A1','B1','A1','C1','B1','C1','C1','D1',\
+                        'A2','B2','A2','C2','A2','D2','B2','C2','B2','D2','C2','D2','D2','E2',\
+                        'A3','B3','A3','C3','A3','D3','A3','E3','B3','C3','B3','D3','B3','E3','C3','D3','C3','E3','D3','E3',\
+                        'A1','A2','B2','B3'],false)
+
+             weights = [5,7,7,5,\
+                        6,6,5,7,5,6,8,\
+                        8,4,3,5,4,6,7,8,3,7,\
+                        3,3]
+
+    res = graph.community_label_propagation(weights)[0].sort
     assert_equal [["A1", "B1", "C1", "D1"], ["A2", "B2", "C2", "D2", "E2"], ["A3", "B3", "C3", "D3", "E3"]], res
   end
 
