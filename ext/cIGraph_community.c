@@ -43,7 +43,7 @@ VALUE cIGraph_modularity(VALUE self, VALUE groups){
 }
 
 /* call-seq:
- *   graph.community_to_membership(merge,steps) -> Array
+ *   graph.community_to_membership(merge,steps,nodes) -> Array
  *
  * Create membership vector from community structure dendrogram This function 
  * creates a membership vector from a community structure dendrogram. 
@@ -458,10 +458,10 @@ igraph_arpack_options_init(&arpack_opt);
  *
  */
 
+
 VALUE cIGraph_community_walktrap(VALUE self, VALUE weights, VALUE steps){
 
   igraph_t *graph;
-
   igraph_vector_t weights_vec;
   igraph_vector_t modularity;
   igraph_matrix_t *merges = malloc(sizeof(igraph_matrix_t));
@@ -473,8 +473,8 @@ VALUE cIGraph_community_walktrap(VALUE self, VALUE weights, VALUE steps){
   Data_Get_Struct(self, igraph_t, graph);
 
   igraph_matrix_init(merges,0,0);
-  igraph_vector_init(&weights_vec,0);
   igraph_vector_init(&modularity,0);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
 
   for(i=0;i<RARRAY_LEN(weights);i++){
     VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
@@ -615,7 +615,7 @@ VALUE cIGraph_community_eb_get_merges(VALUE self, VALUE edges){
 }
 
 /* call-seq:
- *   graph.community_fastgreedy() -> Array
+ *   graph.community_fastgreedy(weights) -> Array
  *
  * Finding community structure by greedy optimization of modularity. 
  * This function implements the fast greedy modularity optimization algorithm 
