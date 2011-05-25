@@ -712,7 +712,7 @@ igraph_arpack_options_init(&arpack_opt);
 
  igraph_community_label_propagation(graph,
                                     &membership,
-                                    &weights_vec,
+                                    igraph_vector_size(&weights_vec) > 0 ? &weights_vec : NULL,
                                     NULL,
                                     NULL);
 
