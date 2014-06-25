@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RUBY_MODULE" version="4">
+  <component name="GemRequirementsHolder" version="3">
+    <requirement>
+      <requirement>
+        <dependency name="test-unit" version="0" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
+      </requirement>
+      <source manual="true" />
+    </requirement>
+  </component>
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] test-unit (v2.1.1, /home/hamlet/.rvm/gems/ruby-1.9.2-p0/gems/test-unit-2.1.1)" level="application" />
+  </component>
+</module>
+

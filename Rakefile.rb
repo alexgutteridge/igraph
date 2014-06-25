@@ -11,20 +11,20 @@ end
 #rescue RuntimeError
 #end
 
-hoe = Hoe.new("igraph",IGraph::VERSION) do |p|
-  
+hoe = Hoe.spec("igraph") do |p|
+
   p.author = "Alex Gutteridge"
   p.email = "ag357@cam.ac.uk"
   p.url = "http://igraph.rubyforge.org/"
-  
+
   p.description = p.paragraphs_of("README.txt",1..3)[0]
   p.summary     = p.paragraphs_of("README.txt",1)[0]
   p.changes     = p.paragraphs_of("History.txt",0..1).join("\n\n")
-  
+
   p.clean_globs = ["ext/*.o","ext/*.so","ext/Makefile","ext/mkmf.log","**/*~","email.txt","manual.{aux,log,out,toc,pdf}"]
-  
-  p.rdoc_pattern = /(^ext\/.*\.c$|^README|^History|^License)/
-  
+
+  #p.rdoc_pattern = /(^ext\/.*\.c$|^README|^History|^License)/
+
   p.spec_extras = {
     :extensions    => ['ext/extconf.rb'],
     :require_paths => ['test'],

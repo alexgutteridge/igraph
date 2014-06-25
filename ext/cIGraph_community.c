@@ -43,7 +43,7 @@ VALUE cIGraph_modularity(VALUE self, VALUE groups){
 }
 
 /* call-seq:
- *   graph.community_to_membership(merge,steps) -> Array
+ *   graph.community_to_membership(merge,steps,nodes) -> Array
  *
  * Create membership vector from community structure dendrogram This function 
  * creates a membership vector from a community structure dendrogram. 
@@ -458,10 +458,10 @@ igraph_arpack_options_init(&arpack_opt);
  *
  */
 
+
 VALUE cIGraph_community_walktrap(VALUE self, VALUE weights, VALUE steps){
 
   igraph_t *graph;
-
   igraph_vector_t weights_vec;
   igraph_vector_t modularity;
   igraph_matrix_t *merges = malloc(sizeof(igraph_matrix_t));
@@ -473,8 +473,8 @@ VALUE cIGraph_community_walktrap(VALUE self, VALUE weights, VALUE steps){
   Data_Get_Struct(self, igraph_t, graph);
 
   igraph_matrix_init(merges,0,0);
-  igraph_vector_init(&weights_vec,0);
   igraph_vector_init(&modularity,0);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
 
   for(i=0;i<RARRAY_LEN(weights);i++){
     VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
@@ -615,7 +615,7 @@ VALUE cIGraph_community_eb_get_merges(VALUE self, VALUE edges){
 }
 
 /* call-seq:
- *   graph.community_fastgreedy() -> Array
+ *   graph.community_fastgreedy(weights) -> Array
  *
  * Finding community structure by greedy optimization of modularity. 
  * This function implements the fast greedy modularity optimization algorithm 
@@ -625,10 +625,10 @@ VALUE cIGraph_community_eb_get_merges(VALUE self, VALUE edges){
  *
  */
 
-VALUE cIGraph_community_fastgreedy(VALUE self){
+VALUE cIGraph_community_fastgreedy(VALUE self, VALUE weights){
 
   igraph_t *graph;
-
+  igraph_vector_t weights_vec;
   igraph_vector_t modularity;
   igraph_matrix_t *merges = malloc(sizeof(igraph_matrix_t));
 
@@ -640,8 +640,13 @@ VALUE cIGraph_community_fastgreedy(VALUE self){
 
   igraph_matrix_init(merges,0,0);
   igraph_vector_init(&modularity,0);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
 
-  igraph_community_fastgreedy(graph,NULL,
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
+  }
+
+  igraph_community_fastgreedy(graph,igraph_vector_size(&weights_vec) > 0 ? &weights_vec : NULL,
 			      merges,&modularity);
 
   modularity_a = rb_ary_new();
@@ -655,7 +660,95 @@ VALUE cIGraph_community_fastgreedy(VALUE self){
 		    modularity_a);
 
   igraph_vector_destroy(&modularity);
+  igraph_vector_destroy(&weights_vec);
 
   return res;
 
 }
+
+/* call-seq:
+ *   graph.community_label_propagation(weights) -> Array
+ *
+ Community detection based on label propagation This function implements the community detection method described in:
+ Raghavan, U.N. and Albert, R. and Kumara, S.: Near linear time algorithm to detect community structures in large-scale
+ networks. Phys Rev E 76, 036106. (2007). This version extends the original method by the ability to take edge weights
+ into consideration and also by allowing some labels to be fixed.
+
+Arguments:
+
+weights:
+
+The weight vector, it should contain a positive weight for all the edges
+ *
+ */
+
+VALUE cIGraph_community_label_propagation(VALUE self, VALUE weights){
+
+  igraph_t *graph;
+
+  igraph_vector_t membership;
+  igraph_vector_t weights_vec;
+  igraph_matrix_t *merges = malloc(sizeof(igraph_matrix_t));
+
+igraph_arpack_options_t arpack_opt;
+igraph_arpack_options_init(&arpack_opt);
+
+
+  int i,groupid,max_groupid;
+
+  VALUE groups, group, res;
+
+  Data_Get_Struct(self, igraph_t, graph);
+
+  igraph_matrix_init(merges,0,0);
+  igraph_vector_init(&membership,0);
+  igraph_vector_init(&weights_vec,RARRAY_LEN(weights));
+
+
+  for(i=0;i<RARRAY_LEN(weights);i++){
+    VECTOR(weights_vec)[i] = NUM2DBL(RARRAY_PTR(weights)[i]);
+  }
+
+
+ igraph_community_label_propagation(graph,
+                                    &membership,
+                                    igraph_vector_size(&weights_vec) > 0 ? &weights_vec : NULL,
+                                    NULL,
+                                    NULL);
+
+
+  max_groupid = 0;
+  for(i=0;i<igraph_vector_size(&membership);i++){
+    if(VECTOR(membership)[i] > max_groupid)
+      max_groupid = VECTOR(membership)[i];
+  }
+
+  groups = rb_ary_new();
+  for(i=0;i<max_groupid+1;i++){
+    rb_ary_push(groups,rb_ary_new());
+  }
+
+  for(i=0;i<igraph_vector_size(&membership);i++){
+
+    groupid = VECTOR(membership)[i];
+
+    if(groupid == -1)
+      groupid = 0;
+
+    group = RARRAY_PTR(groups)[groupid];
+    rb_ary_push(group,cIGraph_get_vertex_object(self, i));
+  }
+
+  res = rb_ary_new3(2,groups,
+		    Data_Wrap_Struct(cIGraphMatrix, 0,
+				     cIGraph_matrix_free, merges));
+
+  igraph_vector_destroy(&membership);
+  igraph_vector_destroy(&weights_vec);
+
+  return res;
+
+}
+
+
+
